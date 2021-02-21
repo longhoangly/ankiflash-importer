@@ -126,22 +126,22 @@ class AutoImportWidget(QtWidgets.QWidget):
 
         front = ""
         frontFile = srcdir + slash + r'front.html'
-        with open(frontFile, 'r') as file:
+        with open(frontFile, 'r', encoding='utf-8') as file:
             front = file.read()
 
         back = ""
         backFile = srcdir + slash + r'back.html'
-        with open(backFile, 'r') as file:
+        with open(backFile, 'r', encoding='utf-8') as file:
             back = file.read()
 
         css = ""
         cssFile = srcdir + slash + r'style.css'
-        with open(cssFile, 'r') as file:
+        with open(cssFile, 'r', encoding='utf-8') as file:
             css = file.read()
 
         templateVersion = ""
         versionFile = srcdir + slash + r'version.csv'
-        with open(versionFile, 'r') as file:
+        with open(versionFile, 'r', encoding='utf-8') as file:
             templateVersion = file.read()
 
         desdir = mw.col.media.dir()
