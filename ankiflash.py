@@ -31,15 +31,24 @@ class AnkiFlashDlg(QDialog):
         # Run the .setupUi() method to show the GUI
         self.ui.setupUi(self, version)
 
-        # Handle Generate button clicked
-        self.ui.generateBtn.clicked.connect(self.__btnGenerateClicked)
+        # Set total input words count
+        self.ui.inputTxt.textChanged.connect(self.inputTextChanged)
 
-        # Enable Import button only if deck name entered
-        self.ui.deckNameTxt.textChanged.connect(self.__deckNameTextChanged)
-        self.ui.outputTxt.textChanged.connect(self.__deckNameTextChanged)
+        # Set completed output cards count
+        self.ui.outputTxt.textChanged.connect(self.outputTextChanged)
+
+        # Set failures words count
+        self.ui.failureTxt.textChanged.connect(self.failureTextChanged)
+
+        # Handle Generate button clicked
+        self.ui.generateBtn.clicked.connect(self.btnGenerateClicked)
+
+        # Check if Import button should be enabled or disabled
+        self.ui.deckNameTxt.textChanged.connect(self.enableImportBtn)
+        self.ui.outputTxt.textChanged.connect(self.enableImportBtn)
 
         # Handle Import button clicked
-        self.ui.importBtn.clicked.connect(self.__btnImportClicked)
+        self.ui.importBtn.clicked.connect(self.btnImportClicked)
 
         # Create an instance of the generator
         self.generator = Generator()
@@ -50,48 +59,71 @@ class AnkiFlashDlg(QDialog):
 
     def onKey(self, key):
         if key == QtCore.Qt.Key_Return and self.filePath:
-            self.__btnImportClicked()
+            self.btnImportClicked()
         else:
             print('key pressed: %i' % key)
 
-    def __deckNameTextChanged(self):
+    def enableImportBtn(self):
         if self.ui.deckNameTxt.text() and self.ui.outputTxt.toPlainText():
             self.ui.importBtn.setEnabled(True)
         else:
             self.ui.importBtn.setEnabled(False)
 
-    def __btnGenerateClicked(self):
-        # Get word list, validate if empty?
+    def inputTextChanged(self):
+        words = self.ui.inputTxt.toPlainText().split("\n")
+        # Filter words list, only get non-empty words
+        self.words = list(filter(None, words))
+        self.ui.totalLbl.setText("Total: {}".format(len(self.words)))
+
+    def outputTextChanged(self):
+        cards = self.ui.outputTxt.toPlainText().split("\n")
+        # Filter cards list, only get non-empty cards
+        self.cards = list(filter(None, cards))
+        self.ui.completedLbl.setText("Completed: {}".format(len(self.cards)))
+
+    def failureTextChanged(self):
+        failures = self.ui.failureTxt.toPlainText().split("\n")
+        # Filter failures list, only get non-empty failures
+        self.failures = list(filter(None, failures))
+        self.ui.failureLbl.setText("Failure: {}".format(len(self.failures)))
+
+    def btnGenerateClicked(self):
+        # Validate if input text empty?
         inputText = self.ui.inputTxt.toPlainText()
 
         if not inputText:
             showInfo("Empty input. No word found. Please check your input.")
             return
-        else:
-            self.words = inputText.split("\n")
-        
+
+        # Clean up output before generating cards
         self.ui.outputTxt.setPlainText("")
         self.ui.failureTxt.setPlainText("")
 
         # Send word list to generator
-        self.generator.flashcards(self.words)
+        self.generator.flashcards(self.ui, self.words)
 
-    def __btnImportClicked(self):
+    def btnImportClicked(self):
         self.ui.importBar.setValue(10)
 
+        # Base dir will be media folder
+        # Download and save audios and images directly to media folder
         self.baseDir = mw.col.media.dir()
-        self.ankiFlashDir = join(self.baseDir, r'AnkiFlash')
 
+        # AnkiFlash folder contains one time files such as template, csv cards...
+        self.ankiFlashDir = join(self.baseDir, r'AnkiFlash')
         self.ankiCsvFile = join(self.ankiFlashDir, r'AnkiDeck.csv')
 
+        # Front template inside AnkiFlash folder
         frontFile = join(self.ankiFlashDir, r'front.html')
         with open(frontFile, 'r', encoding='utf-8') as file:
             self.front = file.read()
 
+        # Back template inside AnkiFlash folder
         backFile = join(self.ankiFlashDir, r'back.html')
         with open(backFile, 'r', encoding='utf-8') as file:
             self.back = file.read()
 
+        # Styling template inside AnkiFlash folder
         cssFile = join(self.ankiFlashDir, r'style.css')
         with open(cssFile, 'r', encoding='utf-8') as file:
             self.css = file.read()
@@ -100,22 +132,24 @@ class AnkiFlashDlg(QDialog):
         noteTypeName = u'AnkiFlashTemplate.' + self.version
         allmodels = mw.col.models.allNames()
 
+        # If note type already existed, skip creating note type
         if noteTypeName not in allmodels:
-            self.__createNoteType(
+            self.createNoteType(
                 noteTypeName, self.front, self.back, self.css)
             print("Created note type: " + noteTypeName)
         else:
             print("Note type existed already => " + noteTypeName)
         self.ui.importBar.setValue(50)
 
-        self.__importTextFile(self.ui.deckNameTxt.text(),
-                              noteTypeName, self.ankiCsvFile)
+        # Import csv text file into Anki
+        self.importTextFile(self.ui.deckNameTxt.text(),
+                            noteTypeName, self.ankiCsvFile)
         self.ui.importBar.setValue(100)
         print("Imported csv file: " + self.ankiCsvFile)
 
         showInfo("AnkiFlash cards imported successfully...")
 
-    def __createNoteType(self, noteTypeName, front, back, css):
+    def createNoteType(self, noteTypeName, front, back, css):
         # Create empty note type
         mm = ModelManager(mw.col)
         nt = mm.new(noteTypeName)
@@ -143,7 +177,7 @@ class AnkiFlashDlg(QDialog):
         # Update UI
         mw.reset()
 
-    def __importTextFile(self, deckName, noteTypeName, csvPath):
+    def importTextFile(self, deckName, noteTypeName, csvPath):
         # Select deck
         did = mw.col.decks.id(deckName)
         mw.col.decks.select(did)

@@ -11,18 +11,20 @@
 # 1. Added version param for setupUi method
 # Dialog.setWindowTitle(_translate("Dialog", "AnkiFlash " + version))
 # 2. Set AnkiFlash icon [Dialog.setWindowIcon]
-# Dialog.setWindowIcon(QtGui.QIcon("anki.png"))
+# icon = QtGui.QIcon("anki.png")
+# 3. Set fixed window size
+# Dialog.setFixedSize(873, 593)
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_Dialog(object):
-    def setupUi(self, Dialog, version):
+    def setupUi(self, Dialog: QtWidgets.QDialog, version):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(873, 593)
+        Dialog.setFixedSize(873, 593)
         Dialog.setFocusPolicy(QtCore.Qt.StrongFocus)
-        icon = QtGui.QIcon.fromTheme("anki.png")
+        icon = QtGui.QIcon("anki.png")
         Dialog.setWindowIcon(icon)
         Dialog.setAutoFillBackground(True)
         self.inputBox = QtWidgets.QGroupBox(Dialog)
@@ -47,7 +49,7 @@ class Ui_Dialog(object):
         self.generateBtn.setDefault(False)
         self.generateBtn.setObjectName("generateBtn")
         self.totalLbl = QtWidgets.QLabel(self.inputBox)
-        self.totalLbl.setGeometry(QtCore.QRect(20, 200, 42, 13))
+        self.totalLbl.setGeometry(QtCore.QRect(20, 195, 200, 16))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
@@ -174,14 +176,14 @@ class Ui_Dialog(object):
         self.outputTxt.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.outputTxt.setObjectName("outputTxt")
         self.completedLbl = QtWidgets.QLabel(self.outputBox)
-        self.completedLbl.setGeometry(QtCore.QRect(20, 200, 74, 13))
+        self.completedLbl.setGeometry(QtCore.QRect(20, 196, 200, 16))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         self.completedLbl.setFont(font)
         self.completedLbl.setObjectName("completedLbl")
         self.failureLbl = QtWidgets.QLabel(self.outputBox)
-        self.failureLbl.setGeometry(QtCore.QRect(20, 410, 74, 13))
+        self.failureLbl.setGeometry(QtCore.QRect(20, 410, 200, 16))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
@@ -281,7 +283,6 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog, version):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "AnkiFlash " + version))
-        Dialog.setWindowIcon(QtGui.QIcon("anki.png"))
         self.inputBox.setTitle(_translate("Dialog", "Input"))
         self.inputTxt.setPlaceholderText(_translate("Dialog", "Input your words"))
         self.generateBtn.setToolTip(_translate("Dialog", "Generate flashcards for the input words"))
