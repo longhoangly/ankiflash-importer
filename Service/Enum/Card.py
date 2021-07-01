@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from typing import List
+
 from ...Service.Enum.Translation import Translation
 
 
@@ -15,7 +17,9 @@ class Card:
     example: str
 
     image: str
+    imageLink: str
     sound: str
+    soundLinks: List[str]
     status: str
 
     meaning: str
@@ -25,7 +29,7 @@ class Card:
 
     translation: Translation
 
-    def __init__(self, word, wordId, oriWord, translation) -> None:
+    def __init__(self, word=None, wordId=None, oriWord=None, translation=None) -> None:
         self.word = word
         self.wordId = wordId
         self.oriWord = oriWord

@@ -27,6 +27,6 @@ def ankiFlash():
     window.show()
 
 
-ankiFlashAct = QAction("AnkiFlash " + version, mw)
+ankiFlashAct = QAction("AnkiFlash {}".format(version), mw)
 ankiFlashAct.triggered.connect(ankiFlash)
 mw.form.menuTools.addAction(ankiFlashAct)

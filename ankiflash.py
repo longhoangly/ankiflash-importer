@@ -1,24 +1,34 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import logging
+
 from anki.models import ModelManager
 from anki.importing.csvfile import TextImporter
+
 from aqt import mw
 from aqt.utils import showInfo
 
-from os.path import join
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QGroupBox, QRadioButton
 
 from .Ui.UiAnkiFlash import UiAnkiFlash
-from .Services.Generator import Generator
+from .Service.Enum.Translation import Translation
+from .Service.Card.ChineseGenerator import ChineseGenerator
+from .Service.Card.VietnameseGenerator import VietnameseGenerator
+from .Service.Card.SpanishGenerator import SpanishGenerator
+from .Service.Card.JapaneseGenerator import JapaneseGenerator
+from .Service.Card.FrenchGenerator import FrenchGenerator
+from .Service.Card.EnglishGenerator import EnglishGenerator
 
+from os.path import join
 import csv
 csv.field_size_limit(2**30)
 
 
 class AnkiFlash(QDialog):
     """AnkiFlash Dialog class"""
+
     keyPressed = QtCore.pyqtSignal(int)
 
     def __init__(self, version):
@@ -50,8 +60,19 @@ class AnkiFlash(QDialog):
         # Handle Import button clicked
         self.ui.importBtn.clicked.connect(self.btnImportClicked)
 
-        # Create an instance of the generator
-        self.generator = Generator()
+    def initializeGenerator(self, translation: Translation):
+        if translation.source == "English":
+            self.generator = EnglishGenerator()
+        elif translation.source == "Japanese":
+            self.generator = JapaneseGenerator()
+        elif translation.source == "Vietnamese":
+            self.generator = VietnameseGenerator()
+        elif translation.source == "French":
+            self.generator = FrenchGenerator()
+        elif translation.source == "Spanish":
+            self.generator = SpanishGenerator()
+        elif translation.source == "Chinese":
+            self.generator = ChineseGenerator()
 
     def keyPressEvent(self, event):
         super(AnkiFlash, self).keyPressEvent(event)
@@ -61,7 +82,7 @@ class AnkiFlash(QDialog):
         if key == QtCore.Qt.Key_Return and self.filePath:
             self.btnImportClicked()
         else:
-            print('key pressed: %i' % key)
+            logging.info('key pressed: {}'.format(key))
 
     def enableImportBtn(self):
         if self.ui.deckNameTxt.text() and self.ui.outputTxt.toPlainText():
@@ -99,8 +120,29 @@ class AnkiFlash(QDialog):
         self.ui.outputTxt.setPlainText("")
         self.ui.failureTxt.setPlainText("")
 
+        source = self.selectedRadio(self.ui.sourceBox)
+        target = self.selectedRadio(self.ui.translatedToBox)
+        translation = Translation(source, target)
+
+        # Initialize Generator based on translation
+        self.initializeGenerator(translation)
+
+        self.allWordTypes = self.ui.allWordTypes.isChecked()
+        self.isOnline = self.ui.isOnline.isChecked()
         # Send word list to generator
-        self.generator.flashcards(self.ui, self.words)
+        self.generator.generateCards(
+            self.ui, self.words, translation, self.isOnline, self.allWordTypes)
+
+    def selectedRadio(self, groupBox: QGroupBox) -> str:
+
+        # Get all radio buttons
+        radioBtns = [radio for radio in groupBox.children(
+        ) if isinstance(radio, QRadioButton)]
+
+        # Find choosen radio and return text
+        for radio in radioBtns:
+            if radio.isChecked():
+                return radio.text()
 
     def btnImportClicked(self):
         self.ui.importBar.setValue(10)
@@ -129,23 +171,24 @@ class AnkiFlash(QDialog):
             self.css = file.read()
 
         # Import note type and flashcards
-        noteTypeName = u'AnkiFlashTemplate.' + self.version
+        noteTypeName = u'AnkiFlashTemplate.{}'.format(self.version)
         allmodels = mw.col.models.allNames()
 
         # If note type already existed, skip creating note type
         if noteTypeName not in allmodels:
             self.createNoteType(
                 noteTypeName, self.front, self.back, self.css)
-            print("Created note type: " + noteTypeName)
+            logging.info("Created note type: {}".format(noteTypeName))
         else:
-            print("Note type existed already => " + noteTypeName)
+            logging.info(
+                "Note type existed already => {}".format(noteTypeName))
         self.ui.importBar.setValue(50)
 
         # Import csv text file into Anki
         self.importTextFile(self.ui.deckNameTxt.text(),
                             noteTypeName, self.ankiCsvFile)
         self.ui.importBar.setValue(100)
-        print("Imported csv file: " + self.ankiCsvFile)
+        logging.info("Imported csv file: {}".format(self.ankiCsvFile))
 
         showInfo("AnkiFlash cards imported successfully...")
 
