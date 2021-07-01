@@ -134,7 +134,7 @@
     <property name="checkable">
      <bool>false</bool>
     </property>
-    <widget class="QRadioButton" name="japaneseSource">
+    <widget class="QRadioButton" name="source3">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -156,7 +156,7 @@
       <string>Japanese</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="vietnameseSource">
+    <widget class="QRadioButton" name="source4">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -178,7 +178,7 @@
       <string>Vietnamese</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="frenchSource">
+    <widget class="QRadioButton" name="source2">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -200,7 +200,7 @@
       <string>French</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="englishSource">
+    <widget class="QRadioButton" name="source1">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -220,6 +220,9 @@
      </property>
      <property name="text">
       <string>English</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>
@@ -241,7 +244,7 @@
     <property name="title">
      <string>Translated To</string>
     </property>
-    <widget class="QRadioButton" name="chineseSimpTarget">
+    <widget class="QRadioButton" name="target6">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -260,7 +263,7 @@
       <string>Chinese (Simplified)</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="vietnameseTarget">
+    <widget class="QRadioButton" name="target2">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -279,7 +282,7 @@
       <string>Vietnamese</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="englishTarget">
+    <widget class="QRadioButton" name="target1">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -297,8 +300,11 @@
      <property name="text">
       <string>English</string>
      </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
     </widget>
-    <widget class="QRadioButton" name="japaneseTarget">
+    <widget class="QRadioButton" name="target4">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -317,7 +323,7 @@
       <string>Japanese</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="chineseTradTarget">
+    <widget class="QRadioButton" name="target5">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -336,7 +342,7 @@
       <string>Chinese (Traditional)</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="frenchTarget">
+    <widget class="QRadioButton" name="target3">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -373,6 +379,44 @@
     </property>
     <property name="value">
      <number>1</number>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="allWordTypes">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>340</y>
+      <width>121</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>If a word has more than one type (noun, adjective, verb...), AnkiFlash will create cards for all of them</string>
+    </property>
+    <property name="text">
+     <string>All word types?</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="isOnline">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>360</y>
+      <width>121</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Usually, card sound will be downloaded to local computer. AnkiFlash provide an option to use online sound, your computer don't need to store sound file.</string>
+    </property>
+    <property name="text">
+     <string>Online sound?</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>

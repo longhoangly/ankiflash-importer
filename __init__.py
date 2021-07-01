@@ -15,18 +15,18 @@ Modified: Jun 24, 2021
 
 from aqt import mw
 from PyQt5.QtWidgets import QAction
-from .ankiflash import AnkiFlashDlg
+from .AnkiFlash import AnkiFlash
 
 
 version = '1.0.0'
 
 
-def ankiFlashDialog():
-    mw.myWidget = window = AnkiFlashDlg(version)
+def ankiFlash():
+    mw.myWidget = window = AnkiFlash(version)
     window.keyPressed.connect(window.onKey)
     window.show()
 
 
 ankiFlashAct = QAction("AnkiFlash " + version, mw)
-ankiFlashAct.triggered.connect(ankiFlashDialog)
+ankiFlashAct.triggered.connect(ankiFlash)
 mw.form.menuTools.addAction(ankiFlashAct)

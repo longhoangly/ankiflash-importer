@@ -10,14 +10,14 @@ from os.path import join
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QDialog
 
-from .Ui_ankiflash import Ui_Dialog
-from .Generator import Generator
+from .Ui.UiAnkiFlash import UiAnkiFlash
+from .Services.Generator import Generator
 
 import csv
 csv.field_size_limit(2**30)
 
 
-class AnkiFlashDlg(QDialog):
+class AnkiFlash(QDialog):
     """AnkiFlash Dialog class"""
     keyPressed = QtCore.pyqtSignal(int)
 
@@ -26,7 +26,7 @@ class AnkiFlashDlg(QDialog):
         self.version = version
 
         # Create an instance of the GUI
-        self.ui = Ui_Dialog()
+        self.ui = UiAnkiFlash()
 
         # Run the .setupUi() method to show the GUI
         self.ui.setupUi(self, version)
@@ -54,7 +54,7 @@ class AnkiFlashDlg(QDialog):
         self.generator = Generator()
 
     def keyPressEvent(self, event):
-        super(AnkiFlashDlg, self).keyPressEvent(event)
+        super(AnkiFlash, self).keyPressEvent(event)
         self.keyPressed.emit(event.key())
 
     def onKey(self, key):
@@ -107,10 +107,10 @@ class AnkiFlashDlg(QDialog):
 
         # Base dir will be media folder
         # Download and save audios and images directly to media folder
-        self.baseDir = mw.col.media.dir()
+        self.mediaDir = mw.col.media.dir()
 
         # AnkiFlash folder contains one time files such as template, csv cards...
-        self.ankiFlashDir = join(self.baseDir, r'AnkiFlash')
+        self.ankiFlashDir = join(self.mediaDir, r'AnkiFlash')
         self.ankiCsvFile = join(self.ankiFlashDir, r'AnkiDeck.csv')
 
         # Front template inside AnkiFlash folder
