@@ -2,25 +2,25 @@
 # -*- coding: utf-8 -*-
 
 from typing import List
+from bs4.element import Tag
 from bs4 import BeautifulSoup
 
-from bs4.element import Tag
+from ..Enum.Meaning import Meaning
+from ..Enum.Translation import Translation
 
-from ...Service.BaseDictionary import BaseDictionary
-from ...Service.Constant import Constant
+from ..Constant import Constant
+from ..BaseDictionary import BaseDictionary
 from ...Helpers.HtmlHelper import HtmlHelper
 from ...Helpers.DictHelper import DictHelper
-from ...Service.Enum.Meaning import Meaning
-from ...Service.Enum.Translation import Translation
 
 
 class JishoDictionary(BaseDictionary):
 
     def search(self, formattedWord: str, translation: Translation) -> bool:
         """Find input word from dictionary data"""
-        wordParts = formattedWord.split(self.delimiter)
 
-        if (formattedWord.contains(self.delimiter) and len(wordParts) == 3):
+        wordParts = formattedWord.split(self.delimiter)
+        if self.delimiter in formattedWord and len(wordParts) == 3:
             self.word = wordParts[0]
             self.wordId = wordParts[1]
             self.oriWord = wordParts[2]
@@ -31,10 +31,11 @@ class JishoDictionary(BaseDictionary):
         url = HtmlHelper.lookupUrl(Constant.JISHO_WORD_URL_JP_EN, self.wordId)
         self.doc = HtmlHelper.getDocument(url)
 
-        return True if self.doc else False
+        return True if not self.doc else False
 
     def isInvalidWord(self) -> bool:
         """Check if the input word exists in dictionary?"""
+        
         if Constant.JISHO_WORD_NOT_FOUND in self.doc.parent.text:
             return True
 

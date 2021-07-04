@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from aqt.utils import showInfo
-
 from typing import List
 
 from ...Ui.UiAnkiFlash import UiAnkiFlash
@@ -14,9 +12,7 @@ from ...Service.BaseGenerator import BaseGenerator
 class SpanishGenerator(BaseGenerator):
 
     def getFormattedWords(self, word: str, translation: Translation) -> List[str]:
-        showInfo("This is getFormattedWords from SpanishGenerator")
-        return [""]
+        raise NotImplementedError
 
-    def generateCard(self, ui: UiAnkiFlash, formattedWord: str, translation: Translation, isOnline: bool) -> Card:
-        showInfo("This is generateCard from SpanishGenerator")
-        return Card()
+    def generateCard(self, ui: UiAnkiFlash, formattedWord: str, ankiDir: str, translation: Translation, isOnline: bool) -> Card:
+        raise NotImplementedError

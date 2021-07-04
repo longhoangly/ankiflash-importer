@@ -5,8 +5,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from bs4 import BeautifulSoup
-
-from ..Service.Enum.Translation import Translation
+from .Enum.Translation import Translation
 
 
 class BaseDictionary(ABC):
@@ -20,9 +19,7 @@ class BaseDictionary(ABC):
 
     ankiDir: str
     image: str
-    imageLink: str
     sounds: str
-    soundLinks: str
 
     wordType: str
     phonetic: str

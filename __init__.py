@@ -15,7 +15,7 @@ Modified: Jun 24, 2021
 
 from aqt import mw
 from PyQt5.QtWidgets import QAction
-from .AnkiFlash import AnkiFlash
+from .Ankiflash import AnkiFlash
 
 
 version = '1.0.0'

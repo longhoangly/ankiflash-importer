@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import logging
 import requests
+import logging
 import os
 
 from typing import List
@@ -16,31 +16,37 @@ from .HtmlHelper import HtmlHelper
 class DictHelper:
     """All Dictionary related utilities methods"""
 
+    @staticmethod
     def getFileName(link: str) -> str:
         link_els = link.split("/")
         return link_els[len(link_els) - 1]
 
+    @staticmethod
     def downloadFiles(ankiDir: str, urls: str):
         downloadLinks = urls.split(";")
         for link in downloadLinks:
             fileName = DictHelper.getFileName(link)
             filePath = "{}/{}".format(ankiDir, fileName)
             if os.path.isdir(ankiDir) and not link:
-                r = requests.get(link, allow_redirects=True)
+                r = requests.get(url=link, headers={
+                                 "User-Agent": "Mozilla/5.0"}, allow_redirects=True)
                 open(filePath, 'wb').write(r.content)
             else:
-                logging.warn("ankiDir={}, dir.exists={}, link={}".format(
+                logging.info("ankiDir={}, dir.exists={}, link={}".format(
                     ankiDir, os.path.isdir(ankiDir), link))
 
-    def getJDictDoc(self, url: str, body: str):
+    @staticmethod
+    def getJDictDoc(url: str, body: str):
         logging.info("url={}, body={}", url, body)
-        html = requests.post(url, body)
+        html = requests.post(url=url, data=body, headers={
+                             "User-Agent": "Mozilla/5.0"})
         return BeautifulSoup(html.text, 'html.parser')
 
-    def getJDictWords(self, word: str) -> List[str]:
+    @staticmethod
+    def getJDictWords(word: str) -> List[str]:
         urlParameters = "m=dictionary&fn=search_word&keyword={}&allowSentenceAnalyze=true".format(
             word)
-        document = self.getJDictDoc(
+        document = DictHelper.getJDictDoc(
             Constant.JDICT_URL_VN_JP_OR_JP_VN, urlParameters)
         wordElms: List[Tag] = []
         if document:
@@ -55,6 +61,7 @@ class DictHelper:
 
         return jDictWords
 
+    @staticmethod
     def getJishoWords(word: str) -> List[str]:
 
         url = HtmlHelper.lookupUrl(Constant.JISHO_SEARCH_URL_JP_EN, word)
@@ -72,9 +79,9 @@ class DictHelper:
 
             if foundWordElm and word.lower() in foundWordElm.string.lower() and detailLink and not detailLink.text:
                 detailLinkEls: list[str] = detailLink.attr("href").split("/")
-                logging.debug("word = {}", word)
-                logging.debug("foundWordElm.text() = {}", foundWordElm.text())
-                logging.debug("detailLinkEls = {}",
+                logging.info("word = {}", word)
+                logging.info("foundWordElm.text() = {}", foundWordElm.text())
+                logging.info("detailLinkEls = {}",
                               "".join("---", detailLinkEls))
                 jDictWords.append(foundWordElm.string
                                   + Constant.SUB_DELIMITER
@@ -84,7 +91,8 @@ class DictHelper:
 
         return jDictWords
 
-    def getOxfordWords(self, word: str):
+    @staticmethod
+    def getOxfordWords(word: str):
         foundWords: list[str] = []
         url = HtmlHelper.lookupUrl(Constant.OXFORD_SEARCH_URL_EN_EN, word)
         doc: BeautifulSoup = HtmlHelper.getDocument(url)
@@ -116,6 +124,6 @@ class DictHelper:
                             foundWords.append(
                                 wordId + Constant.SUB_DELIMITER + wordId + Constant.SUB_DELIMITER + word)
         else:
-            logging.info("Words not found: {}", self.word)
+            logging.info("Words not found: {}", word)
 
         return foundWords

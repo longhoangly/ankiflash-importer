@@ -1,8 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import logging
-
+import os
 from anki.models import ModelManager
 from anki.importing.csvfile import TextImporter
 
@@ -22,6 +21,7 @@ from .Service.Card.FrenchGenerator import FrenchGenerator
 from .Service.Card.EnglishGenerator import EnglishGenerator
 
 from os.path import join
+import logging
 import csv
 csv.field_size_limit(2**30)
 
@@ -29,11 +29,30 @@ csv.field_size_limit(2**30)
 class AnkiFlash(QDialog):
     """AnkiFlash Dialog class"""
 
+    ankiFlashDir: str
     keyPressed = QtCore.pyqtSignal(int)
 
     def __init__(self, version):
         super().__init__()
         self.version = version
+
+        # Media folder to store audios and images
+        self.mediaDir = mw.col.media.dir()
+
+        # AnkiFlash inside media contains one time files such as template, csv cards...
+        self.ankiFlashDir = join(self.mediaDir, r'AnkiFlash')
+        os.makedirs(self.ankiFlashDir, exist_ok=True)
+
+        # Card created to be stored in csv file
+        self.ankiCsvFile = join(self.ankiFlashDir, r'AnkiDeck.csv')
+
+        # Addon folder of AnkiFlash
+        self.addonFolder = join(mw.pm.addonFolder(), "1129289384")
+        self.ankiFlashLog = join(self.addonFolder, r'ankiflash.log')
+
+        # Set logging config
+        logging.basicConfig(filename=self.ankiFlashLog, level=logging.INFO,
+                            format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
         # Create an instance of the GUI
         self.ui = UiAnkiFlash()
@@ -50,15 +69,15 @@ class AnkiFlash(QDialog):
         # Set failures words count
         self.ui.failureTxt.textChanged.connect(self.failureTextChanged)
 
-        # Handle Generate button clicked
-        self.ui.generateBtn.clicked.connect(self.btnGenerateClicked)
-
         # Check if Import button should be enabled or disabled
         self.ui.deckNameTxt.textChanged.connect(self.enableImportBtn)
         self.ui.outputTxt.textChanged.connect(self.enableImportBtn)
 
         # Handle Import button clicked
         self.ui.importBtn.clicked.connect(self.btnImportClicked)
+
+        # Handle Generate button clicked
+        self.ui.generateBtn.clicked.connect(self.btnGenerateClicked)
 
     def initializeGenerator(self, translation: Translation):
         if translation.source == "English":
@@ -129,9 +148,10 @@ class AnkiFlash(QDialog):
 
         self.allWordTypes = self.ui.allWordTypes.isChecked()
         self.isOnline = self.ui.isOnline.isChecked()
+
         # Send word list to generator
         self.generator.generateCards(
-            self.ui, self.words, translation, self.isOnline, self.allWordTypes)
+            self.ui, self.words, translation, self.ankiFlashDir, self.isOnline, self.allWordTypes)
 
     def selectedRadio(self, groupBox: QGroupBox) -> str:
 
@@ -146,14 +166,6 @@ class AnkiFlash(QDialog):
 
     def btnImportClicked(self):
         self.ui.importBar.setValue(10)
-
-        # Base dir will be media folder
-        # Download and save audios and images directly to media folder
-        self.mediaDir = mw.col.media.dir()
-
-        # AnkiFlash folder contains one time files such as template, csv cards...
-        self.ankiFlashDir = join(self.mediaDir, r'AnkiFlash')
-        self.ankiCsvFile = join(self.ankiFlashDir, r'AnkiDeck.csv')
 
         # Front template inside AnkiFlash folder
         frontFile = join(self.ankiFlashDir, r'front.html')

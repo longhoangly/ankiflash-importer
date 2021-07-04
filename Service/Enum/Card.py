@@ -1,9 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from typing import List
-
-from ...Service.Enum.Translation import Translation
+from ..Enum.Translation import Translation
 
 
 class Card:
@@ -17,15 +15,13 @@ class Card:
     example: str
 
     image: str
-    imageLink: str
-    sound: str
-    soundLinks: List[str]
+    sounds: str
     status: str
 
     meaning: str
-    tag: str
     copyright: str
     comment: str
+    tag: str
 
     translation: Translation
 

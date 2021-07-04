@@ -1,22 +1,67 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from aqt.utils import showInfo
-
 from typing import List
+import logging
 
 from ...Ui.UiAnkiFlash import UiAnkiFlash
-from ...Service.Enum.Translation import Translation
-from ...Service.Enum.Card import Card
-from ...Service.BaseGenerator import BaseGenerator
+from ..Enum.Translation import Translation
+from ..Enum.Card import Card
+from ..Enum.Status import Status
+from ..BaseGenerator import BaseGenerator
+from ..Constant import Constant
+from ...Helpers.DictHelper import DictHelper
+
+from ..Dictionary.JishoDictionary import JishoDictionary
+from ..Dictionary.JDictDictionary import JDictDictionary
 
 
 class JapaneseGenerator(BaseGenerator):
 
     def getFormattedWords(self, word: str, translation: Translation) -> List[str]:
-        showInfo("This is getFormattedWords from JapaneseGenerator")
-        return [""]
+        foundWords: List[str] = []
+        if translation.equals(Constant.JP_EN):
+            foundWords += DictHelper.getJishoWords(word)
+        elif translation.equals(Constant.JP_VN):
+            foundWords += DictHelper.getJDictWords(word)
+        else:
+            foundWords.append(word + Constant.SUB_DELIMITER +
+                              word + Constant.SUB_DELIMITER + word)
+        return foundWords
 
-    def generateCard(self, ui: UiAnkiFlash, formattedWord: str, translation: Translation, isOnline: bool) -> Card:
-        showInfo("This is generateCard from JapaneseGenerator")
-        return Card()
+    def generateCard(self, ui: UiAnkiFlash, formattedWord: str, ankiDir: str, translation: Translation, isOnline: bool) -> Card:
+
+        card: Card = self.initializeCard(formattedWord, translation)
+
+        logging.info("word = {}", card.word)
+        logging.info("wordId = {}", card.wordId)
+        logging.info("oriWord = {}", card.oriWord)
+
+        logging.info("source = {}", translation.source)
+        logging.info("target = {}", translation.target)
+
+        jDict = JDictDictionary()
+        jishoDict = JishoDictionary()
+
+        # Japanese to Vietnamese
+        if translation.equals(Constant.JP_VN):
+
+            card = self.singleDictionaryCard(
+                formattedWord, translation, ankiDir, isOnline, card, jDict)
+
+        # Japanese to English
+        elif translation.equals(Translation.JP_EN):
+
+            card = self.singleDictionaryCard(
+                formattedWord, translation, ankiDir, isOnline, card, jishoDict)
+
+        else:
+            card.status = Status.NOT_SUPPORTED_TRANSLATION
+            card.comment = Constant.NOT_SUPPORTED_TRANSLATION.format(
+                translation.source, translation.target())
+            return card
+
+        card.status = Status.SUCCESS
+        card.comment = Constant.SUCCESS
+
+        return card

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from Service.Enum.Translation import Translation
+from .Enum.Translation import Translation
 
 
 class Constant:
@@ -23,34 +23,34 @@ class Constant:
     # OXFORD
     OXFORD_SPELLING_WRONG = "Did you spell it correctly?"
     OXFORD_WORD_NOT_FOUND = "Oxford Learner's Dictionaries | Find the meanings"
-    OXFORD_URL_EN_EN = "https:#www.oxfordlearnersdictionaries.com/definition/english/%1$s"
-    OXFORD_SEARCH_URL_EN_EN = "https:#www.oxfordlearnersdictionaries.com/search/english/direct/?q=%1$s"
+    OXFORD_URL_EN_EN = "https://www.oxfordlearnersdictionaries.com/definition/english/{}"
+    OXFORD_SEARCH_URL_EN_EN = "https://www.oxfordlearnersdictionaries.com/search/english/direct/?q={}"
 
     # LACVIET
     LACVIET_SPELLING_WRONG = "Dữ liệu đang được cập nhật"
-    LACVIET_URL_VN_EN = "http:#tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-anh&t=V-A&k=%1$s"
-    LACVIET_URL_VN_FR = "http:#tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-phap&t=V-F&k=%1$s"
-    LACVIET_URL_EN_VN = "http:#tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-anh&t=A-V&k=%1$s"
-    LACVIET_URL_FR_VN = "http:#tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-phap&t=F-V&k=%1$s"
+    LACVIET_URL_VN_EN = "https://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-anh&t=V-A&k={}"
+    LACVIET_URL_VN_FR = "https://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-phap&t=V-F&k={}"
+    LACVIET_URL_EN_VN = "https://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-anh&t=A-V&k={}"
+    LACVIET_URL_FR_VN = "https://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-phap&t=F-V&k={}"
 
     # CAMBRIDGE
     CAMBRIDGE_SPELLING_WRONG = "Did you spell it correctly?"
-    CAMBRIDGE_URL_EN_CN_TD = "https:#dictionary.cambridge.org/search/english-chinese-traditional/direct/?q=%1$s"
-    CAMBRIDGE_URL_EN_CN_SP = "https:#dictionary.cambridge.org/search/english-chinese-simplified/direct/?q=%1$s"
-    CAMBRIDGE_URL_EN_FR = "https:#dictionary.cambridge.org/search/english-french/direct/?q=%1$s"
-    CAMBRIDGE_URL_EN_JP = "https:#dictionary.cambridge.org/search/english-japanese/direct/?q=%1$s"
+    CAMBRIDGE_URL_EN_CN_TD = "https://dictionary.cambridge.org/search/english-chinese-traditional/direct/?q={}"
+    CAMBRIDGE_URL_EN_CN_SP = "https://dictionary.cambridge.org/search/english-chinese-simplified/direct/?q={}"
+    CAMBRIDGE_URL_EN_FR = "https://dictionary.cambridge.org/search/english-french/direct/?q={}"
+    CAMBRIDGE_URL_EN_JP = "https://dictionary.cambridge.org/search/english-japanese/direct/?q={}"
 
     # COLLINS
     COLLINS_SPELLING_WRONG = "Sorry, no results for"
-    COLLINS_URL_FR_EN = "https:#www.collinsdictionary.com/search/?dictCode=french-english&q=%1$s"
+    COLLINS_URL_FR_EN = "https://www.collinsdictionary.com/search/?dictCode=french-english&q={}"
 
     # JDICT
-    JDICT_URL_VN_JP_OR_JP_VN = "https:#kantan.vn/postrequest.ashx"
+    JDICT_URL_VN_JP_OR_JP_VN = "https://kantan.vn/postrequest.ashx"
 
     # JISHO
     JISHO_WORD_NOT_FOUND = "Sorry, couldn't find anything matching"
-    JISHO_WORD_URL_JP_EN = "https:#jisho.org/word/%1$s"
-    JISHO_SEARCH_URL_JP_EN = "https:#jisho.org/search/%1$s"
+    JISHO_WORD_URL_JP_EN = "https://jisho.org/word/{}"
+    JISHO_SEARCH_URL_JP_EN = "https://jisho.org/search/{}"
 
     # WORD REFERENCE
     WORD_REFERENCE_SPELLING_WRONG = ""
@@ -63,10 +63,10 @@ class Constant:
     SUB_DELIMITER = "==="
     NO_EXAMPLE = "No example {{c1::...}}"
     SUCCESS = "Success"
-    COPYRIGHT = "This card's content is collected from the following dictionaries: %1$s"
+    COPYRIGHT = "This card's content is collected from the following dictionaries: {}"
     WORD_NOT_FOUND = "The word was not found! Could you please check spelling or report to us!"
     CONNECTION_FAILED = "Cannot connect to dictionaries, please try again later!"
-    NOT_SUPPORTED_TRANSLATION = "The translation from %1$s to %2$s is not supported!"
+    NOT_SUPPORTED_TRANSLATION = "The translation from {} to {} is not supported!"
 
     # TRANSLATION
     EN_EN = Translation(ENGLISH, ENGLISH)

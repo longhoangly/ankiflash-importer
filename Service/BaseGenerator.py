@@ -7,8 +7,11 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from ..Ui.UiAnkiFlash import UiAnkiFlash
-from ..Service.Enum.Translation import Translation
-from ..Service.Enum.Card import Card
+from .BaseDictionary import BaseDictionary
+from .Enum.Translation import Translation
+from .Enum.Status import Status
+from .Constant import Constant
+from .Enum.Card import Card
 
 
 class BaseGenerator(ABC):
@@ -21,11 +24,11 @@ class BaseGenerator(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def generateCard(self, ui: UiAnkiFlash, formattedWord: str, translation: Translation, isOnline: bool) -> Card:
+    def generateCard(self, ui: UiAnkiFlash, formattedWord: str, translation: Translation, ankiDir: str, isOnline: bool) -> Card:
         """Generate a flashcard from an input word"""
         raise NotImplementedError
 
-    def generateCards(self, ui: UiAnkiFlash, words: List[str], translation: Translation, isOnline: bool, allWordTypes: bool) -> List[Card]:
+    def generateCards(self, ui: UiAnkiFlash, words: List[str], translation: Translation, ankiDir: str, isOnline: bool, allWordTypes: bool) -> List[Card]:
         """Generate flashcards from input words"""
 
         cardCount: int = 0
@@ -36,7 +39,7 @@ class BaseGenerator(ABC):
                 formattedWord = "{}{}{}{}{}".format(
                     value, self.delimiter, value, self.delimiter, value)
                 card = self.generateCard(
-                    ui, formattedWord, translation, isOnline)
+                    ui, formattedWord, ankiDir, translation, isOnline)
 
                 if card.status == "Success":
                     cardCount += 1
@@ -51,7 +54,7 @@ class BaseGenerator(ABC):
                 if len(formattedWords) > 0:
                     for formattedWord in formattedWords:
                         card = self.generateCard(
-                            ui, formattedWord, translation, isOnline)
+                            ui, formattedWord, ankiDir, translation, isOnline)
 
                         if card.status == "Success":
                             cardCount += 1
@@ -67,3 +70,67 @@ class BaseGenerator(ABC):
         Input: {}
         Output: {}
         Failure: {}\n""".format(len(words), cardCount, failureCount))
+
+    def initializeCard(self, formattedWord: str, translation: Translation):
+
+        card = Card()
+        wordParts: list[str] = formattedWord.split(Constant.SUB_DELIMITER)
+        if Constant.SUB_DELIMITER in formattedWord and len(wordParts) == 3:
+            card = Card(wordParts[0], wordParts[1], wordParts[2], translation)
+        else:
+            card.status = Status.WORD_NOT_FOUND
+            card.comment = "Incorrect word format = {}".format(formattedWord)
+        return card
+
+    def singleDictionaryCard(self, formattedWord: str, translation: Translation, ankiDir: str, isOnline: bool, card: Card, dictionary: BaseDictionary) -> Card:
+
+        if dictionary.search(formattedWord, translation):
+            card.status = Status.CONNECTION_FAILED
+            card.comment = Constant.CONNECTION_FAILED
+            return card
+        elif dictionary.isInvalidWord():
+            card.status = Status.WORD_NOT_FOUND
+            card.comment = Constant.WORD_NOT_FOUND
+            return card
+
+        card.wordType = dictionary.getWordType()
+        card.phonetic = dictionary.getPhonetic()
+        card.example = dictionary.getExample()
+
+        card.sounds = dictionary.getSounds(ankiDir, isOnline)
+        card.image = dictionary.getImage(ankiDir, isOnline)
+
+        card.copyright = Constant.COPYRIGHT.format(
+            dictionary.getDictionaryName())
+
+        card.meaning = dictionary.getMeaning()
+        card.tag = dictionary.getTag()
+
+        return card
+
+    def coupleDictionariesCard(self, formattedWord: str, translation: Translation, ankiDir: str, isOnline: bool, card: Card, mainDict: BaseDictionary, meaningDict: BaseDictionary) -> Card:
+
+        if mainDict.search(formattedWord, translation) or meaningDict.search(formattedWord, translation):
+            card.status = Status.CONNECTION_FAILED
+            card.comment = Constant.CONNECTION_FAILED
+            return card
+        elif mainDict.isInvalidWord() or meaningDict.isInvalidWord():
+            card.status = Status.WORD_NOT_FOUND
+            card.comment = Constant.WORD_NOT_FOUND
+            return card
+
+        card.wordType = mainDict.getWordType()
+        card.phonetic = mainDict.getPhonetic()
+        card.example = mainDict.getExample()
+
+        card.sounds = mainDict.getSounds(ankiDir, isOnline)
+        card.image = mainDict.getImage(ankiDir, isOnline)
+
+        card.copyright = Constant.COPYRIGHT.format("".join(
+            mainDict.getDictionaryName(), ", and ", meaningDict.getDictionaryName()))
+
+        # Meaning is get from meaning dictionary
+        card.meaning = meaningDict.getMeaning()
+        card.tag = mainDict.getTag()
+
+        return card

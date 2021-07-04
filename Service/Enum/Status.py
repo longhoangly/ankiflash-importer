@@ -3,7 +3,7 @@
 
 
 class Status:
-    Success: str = "Success"
-    Connection_Failed: str = "Connection_Failed"
-    Word_Not_Found: str = "Word_Not_Found"
-    Not_Supported_Translation: str = "Not_Supported_Translation"
+    SUCCESS: str = "SUCCESS"
+    CONNECTION_FAILED: str = "CONNECTION_FAILED"
+    WORD_NOT_FOUND: str = "WORD_NOT_FOUND"
+    NOT_SUPPORTED_TRANSLATION: str = "NOT_SUPPORTED_TRANSLATION"
