@@ -149,7 +149,7 @@ class JDictDictionary(BaseDictionary):
             if mean:
                 meaning.meaning = mean.text
 
-            exampleElms = Tag(meanElm).select(
+            exampleElms = meanElm.select(
                 "ul.ul-disc>li>u,ul.ul-disc>li>p")
             innerExamples: list[str] = getJDictExamples(exampleElms)
             if not innerExamples:

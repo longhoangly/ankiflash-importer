@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from typing import List
-from aqt.utils import showInfo
 
 import requests
 import logging
@@ -34,8 +33,6 @@ class HtmlHelper:
     def getDocument(url: str) -> BeautifulSoup:
         html_text = requests.get(
             url, headers={"User-Agent": "Mozilla/5.0"}).text
-        showInfo("html_text: {}".format(html_text))
-        logging.info("html_text: {}".format(html_text).encode('utf-8'))
         return BeautifulSoup(html_text, 'html.parser')
 
     @staticmethod
@@ -58,7 +55,7 @@ class HtmlHelper:
         elements = doc.select(selector)
         texts = []
         for element in elements:
-            texts.append(str(Tag(element).string))
+            texts.append(str(element.string))
         return texts
 
     @staticmethod
@@ -74,18 +71,17 @@ class HtmlHelper:
     @staticmethod
     def getDocOuterHtml(doc: BeautifulSoup, selector: str, index: int) -> str:
         element = HtmlHelper.getDocElement(doc, selector, index)
-        return Tag(element.parent).text if element else ""
+        return element.parent.text if element else ""
 
     @staticmethod
     def getChildOuterHtml(element: Tag, selector: str, index: str) -> str:
         element = HtmlHelper.getChildElement(element, selector, index)
-        return Tag(element.parent).text if element else ""
+        return element.parent.text if element else ""
 
     @staticmethod
     def getAttribute(doc: BeautifulSoup, selector: str, index: int, attr: str) -> str:
         element = HtmlHelper.getDocElement(doc, selector, index)
-        showInfo("element: {}".format(element))
-        return Tag(element).find({attr: True}) if element else ""
+        return element.get(attr) if element else ""
 
     @staticmethod
     def buildExample(examples: List[str], isJapanese: bool = False) -> str:

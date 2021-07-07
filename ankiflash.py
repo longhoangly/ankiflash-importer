@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
 from anki.models import ModelManager
 from anki.importing.csvfile import TextImporter
 
@@ -21,7 +20,11 @@ from .Service.Card.FrenchGenerator import FrenchGenerator
 from .Service.Card.EnglishGenerator import EnglishGenerator
 
 from os.path import join
+
+import os
 import logging
+from logging.handlers import RotatingFileHandler
+
 import csv
 csv.field_size_limit(2**30)
 
@@ -50,9 +53,12 @@ class AnkiFlash(QDialog):
         self.addonFolder = join(mw.pm.addonFolder(), "1129289384")
         self.ankiFlashLog = join(self.addonFolder, r'ankiflash.log')
 
-        # Set logging config
-        logging.basicConfig(filename=self.ankiFlashLog, level=logging.INFO,
-                            format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+        # Set logging config (Rotate every 10MB and keep 5 files)
+        rfh = RotatingFileHandler(
+            filename=self.ankiFlashLog, maxBytes=10000000, backupCount=5)
+        logging.basicConfig(level=logging.INFO,
+                            format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S',
+                            handlers=[rfh])
 
         # Create an instance of the GUI
         self.ui = UiAnkiFlash()

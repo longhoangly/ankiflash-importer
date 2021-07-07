@@ -54,7 +54,7 @@ class LacVietDictionary(BaseDictionary):
     def getWordType(self) -> str:
         if not self.wordType:
             element = HtmlHelper.getElement(self.doc, "div.m5t.p10lr", 0)
-            self.wordType = Tag(element).text.replace("|Tất cả", "").replace(
+            self.wordType = element.text.replace("|Tất cả", "").replace(
                 "|Từ liên quan", "") if element else ""
 
             if not self.wordType:
@@ -132,8 +132,8 @@ class LacVietDictionary(BaseDictionary):
         meanGroups = self.doc.select("div[id*=partofspeech]")
 
         for meanGroup in meanGroups:
-            meanElms = Tag(meanGroup).select("div")
-            meanCount = len(Tag(meanGroup).select(".m"))
+            meanElms = meanGroup.select("div")
+            meanCount = len(meanGroup.select(".m"))
             if str(Tag(meanGroup).get("id")).lower() == "partofspeech_100":
                 meanElms.addAll(meanGroup.getElementsByTag("a"))
 
@@ -159,7 +159,7 @@ class LacVietDictionary(BaseDictionary):
                         meaning = Meaning()
                         examples = []
 
-                    meaning.meaning = Tag(meanElm).text
+                    meaning.meaning = meanElm.text
                     firstMeaning = False
                 elif "e" in meanElm["class"] or "em" in meanElm["class"] or "im" in meanElm["class"] or "id" in meanElm["class"] or "href" in meanElm["class"]:
                     examples.add(meanElm.text())

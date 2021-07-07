@@ -116,14 +116,14 @@ class CollinsDictionary(BaseDictionary):
             meaning = Meaning()
             # WordType
             wordType = HtmlHelper.getElement(meanElm, ".pos", 0)
-            meaning.wordType = Tag(wordType).text if wordType else ""
+            meaning.wordType = wordType.text if wordType else ""
 
             # Meaning
-            means = Tag(meanElm).select(">div.sense")
+            means = meanElm.select(">div.sense")
             for mean in means:
-                re = Tag(mean).select("span[class*=sensenum]", limit=1)
+                re = mean.select("span[class*=sensenum]", limit=1)
                 if re:
-                    Tag(re).decompose()
+                    re.decompose()
                 meaning.meaning = str(Tag(mean).parent.text).replace("\n", "")
                 meanings.append(meaning)
                 meaning = Meaning()

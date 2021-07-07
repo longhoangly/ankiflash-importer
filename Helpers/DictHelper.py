@@ -82,7 +82,7 @@ class DictHelper:
                 logging.info("word = {}", word)
                 logging.info("foundWordElm.text() = {}", foundWordElm.text())
                 logging.info("detailLinkEls = {}",
-                              "".join("---", detailLinkEls))
+                             "".join("---", detailLinkEls))
                 jDictWords.append(foundWordElm.string
                                   + Constant.SUB_DELIMITER
                                   + HtmlHelper.urlDecode(detailLinkEls[detailLinkEls.length - 1])
@@ -111,19 +111,23 @@ class DictHelper:
 
             allMatchesBlocks = doc.select("dl.accordion.ui-grad")
             for allMatches in allMatchesBlocks:
-                lis = Tag(allMatches).select("li")
+                lis = allMatches.select("li")
                 for li in lis:
-                    poss = Tag(li).find_all("pos")
+                    poss = li.find_all("pos")
                     for pos in poss:
-                        Tag(pos).decompose()
-                    for span in Tag(li).select("span"):
-                        matchedWord = span.string
-                        if matchedWord.lower() == word.lower():
+                        pos.decompose()
+                    for span in li.select("span"):
+                        logging.info("span: {}".format(span))
+                        texts = span.findAll(text=True)
+                        matchedWord = u" ".join(t.strip() for t in texts)
+                        logging.info("matchedWord: {}".format(matchedWord))
+                        if matchedWord.strip().lower() == word.lower():
                             wordId = DictHelper.getFileName(
-                                Tag(li).select("a").attr("href"))
+                                li.select_one("a").get("href"))
                             foundWords.append(
                                 wordId + Constant.SUB_DELIMITER + wordId + Constant.SUB_DELIMITER + word)
+                            logging.info("foundWords: {}".format(foundWords))
         else:
-            logging.info("Words not found: {}", word)
+            logging.info("Words not found: {}".format(word))
 
         return foundWords

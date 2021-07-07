@@ -86,37 +86,37 @@ class CambridgeDictionary(BaseDictionary):
         for headerGroup in headerGroups:
             # Word Type Header
             meaning = Meaning()
-            wordTypeHeader = Tag(headerGroup).select(
+            wordTypeHeader = headerGroup.select(
                 ".pos-header,div[class*=di-head]", limit=1)
             if wordTypeHeader:
                 headerTexts = []
-                elements = Tag(wordTypeHeader).select(".pos,.pron")
+                elements = wordTypeHeader.select(".pos,.pron")
                 for element in elements:
-                    headerTexts.append(Tag(element).text)
+                    headerTexts.append(element.text)
 
                 meaning.wordType = " ".join(headerTexts)
                 meanings.append(meaning)
 
             examples = []
-            meanGroups = Tag(headerGroup).select("div.sense-block")
+            meanGroups = headerGroup.select("div.sense-block")
             for meanGroup in meanGroups:
                 # Header
                 meaning = Meaning()
-                header = Tag(meanGroup).select("h3", limit=1)
+                header = meanGroup.select("h3", limit=1)
                 if header:
-                    meaning.wordType = Tag(header).text
+                    meaning.wordType = header.text
                     meanings.append(meaning)
 
                 # Meaning
-                meaningElms = Tag(meanGroup).select("div[class*=def-block]")
+                meaningElms = meanGroup.select("div[class*=def-block]")
                 for meaningElm in meaningElms:
                     meaning = Meaning()
-                    definition = Tag(meaningElm).select("b.def", limit=1)
+                    definition =meaningElm.select("b.def", limit=1)
                     if definition:
-                        meaning.meaning = Tag(definition).text
+                        meaning.meaning =definition.text
 
                     examples = []
-                    for element in Tag(meaningElm).select(".eg,.trans"):
+                    for element in meaningElm.select(".eg,.trans"):
                         examples.append(Tag(element).text)
                     meaning.examples = examples
                     meanings.append(meaning)
@@ -124,10 +124,10 @@ class CambridgeDictionary(BaseDictionary):
                 # Extra Examples
                 meaning = Meaning()
                 examples = []
-                extraExample = Tag(meanGroup).select(".extraexamps>p", limit=1)
+                extraExample =meanGroup.select(".extraexamps>p", limit=1)
                 if extraExample:
-                    meaning.wordType = Tag(extraExample).text
-                    for element in Tag(meanGroup).select(".extraexamps>ul>li.eg"):
+                    meaning.wordType =extraExample.text
+                    for element in meanGroup.select(".extraexamps>ul>li.eg"):
                         examples.append(Tag(element).text)
                     meaning.examples = examples
                     meanings.append(meaning)

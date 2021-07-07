@@ -15,6 +15,9 @@ from ...Helpers.DictHelper import DictHelper
 
 class OxfordDictionary(BaseDictionary):
 
+    def __init__(self):
+        super(OxfordDictionary, self).__init__()
+
     def search(self, formattedWord: str, translation: Translation) -> bool:
         """Find input word from dictionary data"""
 
@@ -134,7 +137,7 @@ class OxfordDictionary(BaseDictionary):
         wordFamilyElm = self.doc.select(
             "span.unbox[unbox=\"wordfamily\"]", limit=1)
         if len(wordFamilyElm) > 0:
-            wordFamiliyElms = Tag(wordFamilyElm[0]).select("span.p")
+            wordFamiliyElms = wordFamilyElm[0].select("span.p")
 
             wordFamilies = []
             for wordFamily in wordFamiliyElms:
@@ -147,7 +150,7 @@ class OxfordDictionary(BaseDictionary):
         wordFormElm = self.doc.select(
             "span.unbox[unbox=\"verbforms\"]", limit=1)
         if len(wordFormElm) > 0:
-            wordFormElms = Tag(wordFormElm[0]).select("td.verbforms")
+            wordFormElms = wordFormElm[0].select("td.verbforms")
 
             wordForms = List[str]
             for wordForm in wordFormElms:
@@ -159,19 +162,19 @@ class OxfordDictionary(BaseDictionary):
 
         meanGroup = self.doc.select(".sense")
         for meanElem in meanGroup:
-            defElm = Tag(meanElem).select(".def", limit=1)
+            defElm = meanElem.select(".def", limit=1)
 
             examples: List[str] = []
             # SEE ALSO section
-            subDefElm = Tag(meanElem).select(".xrefs", limit=1)
+            subDefElm = meanElem.select(".xrefs", limit=1)
             if subDefElm:
-                subDefPrefix = Tag(subDefElm).select(".prefix", limit=1)
-                subDefLink = Tag(subDefElm).select(".Ref", limit=1)
-                if subDefPrefix and subDefLink and "full entry" in Tag(subDefLink).get("title"):
+                subDefPrefix = subDefElm.select(".prefix", limit=1)
+                subDefLink = subDefElm.select(".Ref", limit=1)
+                if subDefPrefix and subDefLink and "full entry" in subDefLink.get("title"):
                     examples.append("<a href=\"{}\">{} {}</a>".format(Tag(subDefLink).get(
-                        "href"), Tag(subDefPrefix).string.upper(), Tag(subDefLink).text))
+                        "href"), subDefPrefix).string.upper(), subDefLink.text)
 
-            exampleElms = Tag(meanElem).select(".x")
+            exampleElms = meanElem.select(".x")
             for exampleElem in exampleElms:
                 examples.add(Tag(exampleElem).text)
 
@@ -194,7 +197,7 @@ class OxfordDictionary(BaseDictionary):
         wordOriginElm = self.doc.select(
             "span.unbox[unbox=\"wordorigin\"]", limit=1)
         if wordOriginElm:
-            originElm = Tag(wordOriginElm).select(".p", limit=1)
+            originElm = wordOriginElm.select(".p", limit=1)
             if originElm:
                 wordOrigins = []
                 wordOrigins.append(Tag(originElm).text)

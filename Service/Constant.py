@@ -11,15 +11,6 @@ class Constant:
     ANKI_DECK = "AnkiDeck.csv"
     ANKI_FAILURE = "Failures.csv"
 
-    # LANGUAGES
-    ENGLISH = "English"
-    FRENCH = "French"
-    VIETNAMESE = "Vietnamese"
-    CHINESE_TD = "Chinese (Traditional)"
-    CHINESE_SP = "Chinese (Simplified)"
-    JAPANESE = "Japanese"
-    SPANISH = "Spanish"
-
     # OXFORD
     OXFORD_SPELLING_WRONG = "Did you spell it correctly?"
     OXFORD_WORD_NOT_FOUND = "Oxford Learner's Dictionaries | Find the meanings"
@@ -67,6 +58,15 @@ class Constant:
     WORD_NOT_FOUND = "The word was not found! Could you please check spelling or report to us!"
     CONNECTION_FAILED = "Cannot connect to dictionaries, please try again later!"
     NOT_SUPPORTED_TRANSLATION = "The translation from {} to {} is not supported!"
+
+    # LANGUAGES
+    ENGLISH = "English"
+    FRENCH = "French"
+    VIETNAMESE = "Vietnamese"
+    CHINESE_TD = "Chinese (Traditional)"
+    CHINESE_SP = "Chinese (Simplified)"
+    JAPANESE = "Japanese"
+    SPANISH = "Spanish"
 
     # TRANSLATION
     EN_EN = Translation(ENGLISH, ENGLISH)

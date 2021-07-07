@@ -66,7 +66,7 @@ class JishoDictionary(BaseDictionary):
                 break
             else:
                 lowerWord = self.oriWord.lower()
-                example = Tag(example).string.lower()
+                example = example.string.lower()
 
                 if lowerWord in example:
                     example = example.replace(

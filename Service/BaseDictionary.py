@@ -24,6 +24,9 @@ class BaseDictionary(ABC):
     wordType: str
     phonetic: str
 
+    def __init__(self):
+        pass
+
     @abstractmethod
     def search(self, formattedWord, translation: Translation) -> bool:
         """Find input word from dictionary data"""
