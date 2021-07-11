@@ -10,22 +10,22 @@ from .Enum.Translation import Translation
 
 class BaseDictionary(ABC):
 
-    delimiter: str = "==="
-    doc: BeautifulSoup
-
-    word: str
-    wordId: str
-    oriWord: str
-
-    ankiDir: str
-    image: str
-    sounds: str
-
-    wordType: str
-    phonetic: str
 
     def __init__(self):
-        pass
+        
+        self.delimiter: str = "==="
+        self.doc: BeautifulSoup = None
+
+        self.word: str = ""
+        self.wordId: str = ""
+        self.oriWord: str = ""
+
+        self.ankiDir: str = ""
+        self.image: str = ""
+        self.sounds: str = ""
+
+        self.wordType: str = ""
+        self.phonetic: str = ""
 
     @abstractmethod
     def search(self, formattedWord, translation: Translation) -> bool:

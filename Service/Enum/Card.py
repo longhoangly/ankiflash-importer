@@ -1,32 +1,30 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from dataclasses import dataclass
 from ..Enum.Translation import Translation
 
 
+@dataclass
 class Card:
 
-    word: str
-    wordId: str
-    oriWord: str
+    def __init__(self, word=None, wordId=None, oriWord=None, translation=None):
 
-    wordType: str
-    phonetic: str
-    example: str
+        self.word: str = word
+        self.wordId: str = wordId
+        self.oriWord: str = oriWord
 
-    image: str
-    sounds: str
-    status: str
+        self.wordType: str
+        self.phonetic: str
+        self.example: str
 
-    meaning: str
-    copyright: str
-    comment: str
-    tag: str
+        self.image: str
+        self.sounds: str
+        self.status: str
 
-    translation: Translation
+        self.meaning: str
+        self.copyright: str
+        self.comment: str
+        self.tag: str
 
-    def __init__(self, word=None, wordId=None, oriWord=None, translation=None) -> None:
-        self.word = word
-        self.wordId = wordId
-        self.oriWord = oriWord
-        self.translation = translation
+        self.translation: Translation = translation

@@ -1,15 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from dataclasses import dataclass
 from typing import List
 
 
+@dataclass
 class Meaning:
 
-    wordType: str
-    meaning: str
-    examples: List[str]
+    def __init__(self, meaning=None, examples=None):
 
-    def __init__(self, meaning=None, examples=None) -> None:
-        self.meaning = meaning
-        self.examples = examples
+        self.wordType: str = ""
+        self.meaning: str = meaning
+        self.examples: List[str] = examples

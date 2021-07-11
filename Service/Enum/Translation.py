@@ -6,12 +6,10 @@ from typing import List
 
 class Translation:
 
-    source: str
-    target: str
+    def __init__(self, source, target):
 
-    def __init__(self, source, target) -> None:
-        self.source = source
-        self.target = target
+        self.source: str = source
+        self.target: str = target
 
     def equals(self, translation) -> bool:
         if isinstance(translation, Translation):

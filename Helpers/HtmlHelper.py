@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from typing import List
+from array import array
 
 import requests
 import logging
@@ -103,38 +104,51 @@ class HtmlHelper:
     @staticmethod
     def buildMeaning(word: str, wordType: str, phonetic: str, meanings: List[Meaning], isJapanese: bool = False) -> str:
         str_list = []
+
         if (isJapanese):
             str_list.append("<div class=\"content-container japan-font\">")
         else:
             str_list.append("<div class=\"content-container\">")
 
-        str_list.append("<h2 class=\"h\">%s</h2>".format(word))
+        str_list.append("<h2 class=\"h\">{}</h2>".format(word))
+
         if wordType:
             str_list.append(
-                "<span class=\"content-type\">%s</span>".format(wordType))
+                "<span class=\"content-type\">{}</span>".format(wordType))
 
         if phonetic:
             str_list.append(
-                "<span class=\"content-phonetic\">%s</span>".format(phonetic))
+                "<span class=\"content-phonetic\">{}</span>".format(phonetic))
 
         str_list.append("<ol class=\"content-order\">")
-        for meaning in meanings:
-            if meaning.wordType:
-                str_list.append(
-                    "<h4 class=\"content-type\" style='margin-left: -20px;'>%s</h4>".format(meaning.wordType))
 
-            if meaning.meaning:
+        for mean in meanings:
+            if mean.wordType:
                 str_list.append(
-                    "<li class=\"content-meaning\">%s</li>".format(meaning.meaning))
+                    "<h4 class=\"content-type\" style='margin-left: -20px;'>{}</h4>".format(mean.wordType))
 
-            if meaning.examples:
+            if mean.meaning:
+                logging.info("meaning: {}".format(mean.meaning).encode("utf-8"))
+                str_list.append(
+                    "<li class=\"content-meaning\">{}</li>".format(mean.meaning))
+
+            if "list" in str(type(mean.examples)) and len(mean.examples) > 0:
                 str_list.append("<ul class=\"content-circle\">")
-                for example in meaning.examples:
+                for example in mean.examples:
+                    logging.info("example: {}".format(example).encode("utf-8"))
                     str_list.append(
-                        "<li class=\"content-example\">%s</li>".format(example))
+                        "<li class=\"content-example\">{}</li>".format(example))
                 str_list.append("</ul>")
 
         str_list.append("</ol>")
         str_list.append("</div>")
 
         return "".join(str_list)
+
+    @staticmethod
+    def getString(element: Tag) -> str:
+        if element.string:
+            return element.string
+        else:
+            texts = element.findAll(text=True)
+            return u" ".join(t.strip() for t in texts)

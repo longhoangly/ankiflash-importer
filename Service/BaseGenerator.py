@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import logging
 from aqt.utils import showInfo
 
 from abc import ABC, abstractmethod
@@ -16,7 +17,8 @@ from .Enum.Card import Card
 
 class BaseGenerator(ABC):
 
-    delimiter: str = "==="
+    def __init__(self):
+        self.delimiter: str = "==="
 
     @abstractmethod
     def getFormattedWords(self, word: str, translation: Translation) -> List[str]:
@@ -40,14 +42,16 @@ class BaseGenerator(ABC):
                     value, self.delimiter, value, self.delimiter, value)
                 card = self.generateCard(
                     ui, formattedWord, ankiDir, translation, isOnline)
+                logging.info("card = {}".format(card))
 
-                if card.status == "Success":
+                if card.status == Status.SUCCESS:
                     cardCount += 1
-                    ui.outputTxt += "{}\n".format(card.meaning)
+                    ui.outputTxt.setPlainText(
+                        ui.outputTxt.toPlainText() + "{}\n".format(card.meaning))
                 else:
                     failureCount += 1
-                    ui.failureTxt += "{} -> {}\n".format(
-                        formattedWord, card.comment)
+                    ui.failureTxt.setPlainText(ui.failureTxt.toPlainText() + "{} -> {}\n".format(
+                        formattedWord, card.comment))
         else:
             for value in words:
                 formattedWords = self.getFormattedWords(value, translation)
@@ -55,16 +59,19 @@ class BaseGenerator(ABC):
                     for formattedWord in formattedWords:
                         card = self.generateCard(
                             ui, formattedWord, ankiDir, translation, isOnline)
-
-                        if card.status == "Success":
+                        logging.info("card = {}".format(card))
+                        
+                        if card.status == Status.SUCCESS:
                             cardCount += 1
-                            ui.outputTxt += "{}\n".format(card.meaning)
+                            ui.outputTxt.setPlainText(
+                                ui.outputTxt.toPlainText() + "{}\n".format(card.meaning))
                         else:
                             failureCount += 1
-                            ui.failureTxt += "{} -> {}\n".format(
-                                formattedWord, card.comment)
+                            ui.failureTxt.setPlainText(ui.failureTxt.toPlainText(
+                            ) + "{} -> {}\n".format(formattedWord, card.comment))
                 else:
-                    ui.failureTxt += "{} -> word not found\n".format(value)
+                    ui.failureTxt.setPlainText(
+                        ui.failureTxt.toPlainText() + "{} -> word not found\n".format(value))
 
         showInfo("""Completed 100%
         Input: {}

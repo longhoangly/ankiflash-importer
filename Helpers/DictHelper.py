@@ -37,7 +37,7 @@ class DictHelper:
 
     @staticmethod
     def getJDictDoc(url: str, body: str):
-        logging.info("url={}, body={}", url, body)
+        logging.info("url={}, body={}".format(url, body).encode("utf-8"))
         html = requests.post(url=url, data=body, headers={
                              "User-Agent": "Mozilla/5.0"})
         return BeautifulSoup(html.text, 'html.parser')
@@ -79,15 +79,13 @@ class DictHelper:
 
             if foundWordElm and word.lower() in foundWordElm.string.lower() and detailLink and not detailLink.text:
                 detailLinkEls: list[str] = detailLink.attr("href").split("/")
-                logging.info("word = {}", word)
-                logging.info("foundWordElm.text() = {}", foundWordElm.text())
-                logging.info("detailLinkEls = {}",
-                             "".join("---", detailLinkEls))
                 jDictWords.append(foundWordElm.string
                                   + Constant.SUB_DELIMITER
                                   + HtmlHelper.urlDecode(detailLinkEls[detailLinkEls.length - 1])
                                   + Constant.SUB_DELIMITER
                                   + word)
+
+        logging.info("jDictWords = {}".format("".join("---", jDictWords)))
 
         return jDictWords
 
@@ -101,7 +99,7 @@ class DictHelper:
             firstLink: str = HtmlHelper.getAttribute(doc, "link", 0, "href")
             if "definition/english" in firstLink:
                 matchedWord = HtmlHelper.getText(doc, ".headword", 0)
-                if not matchedWord:
+                if matchedWord:
                     foundWords.append(
                         matchedWord
                         + Constant.SUB_DELIMITER
@@ -117,17 +115,13 @@ class DictHelper:
                     for pos in poss:
                         pos.decompose()
                     for span in li.select("span"):
-                        logging.info("span: {}".format(span))
-                        texts = span.findAll(text=True)
-                        matchedWord = u" ".join(t.strip() for t in texts)
-                        logging.info("matchedWord: {}".format(matchedWord))
-                        if matchedWord.strip().lower() == word.lower():
+                        if HtmlHelper.getString(span).lower() == word.lower():
                             wordId = DictHelper.getFileName(
                                 li.select_one("a").get("href"))
                             foundWords.append(
                                 wordId + Constant.SUB_DELIMITER + wordId + Constant.SUB_DELIMITER + word)
-                            logging.info("foundWords: {}".format(foundWords))
         else:
             logging.info("Words not found: {}".format(word))
 
+        logging.info("foundWords: {}".format(foundWords))
         return foundWords

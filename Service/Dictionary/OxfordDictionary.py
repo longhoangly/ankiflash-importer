@@ -16,7 +16,7 @@ from ...Helpers.DictHelper import DictHelper
 class OxfordDictionary(BaseDictionary):
 
     def __init__(self):
-        super(OxfordDictionary, self).__init__()
+        super().__init__()
 
     def search(self, formattedWord: str, translation: Translation) -> bool:
         """Find input word from dictionary data"""
@@ -37,7 +37,7 @@ class OxfordDictionary(BaseDictionary):
 
     def isInvalidWord(self) -> bool:
         """Check if the input word exists in dictionary?"""
-        
+
         title = HtmlHelper.getText(self.doc, "title", 0)
         if Constant.OXFORD_SPELLING_WRONG in title or Constant.OXFORD_WORD_NOT_FOUND in title:
             return True
@@ -133,74 +133,72 @@ class OxfordDictionary(BaseDictionary):
         self.getWordType()
         self.getPhonetic()
 
-        meanings: List[Meaning] = []
-        wordFamilyElm = self.doc.select(
-            "span.unbox[unbox=\"wordfamily\"]", limit=1)
-        if len(wordFamilyElm) > 0:
-            wordFamiliyElms = wordFamilyElm[0].select("span.p")
+        meanings: list[Meaning] = []
+        wordFamilyElm = self.doc.select_one("span.unbox[unbox=\"wordfamily\"]")
+        if wordFamilyElm:
+            wordFamilyElms = wordFamilyElm.select("span.p")
 
             wordFamilies = []
-            for wordFamily in wordFamiliyElms:
-                wordFamilies.append(str(Tag(wordFamily).string))
+            for wordFamily in wordFamilyElms:
+                wordFamilies.append(HtmlHelper.getString(wordFamily))
 
             meaning = Meaning("", wordFamilies)
             meaning.wordType = "Word Family"
             meanings.append(meaning)
 
-        wordFormElm = self.doc.select(
-            "span.unbox[unbox=\"verbforms\"]", limit=1)
-        if len(wordFormElm) > 0:
-            wordFormElms = wordFormElm[0].select("td.verbforms")
+        wordFormElm = self.doc.select_one("span.unbox[unbox=\"verbforms\"]")
+        if wordFormElm:
+            wordFormElms = wordFormElm.select("td.verbforms")
 
-            wordForms = List[str]
+            wordForms = []
             for wordForm in wordFormElms:
-                wordForms.append(str(Tag(wordForm).string))
+                wordForms.append(HtmlHelper.getString(wordForm))
 
             meaning = Meaning("", wordForms)
             meaning.wordType = "Verb Forms"
             meanings.append(meaning)
 
-        meanGroup = self.doc.select(".sense")
-        for meanElem in meanGroup:
-            defElm = meanElem.select(".def", limit=1)
+        meanGroups = self.doc.select(".sense")
+        for meanElem in meanGroups:
+            defElm = meanElem.select_one(".def")
 
-            examples: List[str] = []
+            examples = []
             # SEE ALSO section
-            subDefElm = meanElem.select(".xrefs", limit=1)
+            subDefElm = meanElem.select_one(".xrefs")
             if subDefElm:
-                subDefPrefix = subDefElm.select(".prefix", limit=1)
-                subDefLink = subDefElm.select(".Ref", limit=1)
+                subDefPrefix = subDefElm.select_one(".prefix")
+                subDefLink = subDefElm.select_one(".Ref")
                 if subDefPrefix and subDefLink and "full entry" in subDefLink.get("title"):
-                    examples.append("<a href=\"{}\">{} {}</a>".format(Tag(subDefLink).get(
-                        "href"), subDefPrefix).string.upper(), subDefLink.text)
+                    examples.append("<a href=\"{}\">{} {}</a>".format(subDefLink.get(
+                        "href"), HtmlHelper.getString(subDefPrefix).upper(), HtmlHelper.getString(subDefLink)))
 
             exampleElms = meanElem.select(".x")
             for exampleElem in exampleElms:
-                examples.add(Tag(exampleElem).text)
+                examples.append(HtmlHelper.getString(exampleElem))
 
             meanings.append(
-                Meaning(Tag(defElm).text if defElm else "", examples))
+                Meaning(HtmlHelper.getString(defElm) if defElm else "", examples))
 
-            extraExample = HtmlHelper.getElement(
+            extraExample = HtmlHelper.getChildElement(
                 meanElem, "span.unbox[unbox=\"extra_examples\"]", 0)
             if extraExample:
                 exampleElms = extraExample.select(".unx")
 
                 examples = []
                 for exampleElm in exampleElms:
-                    examples.append(Tag(exampleElm).text)
+                    examples.append(HtmlHelper.getString(exampleElm))
 
                 meaning = Meaning("", examples)
                 meaning.wordType = "Extra Examples"
                 meanings.append(meaning)
 
-        wordOriginElm = self.doc.select(
-            "span.unbox[unbox=\"wordorigin\"]", limit=1)
+        wordOriginElm = self.doc.select_one(
+            "span.unbox[unbox=\"wordorigin\"]")
         if wordOriginElm:
-            originElm = wordOriginElm.select(".p", limit=1)
+            originElm = wordOriginElm.select_one(".p")
             if originElm:
                 wordOrigins = []
-                wordOrigins.append(Tag(originElm).text)
+                wordOrigins.append(HtmlHelper.getString(originElm))
 
                 meaning = Meaning("", wordOrigins)
                 meaning.wordType = "Word Origin"

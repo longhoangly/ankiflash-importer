@@ -29,12 +29,12 @@ class FrenchGenerator(BaseGenerator):
 
         card: Card = self.initializeCard(formattedWord, translation)
 
-        logging.info("word = {}", card.word)
-        logging.info("wordId = {}", card.wordId)
-        logging.info("oriWord = {}", card.oriWord)
+        logging.info("word = {}".format(card.word))
+        logging.info("wordId = {}".format(card.wordId))
+        logging.info("oriWord = {}".format(card.oriWord))
 
-        logging.info("source = {}", translation.source)
-        logging.info("target = {}", translation.target)
+        logging.info("source = {}".format(translation.source))
+        logging.info("target = {}".format(translation.target))
 
         lacVietDict = LacVietDictionary()
         collinsDict = CollinsDictionary()
