@@ -32,7 +32,6 @@ csv.field_size_limit(2**30)
 class AnkiFlash(QDialog):
     """AnkiFlash Dialog class"""
 
-    ankiFlashDir: str
     keyPressed = QtCore.pyqtSignal(int)
 
     def __init__(self, version):
@@ -41,16 +40,12 @@ class AnkiFlash(QDialog):
 
         # Media folder to store audios and images
         self.mediaDir = mw.col.media.dir()
-
-        # AnkiFlash inside media contains one time files such as template, csv cards...
-        self.ankiFlashDir = join(self.mediaDir, r'AnkiFlash')
-        os.makedirs(self.ankiFlashDir, exist_ok=True)
-
         # Card created to be stored in csv file
-        self.ankiCsvFile = join(self.ankiFlashDir, r'AnkiDeck.csv')
+        self.ankiCsvFile = join(self.mediaDir, r'AnkiDeck.csv')
 
         # Addon folder of AnkiFlash
         self.addonFolder = join(mw.pm.addonFolder(), "1129289384")
+        # Add on log
         self.ankiFlashLog = join(self.addonFolder, r'ankiflash.log')
 
         # Set logging config (Rotate every 10MB and keep 5 files)
@@ -157,7 +152,7 @@ class AnkiFlash(QDialog):
 
         # Send word list to generator
         self.generator.generateCards(
-            self.ui, self.words, translation, self.ankiFlashDir, self.isOnline, self.allWordTypes)
+            self.ui, self.words, translation, self.mediaDir, self.isOnline, self.allWordTypes, self.ankiCsvFile)
 
     def selectedRadio(self, groupBox: QGroupBox) -> str:
 
@@ -174,17 +169,17 @@ class AnkiFlash(QDialog):
         self.ui.importBar.setValue(10)
 
         # Front template inside AnkiFlash folder
-        frontFile = join(self.ankiFlashDir, r'front.html')
+        frontFile = join(self.addonFolder, r'front.html')
         with open(frontFile, 'r', encoding='utf-8') as file:
             self.front = file.read()
 
         # Back template inside AnkiFlash folder
-        backFile = join(self.ankiFlashDir, r'back.html')
+        backFile = join(self.addonFolder, r'back.html')
         with open(backFile, 'r', encoding='utf-8') as file:
             self.back = file.read()
 
         # Styling template inside AnkiFlash folder
-        cssFile = join(self.ankiFlashDir, r'style.css')
+        cssFile = join(self.addonFolder, r'style.css')
         with open(cssFile, 'r', encoding='utf-8') as file:
             self.css = file.read()
 

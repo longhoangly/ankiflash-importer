@@ -22,18 +22,19 @@ class DictHelper:
         return link_els[len(link_els) - 1]
 
     @staticmethod
-    def downloadFiles(ankiDir: str, urls: str):
+    def downloadFiles(mediaDir: str, urls: str):
         downloadLinks = urls.split(";")
         for link in downloadLinks:
             fileName = DictHelper.getFileName(link)
-            filePath = "{}/{}".format(ankiDir, fileName)
-            if os.path.isdir(ankiDir) and not link:
+            filePath = "{}/{}".format(mediaDir, fileName)
+            logging.info("sound path: {}".format(filePath))
+            if os.path.isdir(mediaDir) and link:
                 r = requests.get(url=link, headers={
                                  "User-Agent": "Mozilla/5.0"}, allow_redirects=True)
                 open(filePath, 'wb').write(r.content)
             else:
-                logging.info("ankiDir={}, dir.exists={}, link={}".format(
-                    ankiDir, os.path.isdir(ankiDir), link))
+                logging.info("mediaDir={}, dir.exists={}, link={}".format(
+                    mediaDir, os.path.isdir(mediaDir), link))
 
     @staticmethod
     def getJDictDoc(url: str, body: str):

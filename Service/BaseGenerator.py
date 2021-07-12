@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from dataclasses import make_dataclass
 import logging
 from aqt.utils import showInfo
 
@@ -19,6 +20,8 @@ class BaseGenerator(ABC):
 
     def __init__(self):
         self.delimiter: str = "==="
+        self.formattedWords: List[str] = []
+        self.cards: List[Card] = []
 
     @abstractmethod
     def getFormattedWords(self, word: str, translation: Translation) -> List[str]:
@@ -26,11 +29,11 @@ class BaseGenerator(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def generateCard(self, ui: UiAnkiFlash, formattedWord: str, translation: Translation, ankiDir: str, isOnline: bool) -> Card:
+    def generateCard(self, ui: UiAnkiFlash, formattedWord: str, translation: Translation, mediaDir: str, isOnline: bool) -> Card:
         """Generate a flashcard from an input word"""
         raise NotImplementedError
 
-    def generateCards(self, ui: UiAnkiFlash, words: List[str], translation: Translation, ankiDir: str, isOnline: bool, allWordTypes: bool) -> List[Card]:
+    def generateCards(self, ui: UiAnkiFlash, words: List[str], translation: Translation, mediaDir: str, isOnline: bool, allWordTypes: bool, csvFilePath: str) -> List[Card]:
         """Generate flashcards from input words"""
 
         cardCount: int = 0
@@ -41,30 +44,33 @@ class BaseGenerator(ABC):
                 formattedWord = "{}{}{}{}{}".format(
                     value, self.delimiter, value, self.delimiter, value)
                 card = self.generateCard(
-                    ui, formattedWord, ankiDir, translation, isOnline)
+                    ui, formattedWord, mediaDir, translation, isOnline)
                 logging.info("card = {}".format(card))
 
                 if card.status == Status.SUCCESS:
                     cardCount += 1
                     ui.outputTxt.setPlainText(
                         ui.outputTxt.toPlainText() + "{}\n".format(card.meaning))
+                    self.cards.append(card)
                 else:
                     failureCount += 1
                     ui.failureTxt.setPlainText(ui.failureTxt.toPlainText() + "{} -> {}\n".format(
                         formattedWord, card.comment))
         else:
             for value in words:
-                formattedWords = self.getFormattedWords(value, translation)
-                if len(formattedWords) > 0:
-                    for formattedWord in formattedWords:
+                self.formattedWords = self.getFormattedWords(
+                    value, translation)
+                if len(self.formattedWords) > 0:
+                    for formattedWord in self.formattedWords:
                         card = self.generateCard(
-                            ui, formattedWord, ankiDir, translation, isOnline)
+                            ui, formattedWord, mediaDir, translation, isOnline)
                         logging.info("card = {}".format(card))
-                        
+
                         if card.status == Status.SUCCESS:
                             cardCount += 1
                             ui.outputTxt.setPlainText(
                                 ui.outputTxt.toPlainText() + "{}\n".format(card.meaning))
+                            self.cards.append(card)
                         else:
                             failureCount += 1
                             ui.failureTxt.setPlainText(ui.failureTxt.toPlainText(
@@ -72,6 +78,31 @@ class BaseGenerator(ABC):
                 else:
                     ui.failureTxt.setPlainText(
                         ui.failureTxt.toPlainText() + "{} -> word not found\n".format(value))
+
+        cardLines: list[str] = []
+        for card in self.cards:
+            cardContent = "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}".format(
+                card.word,
+                Constant.TAB,
+                card.wordType,
+                Constant.TAB,
+                card.phonetic,
+                Constant.TAB,
+                card.example,
+                Constant.TAB,
+                card.sounds,
+                Constant.TAB,
+                card.image,
+                Constant.TAB,
+                card.meaning,
+                Constant.TAB,
+                card.copyright,
+                Constant.TAB,
+                card.tag + "\n")
+            cardLines.append(cardContent)
+
+        with open(csvFilePath, 'w', encoding='utf-8') as file:
+            file.writelines(cardLines)
 
         showInfo("""Completed 100%
         Input: {}
@@ -89,7 +120,7 @@ class BaseGenerator(ABC):
             card.comment = "Incorrect word format = {}".format(formattedWord)
         return card
 
-    def singleDictionaryCard(self, formattedWord: str, translation: Translation, ankiDir: str, isOnline: bool, card: Card, dictionary: BaseDictionary) -> Card:
+    def singleDictionaryCard(self, formattedWord: str, translation: Translation, mediaDir: str, isOnline: bool, card: Card, dictionary: BaseDictionary) -> Card:
 
         if dictionary.search(formattedWord, translation):
             card.status = Status.CONNECTION_FAILED
@@ -104,8 +135,8 @@ class BaseGenerator(ABC):
         card.phonetic = dictionary.getPhonetic()
         card.example = dictionary.getExample()
 
-        card.sounds = dictionary.getSounds(ankiDir, isOnline)
-        card.image = dictionary.getImage(ankiDir, isOnline)
+        card.sounds = dictionary.getSounds(mediaDir, isOnline)
+        card.image = dictionary.getImage(mediaDir, isOnline)
 
         card.copyright = Constant.COPYRIGHT.format(
             dictionary.getDictionaryName())
@@ -115,7 +146,7 @@ class BaseGenerator(ABC):
 
         return card
 
-    def coupleDictionariesCard(self, formattedWord: str, translation: Translation, ankiDir: str, isOnline: bool, card: Card, mainDict: BaseDictionary, meaningDict: BaseDictionary) -> Card:
+    def coupleDictionariesCard(self, formattedWord: str, translation: Translation, mediaDir: str, isOnline: bool, card: Card, mainDict: BaseDictionary, meaningDict: BaseDictionary) -> Card:
 
         if mainDict.search(formattedWord, translation) or meaningDict.search(formattedWord, translation):
             card.status = Status.CONNECTION_FAILED
@@ -130,8 +161,8 @@ class BaseGenerator(ABC):
         card.phonetic = mainDict.getPhonetic()
         card.example = mainDict.getExample()
 
-        card.sounds = mainDict.getSounds(ankiDir, isOnline)
-        card.image = mainDict.getImage(ankiDir, isOnline)
+        card.sounds = mainDict.getSounds(mediaDir, isOnline)
+        card.image = mainDict.getImage(mediaDir, isOnline)
 
         card.copyright = Constant.COPYRIGHT.format("".join(
             mainDict.getDictionaryName(), ", and ", meaningDict.getDictionaryName()))
