@@ -22,9 +22,8 @@ version = '1.0.0'
 
 
 def ankiFlash():
-    mw.myWidget = window = AnkiFlash(version)
-    window.keyPressed.connect(window.onKey)
-    window.show()
+    mw.ankiFlash = AnkiFlash(version)
+    mw.ankiFlash.generator.keyPressed.connect(mw.ankiFlash.generator.onKey)
 
 
 ankiFlashAct = QAction("AnkiFlash {}".format(version), mw)

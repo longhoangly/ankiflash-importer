@@ -49,14 +49,14 @@ class HtmlHelper:
     @staticmethod
     def getText(doc: BeautifulSoup, selector: str, index: int) -> str:
         element = HtmlHelper.getDocElement(doc, selector, index)
-        return str(element.string) if element else ""
+        return HtmlHelper.getString(element) if element else ""
 
     @staticmethod
     def getTexts(doc: BeautifulSoup, selector: str) -> List[str]:
         elements = doc.select(selector)
         texts = []
         for element in elements:
-            texts.append(str(element.string))
+            texts.append(HtmlHelper.getString(element))
         return texts
 
     @staticmethod
@@ -87,6 +87,7 @@ class HtmlHelper:
     @staticmethod
     def buildExample(examples: List[str], isJapanese: bool = False) -> str:
         str_list = []
+
         if (isJapanese):
             str_list.append("<div class=\"content-container japan-font\">")
         else:
@@ -95,7 +96,7 @@ class HtmlHelper:
         str_list.append("<ul class=\"content-circle\">")
         for example in examples:
             str_list.append(
-                "<li class=\"content-example\">%s</li>".format(example))
+                "<li class=\"content-example\">{}</li>".format(example))
         str_list.append("</ul>")
         str_list.append("</div>")
 

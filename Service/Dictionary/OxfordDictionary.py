@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import logging
 from typing import List
-from bs4.element import Tag
 
 from ..Enum.Meaning import Meaning
 from ..Enum.Translation import Translation
@@ -53,12 +53,13 @@ class OxfordDictionary(BaseDictionary):
         return self.wordType
 
     def getExample(self) -> str:
-        examples = []
+        examples: list[str] = []
         for i in range(4):
             example: str = HtmlHelper.getText(self.doc, "span.x", i)
+            logging.info("example: {}".format(example).encode("utf-8"))
             if not example and i == 0:
                 return Constant.NO_EXAMPLE
-            elif not example:
+            elif not example or example is None:
                 break
             else:
                 self.word = self.word.lower()
@@ -67,9 +68,11 @@ class OxfordDictionary(BaseDictionary):
                     example = example.replace(
                         self.word, "{{c1::" + self.word + "}}")
                 else:
+                    # Anki will not hide the word, if we don't have "{{c1::...}}" for all examples!
                     example = "{} {}".format(example, "{{c1::...}}")
                 examples.append(example)
 
+        logging.info("examples: {}".format(examples).encode("utf-8"))
         return HtmlHelper.buildExample(examples)
 
     def getPhonetic(self) -> str:

@@ -518,119 +518,12 @@
     </property>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="importerBox">
-   <property name="geometry">
-    <rect>
-     <x>440</x>
-     <y>460</y>
-     <width>421</width>
-     <height>141</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="title">
-    <string>Importer</string>
-   </property>
-   <widget class="QProgressBar" name="importProgressBar">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>90</y>
-      <width>301</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="value">
-     <number>1</number>
-    </property>
-   </widget>
-   <widget class="QLabel" name="deckNameLbl">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>60</y>
-      <width>81</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Deck Name</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="importBtn">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>90</y>
-      <width>75</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>Import generated flashcards into Anki</string>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="text">
-     <string>Import</string>
-    </property>
-    <property name="checkable">
-     <bool>false</bool>
-    </property>
-    <property name="default">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="deckNameTxt">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>50</y>
-      <width>301</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="placeholderText">
-     <string> Input deck name</string>
-    </property>
-   </widget>
-  </widget>
   <widget class="QGroupBox" name="ankiflashInfoBox">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>460</y>
-     <width>421</width>
+     <width>851</width>
      <height>141</height>
     </rect>
    </property>
@@ -647,9 +540,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>90</y>
-      <width>391</width>
-      <height>31</height>
+      <y>107</y>
+      <width>811</width>
+      <height>16</height>
      </rect>
     </property>
     <property name="font">
@@ -661,7 +554,7 @@
      </font>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you want to buy me a coffee: &lt;br/&gt;&lt;a href=&quot;https://www.buymeacoffee.com/longhoangly&quot;&gt;https://www.buymeacoffee.com/longhoangly&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you want to buy me a coffee: &lt;a href=&quot;https://www.buymeacoffee.com/longhoangly&quot;&gt;https://www.buymeacoffee.com/longhoangly&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="openExternalLinks">
      <bool>true</bool>
@@ -671,7 +564,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>70</y>
+      <y>83</y>
       <width>391</width>
       <height>16</height>
      </rect>
@@ -685,7 +578,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Feel free to drop me a message if any issue or any suggestion</string>
+     <string>Feel free to drop me a message if any issue or suggestion</string>
     </property>
    </widget>
    <widget class="QLabel" name="caption">
@@ -713,7 +606,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>50</y>
+      <y>57</y>
       <width>391</width>
       <height>16</height>
      </rect>

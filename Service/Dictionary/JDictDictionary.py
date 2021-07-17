@@ -47,7 +47,7 @@ class JDictDictionary(BaseDictionary):
         if not self.wordType:
             element: Tag = HtmlHelper.getDocElement(
                 self.doc, "label[class*=word-type]", 0)
-            self.wordType = "(" + element.string + ")" if element else ""
+            self.wordType = "(" + HtmlHelper.getString(element) + ")" if element else ""
         return self.wordType
 
     def getExample(self) -> str:
@@ -139,7 +139,7 @@ class JDictDictionary(BaseDictionary):
         wordType: Tag = HtmlHelper.getChildElement(
             meanGroup, "label[class*=word-type]", 0)
         if wordType:
-            meaning.wordType = wordType.string
+            meaning.wordType = HtmlHelper.getString(wordType)
         meanings.append(meaning)
 
         meanElms = meanGroup.select("ol.ol-decimal>li")

@@ -78,9 +78,9 @@ class DictHelper:
             detailLink: Tag = HtmlHelper.getChildElement(
                 wordElem, ".light-details_link", 0)
 
-            if foundWordElm and word.lower() in foundWordElm.string.lower() and detailLink and not detailLink.text:
+            if foundWordElm and word.lower() in HtmlHelper.getString(foundWordElm).lower() and detailLink and not detailLink.text:
                 detailLinkEls: list[str] = detailLink.attr("href").split("/")
-                jDictWords.append(foundWordElm.string
+                jDictWords.append(HtmlHelper.getString(foundWordElm)
                                   + Constant.SUB_DELIMITER
                                   + HtmlHelper.urlDecode(detailLinkEls[detailLinkEls.length - 1])
                                   + Constant.SUB_DELIMITER

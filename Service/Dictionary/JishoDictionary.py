@@ -49,8 +49,9 @@ class JishoDictionary(BaseDictionary):
             wordTypes = []
 
             for element in elements:
-                if element.string and "Wikipedia definition" != element.string and "Other forms" != element.string:
-                    wordTypes.add("[" + element.string + "]")
+                wType = HtmlHelper.getString(element)
+                if wType and "Wikipedia definition" != wType and "Other forms" != wType:
+                    wordTypes.add("[" + wType + "]")
 
             self.wordType = "(" + "".join(" / ", wordTypes) + \
                 ")" if len(wordTypes) > 0 else ""
@@ -66,7 +67,7 @@ class JishoDictionary(BaseDictionary):
                 break
             else:
                 lowerWord = self.oriWord.lower()
-                example = example.string.lower()
+                example = HtmlHelper.getString(example).lower()
 
                 if lowerWord in example:
                     example = example.replace(
@@ -131,7 +132,7 @@ class JishoDictionary(BaseDictionary):
                     mean = HtmlHelper.getChildElement(
                         meanElm, ".meaning-meaning", 0)
                     if mean:
-                        meaning.meaning = mean.string
+                        meaning.meaning = HtmlHelper.getString(mean)
 
                     examples = []
                     exampleElms = meanElm.select(".sentence")

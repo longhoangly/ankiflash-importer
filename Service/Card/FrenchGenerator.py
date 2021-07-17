@@ -5,7 +5,6 @@
 from typing import List
 import logging
 
-from ...Ui.UiAnkiFlash import UiAnkiFlash
 from ..Enum.Translation import Translation
 from ..Enum.Status import Status
 from ..Enum.Card import Card
@@ -25,7 +24,7 @@ class FrenchGenerator(BaseGenerator):
                           word + Constant.SUB_DELIMITER + word)
         return foundWords
 
-    def generateCard(self, ui: UiAnkiFlash, formattedWord: str, ankiDir: str, translation: Translation, isOnline: bool) -> Card:
+    def generateCard(self, formattedWord: str, ankiDir: str, translation: Translation, isOnline: bool) -> Card:
 
         card: Card = self.initializeCard(formattedWord, translation)
 

@@ -1,14 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from dataclasses import make_dataclass
+import os
 import logging
 from aqt.utils import showInfo
 
 from abc import ABC, abstractmethod
 from typing import List
 
-from ..Ui.UiAnkiFlash import UiAnkiFlash
+from ..Importer import Importer
+from ..Ui.UiGenerator import UiGenerator
+
 from .BaseDictionary import BaseDictionary
 from .Enum.Translation import Translation
 from .Enum.Status import Status
@@ -29,11 +31,11 @@ class BaseGenerator(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def generateCard(self, ui: UiAnkiFlash, formattedWord: str, translation: Translation, mediaDir: str, isOnline: bool) -> Card:
+    def generateCard(self, formattedWord: str, translation: Translation, mediaDir: str, isOnline: bool) -> Card:
         """Generate a flashcard from an input word"""
         raise NotImplementedError
 
-    def generateCards(self, ui: UiAnkiFlash, words: List[str], translation: Translation, mediaDir: str, isOnline: bool, allWordTypes: bool, csvFilePath: str) -> List[Card]:
+    def generateCards(self, words: List[str], translation: Translation, mediaDir: str, isOnline: bool, allWordTypes: bool, csvFilePath: str, ui: UiGenerator, importer: Importer) -> List[Card]:
         """Generate flashcards from input words"""
 
         cardCount: int = 0
@@ -44,8 +46,7 @@ class BaseGenerator(ABC):
                 formattedWord = "{}{}{}{}{}".format(
                     value, self.delimiter, value, self.delimiter, value)
                 card = self.generateCard(
-                    ui, formattedWord, mediaDir, translation, isOnline)
-                logging.info("card = {}".format(card))
+                    formattedWord, mediaDir, translation, isOnline)
 
                 if card.status == Status.SUCCESS:
                     cardCount += 1
@@ -63,8 +64,7 @@ class BaseGenerator(ABC):
                 if len(self.formattedWords) > 0:
                     for formattedWord in self.formattedWords:
                         card = self.generateCard(
-                            ui, formattedWord, mediaDir, translation, isOnline)
-                        logging.info("card = {}".format(card))
+                            formattedWord, mediaDir, translation, isOnline)
 
                         if card.status == Status.SUCCESS:
                             cardCount += 1
@@ -82,7 +82,7 @@ class BaseGenerator(ABC):
         cardLines: list[str] = []
         for card in self.cards:
             cardContent = "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}".format(
-                card.word,
+                card.oriWord,
                 Constant.TAB,
                 card.wordType,
                 Constant.TAB,
@@ -100,14 +100,21 @@ class BaseGenerator(ABC):
                 Constant.TAB,
                 card.tag + "\n")
             cardLines.append(cardContent)
+            logging.info("card content = {}".format(
+                cardContent).encode("utf-8"))
 
+        try:
+            os.remove(csvFilePath)
+        except OSError:
+            logging.info("{} does not exist!".format(csvFilePath))
+            pass
         with open(csvFilePath, 'w', encoding='utf-8') as file:
             file.writelines(cardLines)
 
-        showInfo("""Completed 100%
-        Input: {}
-        Output: {}
-        Failure: {}\n""".format(len(words), cardCount, failureCount))
+        showInfo("""Completed 100%\nInput: {}\nOutput: {}\nFailure: {}\n""".format(len(words), cardCount, failureCount))
+
+        # Show Importer Dialog
+        importer.show()
 
     def initializeCard(self, formattedWord: str, translation: Translation):
 
