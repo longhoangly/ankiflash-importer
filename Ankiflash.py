@@ -3,7 +3,7 @@
 
 from aqt import mw
 
-from .Generator import Generator
+from .GeneratorDialog import GeneratorDialog
 
 from os.path import join
 from logging.handlers import RotatingFileHandler
@@ -16,7 +16,6 @@ class AnkiFlash():
     """AnkiFlash"""
 
     def __init__(self, version):
-        super().__init__()
 
         # Directories
         self.addonDir = join(mw.pm.addonFolder(), "1129289384")
@@ -31,15 +30,16 @@ class AnkiFlash():
         self.ankiFlashLog = join(self.addonDir, r'Logs/ankiflash.log')
 
         rfh = RotatingFileHandler(
-            filename=self.ankiFlashLog, maxBytes=10000000, backupCount=5)
+            filename=self.ankiFlashLog, maxBytes=50000000, backupCount=3)
         should_roll_over = os.path.isfile(self.ankiFlashLog)
         if should_roll_over:
             rfh.doRollover()
         logging.basicConfig(level=logging.INFO,
-                            format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S',
+                            format='%(asctime)s - %(threadName)s [%(thread)d] - %(message)s', datefmt='%d-%b-%y %H:%M:%S',
                             handlers=[rfh])
 
         # Create Generator Dialog
-        self.generator = Generator(
+        self.generator = GeneratorDialog(
             version, self.iconPath, self.addonDir, self.mediaDir)
         self.generator.show()
+        logging.info("Open AnkiFlash Dialog")

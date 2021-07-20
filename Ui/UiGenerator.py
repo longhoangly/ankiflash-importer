@@ -46,7 +46,7 @@ class UiGenerator(object):
         font.setBold(True)
         font.setWeight(75)
         self.generateBtn.setFont(font)
-        self.generateBtn.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.generateBtn.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.generateBtn.setAutoFillBackground(False)
         self.generateBtn.setDefault(False)
         self.generateBtn.setObjectName("generateBtn")
@@ -166,7 +166,7 @@ class UiGenerator(object):
         font.setBold(False)
         font.setWeight(50)
         self.generateProgressBar.setFont(font)
-        self.generateProgressBar.setProperty("value", 1)
+        self.generateProgressBar.setProperty("value", 0)
         self.generateProgressBar.setObjectName("generateProgressBar")
         self.allWordTypes = QtWidgets.QCheckBox(self.inputBox)
         self.allWordTypes.setGeometry(QtCore.QRect(20, 340, 121, 17))
@@ -253,7 +253,11 @@ class UiGenerator(object):
         self.support.setOpenExternalLinks(True)
         self.support.setTextInteractionFlags(QtCore.Qt.LinksAccessibleByMouse)
         self.support.setObjectName("support")
-
+        self.importBtn = QtWidgets.QPushButton(self.ankiflashInfoBox)
+        self.importBtn.setGeometry(QtCore.QRect(730, 30, 113, 32))
+        self.importBtn.setObjectName("importBtn")
+        self.importBtn.setFocusPolicy(QtCore.Qt.ClickFocus)
+        
         self.retranslateUi(Dialog, version)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -291,3 +295,5 @@ class UiGenerator(object):
         self.inbox.setText(_translate("Dialog", "Feel free to drop me a message if any issue or suggestion"))
         self.caption.setText(_translate("Dialog", "Always beside and help you to learn vocabularies"))
         self.support.setText(_translate("Dialog", "Support: <a href=\"https://www.facebook.com/ankiflashcom/inbox\" target=\"_blank\">https://www.facebook.com/ankiflashcom/inbox</a>"))
+        self.importBtn.setToolTip(_translate("Dialog", "Cick here to import generated cards."))
+        self.importBtn.setText(_translate("Dialog", "Importer"))

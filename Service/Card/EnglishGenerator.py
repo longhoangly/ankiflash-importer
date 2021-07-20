@@ -55,13 +55,13 @@ class EnglishGenerator(BaseGenerator):
         # English to Chinese/French/Japanese
         elif translation.equals(Constant.EN_CN_TD) or translation.equals(Constant.EN_CN_SP) or translation.equals(Constant.EN_JP) or translation.equals(Constant.EN_FR):
 
-            card = self.coupleDictionariesCard(
+            card = self.multipleDictionariesCard(
                 formattedWord, translation, ankiDir, isOnline, card, oxfordDict, cambridgeDict)
 
         # English to Vietnamese
         elif translation.equals(Constant.EN_VN):
 
-            card = self.coupleDictionariesCard(
+            card = self.multipleDictionariesCard(
                 formattedWord, translation, ankiDir, isOnline, card, oxfordDict, lacVietDict)
 
         else:

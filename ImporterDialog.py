@@ -6,19 +6,24 @@ from aqt.utils import showInfo
 from anki.models import ModelManager
 from anki.importing.csvfile import TextImporter
 
-from .Ui.UiImporter import UiImporter
 from PyQt5.QtWidgets import QDialog
-from os.path import join
+from PyQt5 import QtCore
 
+from .Ui.UiImporter import UiImporter
+
+from os.path import join
 import logging
 import csv
 csv.field_size_limit(2**30)
 
 
-class Importer(QDialog):
+class ImporterDialog(QDialog):
+
+    keyPressed = QtCore.pyqtSignal(int)
 
     def __init__(self, version, iconPath, addonDir):
         super().__init__()
+        self.version = version
         self.addonDir = addonDir
 
         # Paths
@@ -36,7 +41,18 @@ class Importer(QDialog):
         self.ui.deckNameTxt.textChanged.connect(self.enableImportBtn)
 
         # Handle Import button clicked
-        self.ui.importBtn.clicked.connect(lambda: self.btnImportClicked(version))
+        self.ui.importBtn.clicked.connect(
+            lambda: self.btnImportClicked(version))
+
+    def keyPressEvent(self, event):
+        super().keyPressEvent(event)
+        self.keyPressed.emit(event.key())
+
+    def onKey(self, key):
+        if key == QtCore.Qt.Key_Return and self.ui.deckNameTxt.text():
+            self.btnImportClicked(self.version)
+        else:
+            logging.info('key pressed: {}'.format(key))
 
     def enableImportBtn(self):
         if self.ui.deckNameTxt.text():
@@ -77,6 +93,7 @@ class Importer(QDialog):
         logging.info("Imported csv file: {}".format(self.ankiCsvPath))
 
         showInfo("AnkiFlash cards imported successfully...")
+        self.close()
 
     def createNoteType(self, noteTypeName, front, back, css):
         # Create empty note type

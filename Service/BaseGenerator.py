@@ -1,15 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
 import logging
-from aqt.utils import showInfo
-
 from abc import ABC, abstractmethod
 from typing import List
-
-from ..Importer import Importer
-from ..Ui.UiGenerator import UiGenerator
 
 from .BaseDictionary import BaseDictionary
 from .Enum.Translation import Translation
@@ -17,13 +11,14 @@ from .Enum.Status import Status
 from .Constant import Constant
 from .Enum.Card import Card
 
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
+
+import os
+import csv
+csv.field_size_limit(2**30)
+
 
 class BaseGenerator(ABC):
-
-    def __init__(self):
-        self.delimiter: str = "==="
-        self.formattedWords: List[str] = []
-        self.cards: List[Card] = []
 
     @abstractmethod
     def getFormattedWords(self, word: str, translation: Translation) -> List[str]:
@@ -34,87 +29,6 @@ class BaseGenerator(ABC):
     def generateCard(self, formattedWord: str, translation: Translation, mediaDir: str, isOnline: bool) -> Card:
         """Generate a flashcard from an input word"""
         raise NotImplementedError
-
-    def generateCards(self, words: List[str], translation: Translation, mediaDir: str, isOnline: bool, allWordTypes: bool, csvFilePath: str, ui: UiGenerator, importer: Importer) -> List[Card]:
-        """Generate flashcards from input words"""
-
-        cardCount: int = 0
-        failureCount: int = 0
-
-        if not allWordTypes and translation.source == "Enlgish":
-            for value in words:
-                formattedWord = "{}{}{}{}{}".format(
-                    value, self.delimiter, value, self.delimiter, value)
-                card = self.generateCard(
-                    formattedWord, mediaDir, translation, isOnline)
-
-                if card.status == Status.SUCCESS:
-                    cardCount += 1
-                    ui.outputTxt.setPlainText(
-                        ui.outputTxt.toPlainText() + "{}\n".format(card.meaning))
-                    self.cards.append(card)
-                else:
-                    failureCount += 1
-                    ui.failureTxt.setPlainText(ui.failureTxt.toPlainText() + "{} -> {}\n".format(
-                        formattedWord, card.comment))
-        else:
-            for value in words:
-                self.formattedWords = self.getFormattedWords(
-                    value, translation)
-                if len(self.formattedWords) > 0:
-                    for formattedWord in self.formattedWords:
-                        card = self.generateCard(
-                            formattedWord, mediaDir, translation, isOnline)
-
-                        if card.status == Status.SUCCESS:
-                            cardCount += 1
-                            ui.outputTxt.setPlainText(
-                                ui.outputTxt.toPlainText() + "{}\n".format(card.meaning))
-                            self.cards.append(card)
-                        else:
-                            failureCount += 1
-                            ui.failureTxt.setPlainText(ui.failureTxt.toPlainText(
-                            ) + "{} -> {}\n".format(formattedWord, card.comment))
-                else:
-                    ui.failureTxt.setPlainText(
-                        ui.failureTxt.toPlainText() + "{} -> word not found\n".format(value))
-
-        cardLines: list[str] = []
-        for card in self.cards:
-            cardContent = "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}".format(
-                card.oriWord,
-                Constant.TAB,
-                card.wordType,
-                Constant.TAB,
-                card.phonetic,
-                Constant.TAB,
-                card.example,
-                Constant.TAB,
-                card.sounds,
-                Constant.TAB,
-                card.image,
-                Constant.TAB,
-                card.meaning,
-                Constant.TAB,
-                card.copyright,
-                Constant.TAB,
-                card.tag + "\n")
-            cardLines.append(cardContent)
-            logging.info("card content = {}".format(
-                cardContent).encode("utf-8"))
-
-        try:
-            os.remove(csvFilePath)
-        except OSError:
-            logging.info("{} does not exist!".format(csvFilePath))
-            pass
-        with open(csvFilePath, 'w', encoding='utf-8') as file:
-            file.writelines(cardLines)
-
-        showInfo("""Completed 100%\nInput: {}\nOutput: {}\nFailure: {}\n""".format(len(words), cardCount, failureCount))
-
-        # Show Importer Dialog
-        importer.show()
 
     def initializeCard(self, formattedWord: str, translation: Translation):
 
@@ -153,7 +67,7 @@ class BaseGenerator(ABC):
 
         return card
 
-    def coupleDictionariesCard(self, formattedWord: str, translation: Translation, mediaDir: str, isOnline: bool, card: Card, mainDict: BaseDictionary, meaningDict: BaseDictionary) -> Card:
+    def multipleDictionariesCard(self, formattedWord: str, translation: Translation, mediaDir: str, isOnline: bool, card: Card, mainDict: BaseDictionary, meaningDict: BaseDictionary) -> Card:
 
         if mainDict.search(formattedWord, translation) or meaningDict.search(formattedWord, translation):
             card.status = Status.CONNECTION_FAILED
@@ -179,3 +93,134 @@ class BaseGenerator(ABC):
         card.tag = mainDict.getTag()
 
         return card
+
+
+class Worker(QObject):
+
+    # Create a worker class to run in background using QThread
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)
+    cardStr = pyqtSignal(str)
+    failureStr = pyqtSignal(str)
+
+    def __init__(self, generator, words, translation, mediaDir, isOnline, allWordTypes, ankiCsvPath):
+        super().__init__()
+
+        self.delimiter: str = "==="
+        self.formattedWords: List[str] = []
+        self.cards: List[Card] = []
+
+        self.generator: BaseGenerator = generator
+        self.words: List[str] = words
+        self.translation: Translation = translation
+        self.mediaDir: str = mediaDir
+        self.isOnline: bool = isOnline
+        self.allWordTypes: bool = allWordTypes
+        self.csvFilePath: str = ankiCsvPath
+
+    def generateCardsBackground(self) -> List[Card]:
+        """Generate flashcards from input words"""
+
+        total: int = 0
+        proceeded: int = 0
+        cardCount: int = 0
+        failureCount: int = 0
+
+        total = len(self.words)
+        if not self.allWordTypes and self.translation.source == "Enlgish":
+            for value in self.words:
+                formattedWord = "{}{}{}{}{}".format(
+                    value, self.delimiter, value, self.delimiter, value)
+                card = self.generator.generateCard(
+                    formattedWord, self.mediaDir, self.translation, self.isOnline)
+                proceeded = proceeded + 1
+                percent = (proceeded / total) * 100
+                self.progress.emit(percent)
+                # TODO: remove logging
+                logging.info("progress bg 1: {}".format(percent))
+
+                if card.status == Status.SUCCESS:
+                    cardCount += 1
+                    self.cards.append(card)
+                    self.cardStr.emit(card.meaning)
+                    # TODO: remove logging
+                    logging.info("card.meaning bg 1: {}".format(
+                        card.meaning).encode("utf-8"))
+                else:
+                    failureCount += 1
+                    self.failureStr.emit(
+                        "{} -> {}".format(formattedWord, card.comment))
+                    # TODO: remove logging
+                    logging.info("failureStr bg 1: {}".format(
+                        "{} -> {}".format(formattedWord, card.comment)))
+        else:
+            for value in self.words:
+                self.formattedWords = self.generator.getFormattedWords(
+                    value, self.translation)
+                if len(self.formattedWords) > 0:
+                    for formattedWord in self.formattedWords:
+                        card = self.generator.generateCard(
+                            formattedWord, self.mediaDir, self.translation, self.isOnline)
+                        proceeded = proceeded + 1
+                        percent = (proceeded / total) * 100
+                        self.progress.emit(percent)
+                        # TODO: remove logging
+                        logging.info("progress bg 2: {}".format(percent))
+
+                        if card.status == Status.SUCCESS:
+                            cardCount += 1
+                            self.cards.append(card)
+                            self.cardStr.emit(card.meaning)
+                            # TODO: remove logging
+                            logging.info(
+                                "card.meaning bg 2: {}".format(card.meaning).encode("utf-8"))
+                        else:
+                            failureCount += 1
+                            self.failureStr.emit(
+                                "{} -> {}".format(formattedWord, card.comment))
+                            # TODO: remove logging
+                            logging.info("failureStr bg 2: {}".format(
+                                "{} -> {}".format(formattedWord, card.comment)))
+                else:
+                    failureCount += 1
+                    self.failureStr.emit(
+                        "{} -> word not found".format(value))
+                    # TODO: remove logging
+                    logging.info("failureStr bg 3: {}".format(
+                        "{} -> word not found".format(value)))
+
+        cardLines: list[str] = []
+        for card in self.cards:
+            cardContent = "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}".format(
+                card.oriWord,
+                Constant.TAB,
+                card.wordType,
+                Constant.TAB,
+                card.phonetic,
+                Constant.TAB,
+                card.example,
+                Constant.TAB,
+                card.sounds,
+                Constant.TAB,
+                card.image,
+                Constant.TAB,
+                card.meaning,
+                Constant.TAB,
+                card.copyright,
+                Constant.TAB,
+                card.tag + "\n")
+            cardLines.append(cardContent)
+            logging.info("card content = {}".format(
+                cardContent).encode("utf-8"))
+
+        try:
+            os.remove(self.csvFilePath)
+        except OSError:
+            logging.info("{} does not exist!".format(self.csvFilePath))
+            pass
+        with open(self.csvFilePath, 'w', encoding='utf-8') as file:
+            file.writelines(cardLines)
+
+        # Finished
+        self.progress.emit(100)
+        self.finished.emit()

@@ -35,7 +35,7 @@ class UiImporter(object):
         font.setBold(False)
         font.setWeight(50)
         self.importProgressBar.setFont(font)
-        self.importProgressBar.setProperty("value", 1)
+        self.importProgressBar.setProperty("value", 0)
         self.importProgressBar.setObjectName("importProgressBar")
         self.deckNameLbl = QtWidgets.QLabel(Dialog)
         self.deckNameLbl.setGeometry(QtCore.QRect(20, 18, 81, 16))
