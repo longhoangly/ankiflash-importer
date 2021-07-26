@@ -127,13 +127,13 @@ class Worker(QObject):
         failureCount: int = 0
 
         total = len(self.words)
-        if not self.allWordTypes and self.translation.source == "Enlgish":
+        if not self.allWordTypes and self.translation.source == "English":
             for value in self.words:
                 formattedWord = "{}{}{}{}{}".format(
                     value, self.delimiter, value, self.delimiter, value)
                 card = self.generator.generateCard(
                     formattedWord, self.mediaDir, self.translation, self.isOnline)
-                proceeded = proceeded + 1
+                proceeded += 1
                 percent = (proceeded / total) * 100
                 self.progress.emit(percent)
                 # TODO: remove logging
@@ -157,6 +157,7 @@ class Worker(QObject):
             for value in self.words:
                 self.formattedWords = self.generator.getFormattedWords(
                     value, self.translation)
+                total += len(self.formattedWords) - 1
                 if len(self.formattedWords) > 0:
                     for formattedWord in self.formattedWords:
                         card = self.generator.generateCard(

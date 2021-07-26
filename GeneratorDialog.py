@@ -99,8 +99,8 @@ class GeneratorDialog(QDialog):
             showInfo("Empty input. No word found. Please check your input.")
             return
 
-        # Increase to 10% as a processing signal to user
-        self.ui.generateProgressBar.setProperty("value", 10)
+        # Increase to 2% as a processing signal to user
+        self.ui.generateProgressBar.setValue(2)
         self.ui.generateBtn.setDisabled(True)
 
         # Clean up output before generating cards
@@ -148,10 +148,11 @@ class GeneratorDialog(QDialog):
 
     def finishedGenerationProgress(self):
         self.ui.generateBtn.setEnabled(True)
-        btnSelected = QMessageBox.question(None, "Info", "Completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}\n\nDo you want to import generated cards?".format(len(self.words), self.cardCount, self.failureCount),
+        btnSelected = QMessageBox.question(None, "Info", "Do you want to import generated cards now?\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(len(self.words), self.cardCount, self.failureCount),
                                            QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if btnSelected == QMessageBox.Yes:
             # Show Importer Dialog
+            self.importer.ui.importProgressBar.setValue(0)
             self.importer.show()
 
     def selectedRadio(self, groupBox: QGroupBox) -> str:
@@ -165,21 +166,26 @@ class GeneratorDialog(QDialog):
 
     def reportProgress(self, percent):
         logging.info("progress: {}".format(percent))
-        self.ui.generateProgressBar.setProperty("value", percent)
+        self.ui.generateProgressBar.setValue(percent)
 
     def reportCard(self, cardStr):
         logging.info("cardStr: {}".format(cardStr).encode("utf-8"))
         currentText = self.ui.outputTxt.toPlainText()
-        self.ui.outputTxt.setPlainText("{}\n{}".format(currentText, cardStr))
+        if currentText:
+            currentText += "\n"
+        self.ui.outputTxt.setPlainText("{}{}".format(currentText, cardStr))
 
     def reportFailure(self, failureStr):
         logging.info("failureStr: {}".format(failureStr))
         currentText = self.ui.failureTxt.toPlainText()
+        if currentText:
+            currentText += "\n"
         self.ui.failureTxt.setPlainText(
-            "{}\n{}".format(currentText, failureStr))
+            "{}{}".format(currentText, failureStr))
 
     def btnImporterClicked(self):
         if self.ui.outputTxt.toPlainText():
+            self.importer.ui.importProgressBar.setValue(0)
             self.importer.show()
         else:
             showInfo("Please check your output cards, nothing to import!")
