@@ -35,7 +35,7 @@ class JishoDictionary(BaseDictionary):
 
     def isInvalidWord(self) -> bool:
         """Check if the input word exists in dictionary?"""
-        
+
         if Constant.JISHO_WORD_NOT_FOUND in self.doc.parent.text:
             return True
 
@@ -49,7 +49,7 @@ class JishoDictionary(BaseDictionary):
             wordTypes = []
 
             for element in elements:
-                wType = HtmlHelper.getString(element)
+                wType = element.get_text().strip()
                 if wType and "Wikipedia definition" != wType and "Other forms" != wType:
                     wordTypes.add("[" + wType + "]")
 
@@ -67,7 +67,7 @@ class JishoDictionary(BaseDictionary):
                 break
             else:
                 lowerWord = self.oriWord.lower()
-                example = HtmlHelper.getString(example).lower()
+                example = example.get_text().strip().lower()
 
                 if lowerWord in example:
                     example = example.replace(
@@ -85,7 +85,7 @@ class JishoDictionary(BaseDictionary):
         self.ankiDir = ankiDir
         self.imageLink = ""
         self.image = "<a href=\"https://www.google.com/search?biw=1280&bih=661&tbm=isch&sa=1&q={}\" style=\"font-size: 15px; color: blue\">Search images by the word</a>".format(
-            self.word)
+            self.oriWord)
         return self.image
 
     def getSounds(self, ankiDir: str, isOnline: bool) -> List[str]:
@@ -124,22 +124,22 @@ class JishoDictionary(BaseDictionary):
             for meanElm in meanElms:
                 if "meaning-tags" in meanElm["class"]:
                     meaning = Meaning()
-                    meaning.setWordType(meanElm.text())
-                    meanings.add(meaning)
+                    meaning.wordType = meanElm.text
+                    meanings.append(meaning)
 
                 if "meaning-wrapper" in meanElm["class"]:
                     meaning = Meaning()
                     mean = HtmlHelper.getChildElement(
                         meanElm, ".meaning-meaning", 0)
                     if mean:
-                        meaning.meaning = HtmlHelper.getString(mean)
+                        meaning.meaning = mean.get_text().strip()
 
                     examples = []
                     exampleElms = meanElm.select(".sentence")
                     for exampleElm in exampleElms:
                         if exampleElm:
                             examples.append(
-                                exampleElm.html().replaceAll("\n", ""))
+                                exampleElm.text.replace("\n", ""))
 
                     meaning.examples = examples
                     meanings.append(meaning)

@@ -47,7 +47,7 @@ class JDictDictionary(BaseDictionary):
         if not self.wordType:
             element: Tag = HtmlHelper.getDocElement(
                 self.doc, "label[class*=word-type]", 0)
-            self.wordType = "(" + HtmlHelper.getString(element) + ")" if element else ""
+            self.wordType = "(" + element.get_text().strip() + ")" if element else ""
         return self.wordType
 
     def getExample(self) -> str:
@@ -84,7 +84,7 @@ class JDictDictionary(BaseDictionary):
     def getImage(self, ankiDir: str, isOnline: bool) -> str:
         self.ankiDir = ankiDir
         googleImage = "<a href=\"https://www.google.com/search?biw=1280&bih=661&tbm=isch&sa=1&q={}\" style=\"font-size: 15px; color: blue\">Search images by the word</a>".format(
-            self.word)
+            self.oriWord)
 
         self.imageLink = HtmlHelper.getAttribute(
             self.doc, "a.fancybox.img", 0, "href")
@@ -139,7 +139,7 @@ class JDictDictionary(BaseDictionary):
         wordType: Tag = HtmlHelper.getChildElement(
             meanGroup, "label[class*=word-type]", 0)
         if wordType:
-            meaning.wordType = HtmlHelper.getString(wordType)
+            meaning.wordType = wordType.get_text().strip()
         meanings.append(meaning)
 
         meanElms = meanGroup.select("ol.ol-decimal>li")
@@ -160,7 +160,7 @@ class JDictDictionary(BaseDictionary):
         kanji = HtmlHelper.getChildOuterHtml(
             meanGroup, "#search-kanji-list", 0)
         if not kanji:
-            meaning.meaning = kanji.replaceAll("\n", "")
+            meaning.meaning = kanji.replace("\n", "")
 
         exampleElms = meanGroup.select(
             "#word-detail-info>ul.ul-disc>li>u,#word-detail-info>ul.ul-disc>li>p")

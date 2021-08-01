@@ -78,9 +78,9 @@ class DictHelper:
             detailLink: Tag = HtmlHelper.getChildElement(
                 wordElem, ".light-details_link", 0)
 
-            if foundWordElm and word.lower() in HtmlHelper.getString(foundWordElm).lower() and detailLink and not detailLink.text:
+            if foundWordElm and word.lower() in foundWordElm.get_text().strip().lower() and detailLink and not detailLink.text:
                 detailLinkEls: list[str] = detailLink.attr("href").split("/")
-                jDictWords.append(HtmlHelper.getString(foundWordElm)
+                jDictWords.append(foundWordElm.get_text().strip()
                                   + Constant.SUB_DELIMITER
                                   + HtmlHelper.urlDecode(detailLinkEls[detailLinkEls.length - 1])
                                   + Constant.SUB_DELIMITER
@@ -116,7 +116,7 @@ class DictHelper:
                     for pos in poss:
                         pos.decompose()
                     for span in li.select("span"):
-                        if HtmlHelper.getString(span).lower() == word.lower():
+                        if span.get_text().strip().lower() == word.lower():
                             wordId = DictHelper.getFileName(
                                 li.select_one("a").get("href"))
                             foundWords.append(

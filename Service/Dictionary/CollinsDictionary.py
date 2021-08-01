@@ -79,7 +79,7 @@ class CollinsDictionary(BaseDictionary):
         self.ankiDir = ankiDir
         self.imageLink = ""
         self.image = "<a href=\"https://www.google.com/search?biw=1280&bih=661&tbm=isch&sa=1&q={}\" style=\"font-size: 15px; color: blue\">Search images by the word</a>".format(
-            self.word)
+            self.oriWord)
         return self.image
 
     def getSounds(self, ankiDir: str, isOnline: bool) -> List[str]:

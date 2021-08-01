@@ -49,14 +49,14 @@ class HtmlHelper:
     @staticmethod
     def getText(doc: BeautifulSoup, selector: str, index: int) -> str:
         element = HtmlHelper.getDocElement(doc, selector, index)
-        return HtmlHelper.getString(element) if element else ""
+        return element.get_text().strip() if element else ""
 
     @staticmethod
     def getTexts(doc: BeautifulSoup, selector: str) -> List[str]:
         elements = doc.select(selector)
         texts = []
         for element in elements:
-            texts.append(HtmlHelper.getString(element))
+            texts.append(element.get_text().strip())
         return texts
 
     @staticmethod
@@ -129,14 +129,12 @@ class HtmlHelper:
                     "<h4 class=\"content-type\" style='margin-left: -20px;'>{}</h4>".format(mean.wordType))
 
             if mean.meaning:
-                logging.info("meaning: {}".format(mean.meaning).encode("utf-8"))
                 str_list.append(
                     "<li class=\"content-meaning\">{}</li>".format(mean.meaning))
 
             if "list" in str(type(mean.examples)) and len(mean.examples) > 0:
                 str_list.append("<ul class=\"content-circle\">")
                 for example in mean.examples:
-                    logging.info("example: {}".format(example).encode("utf-8"))
                     str_list.append(
                         "<li class=\"content-example\">{}</li>".format(example))
                 str_list.append("</ul>")
@@ -145,11 +143,3 @@ class HtmlHelper:
         str_list.append("</div>")
 
         return "".join(str_list)
-
-    @staticmethod
-    def getString(element: Tag) -> str:
-        if element.string:
-            return element.string
-        else:
-            texts = element.findAll(text=True)
-            return u" ".join(t.strip() for t in texts)

@@ -48,8 +48,7 @@ class OxfordDictionary(BaseDictionary):
     def getWordType(self) -> str:
         if not self.wordType:
             self.wordType = HtmlHelper.getText(self.doc, "span.pos", 0)
-
-        self.wordType = "(" + self.wordType + ")" if self.wordType else ""
+            self.wordType = "(" + self.wordType + ")" if self.wordType else ""
         return self.wordType
 
     def getExample(self) -> str:
@@ -86,7 +85,7 @@ class OxfordDictionary(BaseDictionary):
     def getImage(self, ankiDir: str, isOnline: bool) -> str:
         self.ankiDir = ankiDir
         googleImage = "<a href=\"https://www.google.com/search?biw=1280&bih=661&tbm=isch&sa=1&q={}\" style=\"font-size: 15px; color: blue\">Search images by the word</a>".format(
-            self.word)
+            self.oriWord)
 
         self.imageLink = HtmlHelper.getAttribute(
             self.doc, "a.topic", 0, "href")
@@ -137,17 +136,6 @@ class OxfordDictionary(BaseDictionary):
         self.getPhonetic()
 
         meanings: list[Meaning] = []
-        wordFamilyElm = self.doc.select_one("span.unbox[unbox=\"wordfamily\"]")
-        if wordFamilyElm:
-            wordFamilyElms = wordFamilyElm.select("span.p")
-
-            wordFamilies = []
-            for wordFamily in wordFamilyElms:
-                wordFamilies.append(HtmlHelper.getString(wordFamily))
-
-            meaning = Meaning("", wordFamilies)
-            meaning.wordType = "Word Family"
-            meanings.append(meaning)
 
         wordFormElm = self.doc.select_one("span.unbox[unbox=\"verbforms\"]")
         if wordFormElm:
@@ -155,7 +143,7 @@ class OxfordDictionary(BaseDictionary):
 
             wordForms = []
             for wordForm in wordFormElms:
-                wordForms.append(HtmlHelper.getString(wordForm))
+                wordForms.append(wordForm.get_text().strip())
 
             meaning = Meaning("", wordForms)
             meaning.wordType = "Verb Forms"
@@ -173,14 +161,14 @@ class OxfordDictionary(BaseDictionary):
                 subDefLink = subDefElm.select_one(".Ref")
                 if subDefPrefix and subDefLink and "full entry" in subDefLink.get("title"):
                     examples.append("<a href=\"{}\">{} {}</a>".format(subDefLink.get(
-                        "href"), HtmlHelper.getString(subDefPrefix).upper(), HtmlHelper.getString(subDefLink)))
+                        "href"), subDefPrefix.get_text().strip().upper(), subDefLink.get_text().strip()))
 
             exampleElms = meanElem.select(".x")
             for exampleElem in exampleElms:
-                examples.append(HtmlHelper.getString(exampleElem))
+                examples.append(exampleElem.get_text().strip())
 
             meanings.append(
-                Meaning(HtmlHelper.getString(defElm) if defElm else "", examples))
+                Meaning(defElm.get_text().strip() if defElm else "", examples))
 
             extraExample = HtmlHelper.getChildElement(
                 meanElem, "span.unbox[unbox=\"extra_examples\"]", 0)
@@ -189,25 +177,25 @@ class OxfordDictionary(BaseDictionary):
 
                 examples = []
                 for exampleElm in exampleElms:
-                    examples.append(HtmlHelper.getString(exampleElm))
+                    examples.append(exampleElm.get_text().strip())
 
                 meaning = Meaning("", examples)
                 meaning.wordType = "Extra Examples"
                 meanings.append(meaning)
 
-        wordOriginElm = self.doc.select_one(
-            "span.unbox[unbox=\"wordorigin\"]")
-        if wordOriginElm:
-            originElm = wordOriginElm.select_one(".p")
-            if originElm:
-                wordOrigins = []
-                wordOrigins.append(HtmlHelper.getString(originElm))
+        wordFamilyElm = self.doc.select_one("span.unbox[unbox=\"wordfamily\"]")
+        if wordFamilyElm:
+            wordFamilyElms = wordFamilyElm.select("span.p")
 
-                meaning = Meaning("", wordOrigins)
-                meaning.wordType = "Word Origin"
-                meanings.append(meaning)
+            wordFamilies = []
+            for wordFamily in wordFamilyElms:
+                wordFamilies.append(wordFamily.get_text().strip())
 
-        return HtmlHelper.buildMeaning(self.word, self.wordType, self.phonetic, meanings)
+            meaning = Meaning("", wordFamilies)
+            meaning.wordType = "Word Family"
+            meanings.append(meaning)
+
+        return HtmlHelper.buildMeaning(self.oriWord, self.wordType, self.phonetic, meanings)
 
     def getDictionaryName(self) -> str:
         return "Oxford Advanced Learner's Dictionary"

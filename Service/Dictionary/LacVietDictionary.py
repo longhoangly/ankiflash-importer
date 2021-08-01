@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from typing import List
-from bs4.element import Tag
 
 from ..Enum.Meaning import Meaning
 from ..Enum.Translation import Translation
@@ -43,7 +42,7 @@ class LacVietDictionary(BaseDictionary):
 
     def isInvalidWord(self) -> bool:
         """Check if the input word exists in dictionary?"""
-        
+
         words = self.doc.select("div.w.fl")
         if not words:
             return True
@@ -53,13 +52,14 @@ class LacVietDictionary(BaseDictionary):
 
     def getWordType(self) -> str:
         if not self.wordType:
-            element = HtmlHelper.getElement(self.doc, "div.m5t.p10lr", 0)
+            element = HtmlHelper.getDocElement(self.doc, "div.m5t.p10lr", 0)
             self.wordType = element.text.replace("|Tất cả", "").replace(
                 "|Từ liên quan", "") if element else ""
+            self.wordType = " | ".join(self.wordType.split("|"))
 
             if not self.wordType:
                 elements = HtmlHelper.getTexts(self.doc, "div.m5t.p10lr")
-                self.wordType = "".join(" | ", elements) if len(
+                self.wordType = " | ".join(elements) if len(
                     elements) > 0 else ""
 
             self.wordType = "(" + self.wordType + ")" if self.wordType else ""
@@ -94,7 +94,7 @@ class LacVietDictionary(BaseDictionary):
         self.ankiDir = ankiDir
         self.imageLink = ""
         self.image = "<a href=\"https://www.google.com/search?biw=1280&bih=661&tbm=isch&sa=1&q={}\" style=\"font-size: 15px; color: blue\">Search images by the word</a>".format(
-            self.word)
+            self.oriWord)
         return self.image
 
     def getSounds(self, ankiDir: str, isOnline: bool) -> List[str]:
@@ -128,46 +128,44 @@ class LacVietDictionary(BaseDictionary):
         self.getWordType()
         self.getPhonetic()
 
-        meanings: List[Meaning] = []
+        meanings: list[Meaning] = []
         meanGroups = self.doc.select("div[id*=partofspeech]")
 
         for meanGroup in meanGroups:
-            meanElms = meanGroup.select("div")
-            meanCount = len(meanGroup.select(".m"))
-            if str(Tag(meanGroup).get("id")).lower() == "partofspeech_100":
-                meanElms.addAll(meanGroup.getElementsByTag("a"))
+            if meanGroup.get("id").lower() != "partofspeech_100":
+                meanElms: list = meanGroup.select("div")
+                meanCount = len(meanGroup.select(".m"))
 
-            meaning = Meaning()
-            examples = []
-            firstMeaning = True
+                meaning = Meaning()
+                examples = []
+                firstMeaning = True
 
-            for meanElm in meanElms:
-                if "ub" in meanElm["class"]:
-                    if meanCount > 0:
-                        # has meaning = > get text
-                        meaning.setWordType(meanElm.text())
-                    else:
-                        # only type = > get inner html
-                        meaning.setWordType(
-                            meanElm.html().replaceAll("\n", ""))
-                elif "m" in meanElm["class"]:
-                    # from the second meaning tag
-                    if not firstMeaning:
-                        meaning.setExamples(examples)
-                        meanings.add(meaning)
-                        # reset value
-                        meaning = Meaning()
-                        examples = []
+                for meanElm in meanElms:
+                    if meanElm.has_attr("class") and "ub" in meanElm["class"]:
+                        if meanCount > 0:
+                            # has meaning -> get text
+                            meaning.wordType = meanElm.get_text().strip()
+                        else:
+                            # only type -> get inner html
+                            meaning.wordType = meanElm.get_text().strip().replace("\n", "")
+                    elif meanElm.has_attr("class") and "m" in meanElm["class"]:
+                        # from the second meaning tag
+                        if not firstMeaning:
+                            meaning.examples = examples
+                            meanings.append(meaning)
+                            # reset value
+                            meaning = Meaning()
+                            examples = []
 
-                    meaning.meaning = meanElm.text
-                    firstMeaning = False
-                elif "e" in meanElm["class"] or "em" in meanElm["class"] or "im" in meanElm["class"] or "id" in meanElm["class"] or "href" in meanElm["class"]:
-                    examples.add(meanElm.text())
+                        meaning.meaning = meanElm.get_text().strip()
+                        firstMeaning = False
+                    elif meanElm.has_attr("class") and ("e" in meanElm["class"] or "em" in meanElm["class"] or "im" in meanElm["class"] or "id" in meanElm["class"] or "href" in meanElm["class"]):
+                        examples.append(meanElm.get_text().strip())
 
-        self.meaning.examples = examples
-        meanings.add(meaning)
+                meaning.examples = examples
+                meanings.append(meaning)
 
-        return HtmlHelper.buildMeaning(self.word, self.wordType, self.phonetic, meanings)
+        return HtmlHelper.buildMeaning(self.oriWord, self.wordType, self.phonetic, meanings)
 
     def getDictionaryName(self) -> str:
         return "Lac Viet Dictionary"

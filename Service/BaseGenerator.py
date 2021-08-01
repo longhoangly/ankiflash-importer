@@ -78,14 +78,18 @@ class BaseGenerator(ABC):
             card.comment = Constant.WORD_NOT_FOUND
             return card
 
-        card.wordType = mainDict.getWordType()
+        if translation.equals(Constant.EN_VN):
+            card.wordType = meaningDict.getWordType()
+        else:
+            card.wordType = mainDict.getWordType()
+
         card.phonetic = mainDict.getPhonetic()
         card.example = mainDict.getExample()
 
         card.sounds = mainDict.getSounds(mediaDir, isOnline)
         card.image = mainDict.getImage(mediaDir, isOnline)
 
-        card.copyright = Constant.COPYRIGHT.format("".join(
+        card.copyright = Constant.COPYRIGHT.format("{}{}{}".format(
             mainDict.getDictionaryName(), ", and ", meaningDict.getDictionaryName()))
 
         # Meaning is get from meaning dictionary
@@ -136,23 +140,15 @@ class Worker(QObject):
                 proceeded += 1
                 percent = (proceeded / total) * 100
                 self.progress.emit(percent)
-                # TODO: remove logging
-                logging.info("progress bg 1: {}".format(percent))
 
                 if card.status == Status.SUCCESS:
                     cardCount += 1
                     self.cards.append(card)
                     self.cardStr.emit(card.meaning)
-                    # TODO: remove logging
-                    logging.info("card.meaning bg 1: {}".format(
-                        card.meaning).encode("utf-8"))
                 else:
                     failureCount += 1
                     self.failureStr.emit(
                         "{} -> {}".format(formattedWord, card.comment))
-                    # TODO: remove logging
-                    logging.info("failureStr bg 1: {}".format(
-                        "{} -> {}".format(formattedWord, card.comment)))
         else:
             for value in self.words:
                 self.formattedWords = self.generator.getFormattedWords(
@@ -165,30 +161,19 @@ class Worker(QObject):
                         proceeded = proceeded + 1
                         percent = (proceeded / total) * 100
                         self.progress.emit(percent)
-                        # TODO: remove logging
-                        logging.info("progress bg 2: {}".format(percent))
 
                         if card.status == Status.SUCCESS:
                             cardCount += 1
                             self.cards.append(card)
                             self.cardStr.emit(card.meaning)
-                            # TODO: remove logging
-                            logging.info(
-                                "card.meaning bg 2: {}".format(card.meaning).encode("utf-8"))
                         else:
                             failureCount += 1
                             self.failureStr.emit(
                                 "{} -> {}".format(formattedWord, card.comment))
-                            # TODO: remove logging
-                            logging.info("failureStr bg 2: {}".format(
-                                "{} -> {}".format(formattedWord, card.comment)))
                 else:
                     failureCount += 1
                     self.failureStr.emit(
                         "{} -> word not found".format(value))
-                    # TODO: remove logging
-                    logging.info("failureStr bg 3: {}".format(
-                        "{} -> word not found".format(value)))
 
         cardLines: list[str] = []
         for card in self.cards:

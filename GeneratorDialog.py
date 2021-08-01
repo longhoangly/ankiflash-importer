@@ -149,7 +149,7 @@ class GeneratorDialog(QDialog):
     def finishedGenerationProgress(self):
         self.ui.generateBtn.setEnabled(True)
         btnSelected = QMessageBox.question(None, "Info", "Do you want to import generated cards now?\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(len(self.words), self.cardCount, self.failureCount),
-                                           QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                                           QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
         if btnSelected == QMessageBox.Yes:
             # Show Importer Dialog
             self.importer.ui.importProgressBar.setValue(0)
