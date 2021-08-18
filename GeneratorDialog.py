@@ -4,7 +4,8 @@
 from aqt.utils import showInfo
 
 from PyQt5.QtWidgets import QDialog, QGroupBox, QMessageBox, QRadioButton
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, Qt
+from PyQt5.QtGui import QPalette
 
 from .Ui.UiGenerator import UiGenerator
 from .ImporterDialog import ImporterDialog
@@ -17,6 +18,7 @@ from .Service.Card.SpanishGenerator import SpanishGenerator
 from .Service.Card.JapaneseGenerator import JapaneseGenerator
 from .Service.Card.FrenchGenerator import FrenchGenerator
 from .Service.Card.EnglishGenerator import EnglishGenerator
+from .Service.Constant import Constant
 
 from os.path import join
 import logging
@@ -57,6 +59,13 @@ class GeneratorDialog(QDialog):
         # Handle clicks on Progress bar
         self.ui.importBtn.clicked.connect(self.btnImporterClicked)
 
+        self.getSupportedLanguages()
+        # Handle user clicks on translation
+        self.ui.source1.clicked.connect(self.getSupportedLanguages)
+        self.ui.source2.clicked.connect(self.getSupportedLanguages)
+        self.ui.source3.clicked.connect(self.getSupportedLanguages)
+        self.ui.source4.clicked.connect(self.getSupportedLanguages)
+
     def inputTextChanged(self):
         words = self.ui.inputTxt.toPlainText().split("\n")
         # Filter words list, only get non-empty words
@@ -78,17 +87,17 @@ class GeneratorDialog(QDialog):
         self.ui.failureLbl.setText("Failure: {}".format(len(self.failures)))
 
     def initializeGenerator(self, translation: Translation):
-        if translation.source == "English":
+        if translation.source == Constant.ENGLISH:
             self.generator = EnglishGenerator()
-        elif translation.source == "Japanese":
+        elif translation.source == Constant.JAPANESE:
             self.generator = JapaneseGenerator()
-        elif translation.source == "Vietnamese":
+        elif translation.source == Constant.VIETNAMESE:
             self.generator = VietnameseGenerator()
-        elif translation.source == "French":
+        elif translation.source == Constant.FRENCH:
             self.generator = FrenchGenerator()
-        elif translation.source == "Spanish":
+        elif translation.source == Constant.SPANISH:
             self.generator = SpanishGenerator()
-        elif translation.source == "Chinese":
+        elif Constant.CHINESE in translation.source:
             self.generator = ChineseGenerator()
 
     def btnGenerateClicked(self):
@@ -107,10 +116,12 @@ class GeneratorDialog(QDialog):
         self.ui.outputTxt.setPlainText("")
         self.ui.failureTxt.setPlainText("")
 
+        # Get translation options
         source = self.selectedRadio(self.ui.sourceBox)
         target = self.selectedRadio(self.ui.translatedToBox)
         self.translation = Translation(source, target)
 
+        # Get generating options
         self.allWordTypes = self.ui.allWordTypes.isChecked()
         self.isOnline = self.ui.isOnline.isChecked()
 
@@ -189,3 +200,33 @@ class GeneratorDialog(QDialog):
             self.importer.show()
         else:
             showInfo("Please check your output cards, nothing to import!")
+
+    def getSupportedLanguages(self):
+        source = self.selectedRadio(self.ui.sourceBox)
+        supportTranslations = {Constant.ENGLISH: [Constant.ENGLISH, Constant.VIETNAMESE, Constant.CHINESE_TD, Constant.CHINESE_SP, Constant.FRENCH, Constant.JAPANESE],
+                               Constant.VIETNAMESE: [Constant.ENGLISH, Constant.FRENCH, Constant.JAPANESE],
+                               Constant.FRENCH: [Constant.ENGLISH, Constant.VIETNAMESE],
+                               Constant.JAPANESE: [Constant.ENGLISH, Constant.VIETNAMESE]}
+
+        targetLanguages = supportTranslations.get(source)
+        logging.info("targetLanguages {}".format(targetLanguages))
+
+        radioBtns = [radio for radio in self.ui.translatedToBox.children(
+        ) if isinstance(radio, QRadioButton)]
+
+        for radio in radioBtns:
+            if radio.text() == Constant.ENGLISH:
+                radio.click()
+
+            if radio.text() in targetLanguages:
+                radio.setEnabled(True)
+                self.changeRadioColor(radio, True)
+            else:
+                radio.setEnabled(False)
+                self.changeRadioColor(radio, False)
+
+    def changeRadioColor(self, radio: QRadioButton, isEnabled: bool):
+        if isEnabled:
+            radio.setStyleSheet(self.ui.source1.styleSheet())
+        else:
+            radio.setStyleSheet("color:gray")

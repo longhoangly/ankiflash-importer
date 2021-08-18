@@ -63,6 +63,7 @@ class Constant:
     ENGLISH = "English"
     FRENCH = "French"
     VIETNAMESE = "Vietnamese"
+    CHINESE = "Chinese"
     CHINESE_TD = "Chinese (Traditional)"
     CHINESE_SP = "Chinese (Simplified)"
     JAPANESE = "Japanese"
