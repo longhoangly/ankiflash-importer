@@ -14,17 +14,17 @@ class Card:
         self.wordId: str = wordId
         self.oriWord: str = oriWord
 
-        self.wordType: str
-        self.phonetic: str
-        self.example: str
+        self.wordType: str = ""
+        self.phonetic: str = ""
+        self.example: str = ""
 
-        self.image: str
-        self.sounds: str
-        self.status: str
+        self.image: str = ""
+        self.sounds: str = ""
+        self.status: str = ""
 
-        self.meaning: str
-        self.copyright: str
-        self.comment: str
-        self.tag: str
+        self.meaning: str = ""
+        self.copyright: str = ""
+        self.comment: str = ""
+        self.tag: str = ""
 
         self.translation: Translation = translation

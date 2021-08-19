@@ -39,6 +39,14 @@ class BaseGenerator(ABC):
         else:
             card.status = Status.WORD_NOT_FOUND
             card.comment = "Incorrect word format = {}".format(formattedWord)
+
+        logging.info("word = {}".format(card.word))
+        logging.info("wordId = {}".format(card.wordId))
+        logging.info("oriWord = {}".format(card.oriWord))
+
+        logging.info("source = {}".format(translation.source))
+        logging.info("target = {}".format(translation.target))
+
         return card
 
     def singleDictionaryCard(self, formattedWord: str, translation: Translation, mediaDir: str, isOnline: bool, card: Card, dictionary: BaseDictionary) -> Card:
@@ -92,7 +100,7 @@ class BaseGenerator(ABC):
         card.copyright = Constant.COPYRIGHT.format("{}{}{}".format(
             mainDict.getDictionaryName(), ", and ", meaningDict.getDictionaryName()))
 
-        # Meaning is get from meaning dictionary
+        # Meaning is get from meaningDict
         card.meaning = meaningDict.getMeaning()
         card.tag = mainDict.getTag()
 
@@ -148,7 +156,7 @@ class Worker(QObject):
                 else:
                     failureCount += 1
                     self.failureStr.emit(
-                        "{} -> {}".format(formattedWord, card.comment))
+                        "{} -> {}".format(value, card.comment))
         else:
             for value in self.words:
                 self.formattedWords = self.generator.getFormattedWords(
@@ -169,7 +177,7 @@ class Worker(QObject):
                         else:
                             failureCount += 1
                             self.failureStr.emit(
-                                "{} -> {}".format(formattedWord, card.comment))
+                                "{} -> {}".format(formattedWord.split(self.delimiter)[0], card.comment))
                 else:
                     failureCount += 1
                     self.failureStr.emit(

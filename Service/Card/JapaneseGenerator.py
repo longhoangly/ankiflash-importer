@@ -31,14 +31,9 @@ class JapaneseGenerator(BaseGenerator):
     def generateCard(self, formattedWord: str, ankiDir: str, translation: Translation, isOnline: bool) -> Card:
 
         card: Card = self.initializeCard(formattedWord, translation)
-
-        logging.info("word = {}".format(card.word))
-        logging.info("wordId = {}".format(card.wordId))
-        logging.info("oriWord = {}".format(card.oriWord))
-
-        logging.info("source = {}".format(translation.source))
-        logging.info("target = {}".format(translation.target))
-
+        card.status = Status.SUCCESS
+        card.comment = Constant.SUCCESS
+        
         jDict = JDictDictionary()
         jishoDict = JishoDictionary()
 
@@ -58,9 +53,5 @@ class JapaneseGenerator(BaseGenerator):
             card.status = Status.NOT_SUPPORTED_TRANSLATION
             card.comment = Constant.NOT_SUPPORTED_TRANSLATION.format(
                 translation.source, translation.target())
-            return card
-
-        card.status = Status.SUCCESS
-        card.comment = Constant.SUCCESS
 
         return card

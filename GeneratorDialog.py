@@ -199,7 +199,7 @@ class GeneratorDialog(QDialog):
             self.importer.ui.importProgressBar.setValue(0)
             self.importer.show()
         else:
-            showInfo("Please check your output cards, nothing to import!")
+            showInfo("Please generate cards first, nothing to import!")
 
     def getSupportedLanguages(self):
         source = self.selectedRadio(self.ui.sourceBox)

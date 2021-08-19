@@ -18,7 +18,7 @@ from ..Dictionary.LacVietDictionary import LacVietDictionary
 class VietnameseGenerator(BaseGenerator):
 
     def getFormattedWords(self, word: str, translation: Translation) -> List[str]:
-        foundWords: List[str] = []
+        foundWords = []
         if translation.equals(Constant.VN_JP):
             foundWords += DictHelper.getJDictWords(word)
         else:
@@ -29,13 +29,8 @@ class VietnameseGenerator(BaseGenerator):
     def generateCard(self, formattedWord: str, ankiDir: str, translation: Translation, isOnline: bool) -> Card:
 
         card: Card = self.initializeCard(formattedWord, translation)
-
-        logging.info("word = {}".format(card.word))
-        logging.info("wordId = {}".format(card.wordId))
-        logging.info("oriWord = {}".format(card.oriWord))
-
-        logging.info("source = {}".format(translation.source))
-        logging.info("target = {}".format(translation.target))
+        card.status = Status.SUCCESS
+        card.comment = Constant.SUCCESS
 
         lacVietDict = LacVietDictionary()
         jDict = JDictDictionary()
@@ -56,9 +51,5 @@ class VietnameseGenerator(BaseGenerator):
             card.status = Status.NOT_SUPPORTED_TRANSLATION
             card.comment = Constant.NOT_SUPPORTED_TRANSLATION.format(
                 translation.source, translation.target)
-            return card
-
-        card.status = Status.SUCCESS
-        card.comment = Constant.SUCCESS
 
         return card
