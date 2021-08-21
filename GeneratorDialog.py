@@ -176,18 +176,15 @@ class GeneratorDialog(QDialog):
                 return radio.text()
 
     def reportProgress(self, percent):
-        logging.info("progress: {}".format(percent))
         self.ui.generateProgressBar.setValue(percent)
 
     def reportCard(self, cardStr):
-        logging.info("cardStr: {}".format(cardStr).encode("utf-8"))
         currentText = self.ui.outputTxt.toPlainText()
         if currentText:
             currentText += "\n"
         self.ui.outputTxt.setPlainText("{}{}".format(currentText, cardStr))
 
     def reportFailure(self, failureStr):
-        logging.info("failureStr: {}".format(failureStr))
         currentText = self.ui.failureTxt.toPlainText()
         if currentText:
             currentText += "\n"

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import logging
 from typing import List
 from bs4.element import Tag
 
@@ -51,13 +52,14 @@ class CambridgeDictionary(BaseDictionary):
         if Constant.CAMBRIDGE_SPELLING_WRONG in title:
             return True
 
-        self.word = HtmlHelper.getText(self.doc, "span.headword>span,.hw", 0)
+        self.word = HtmlHelper.getText(self.doc, ".dhw", 0)
         return not self.word
 
     def getWordType(self) -> str:
         if not self.wordType:
-            self.wordType = HtmlHelper.getText(self.doc, "span.pos", 0)
-            self.wordType = "(" + self.wordType + ")" if self.wordType else ""
+            wordTypes = HtmlHelper.getTexts(self.doc, "span.pos")
+            self.wordType = " | ".join(wordTypes) if len(wordTypes) > 0 else ""
+            self.wordType = "({})".format(self.wordType)
         return self.wordType
 
     def getExample(self) -> str:
@@ -65,10 +67,7 @@ class CambridgeDictionary(BaseDictionary):
 
     def getPhonetic(self) -> str:
         if not self.phonetic:
-            phoneticBrE = HtmlHelper.getText(self.doc, "span.phon", 0)
-            phoneticNAmE = HtmlHelper.getText(self.doc, "span.phon", 1)
-            self.phonetic = "{} {}".format(
-                phoneticBrE, phoneticNAmE).replace("//", " / ")
+            self.phonetic = HtmlHelper.getText(self.doc, "span.pron", 0)
         return self.phonetic
 
     def getImage(self, ankiDir: str, isOnline: bool) -> str:
@@ -82,55 +81,39 @@ class CambridgeDictionary(BaseDictionary):
         self.getPhonetic()
 
         meanings: List[Meaning] = []
-        headerGroups = self.doc.select("div[class*=entry-body__el]")
+        headerGroups = self.doc.select("div[class*=kdic]")
         for headerGroup in headerGroups:
-            # Word Type Header
+            # Word Type
             meaning = Meaning()
-            wordTypeHeader = headerGroup.select(
-                ".pos-header,div[class*=di-head]", limit=1)
-            if wordTypeHeader:
-                headerTexts = []
-                elements = wordTypeHeader.select(".pos,.pron")
-                for element in elements:
-                    headerTexts.append(element.text)
+            elements = headerGroup.select(".pos,.pron")
+            headerTexts = []
+            for element in elements:
+                headerTexts.append(element.get_text())
+            meaning.wordType = " ".join(headerTexts)
+            meanings.append(meaning)
 
-                meaning.wordType = " ".join(headerTexts)
-                meanings.append(meaning)
-
-            examples = []
-            meanGroups = headerGroup.select("div.sense-block")
-            for meanGroup in meanGroups:
-                # Header
-                meaning = Meaning()
-                header = meanGroup.select("h3", limit=1)
-                if header:
-                    meaning.wordType = header.text
-                    meanings.append(meaning)
-
+            meaningElms = headerGroup.select("div[class*=def-block]")
+            for meaningElm in meaningElms:
                 # Meaning
-                meaningElms = meanGroup.select("div[class*=def-block]")
-                for meaningElm in meaningElms:
-                    meaning = Meaning()
-                    definition =meaningElm.select("b.def", limit=1)
-                    if definition:
-                        meaning.meaning =definition.text
-
-                    examples = []
-                    for element in meaningElm.select(".eg,.trans"):
-                        examples.append(Tag(element).text)
-                    meaning.examples = examples
-                    meanings.append(meaning)
-
-                # Extra Examples
                 meaning = Meaning()
+                header = meaningElm.select_one(".def.ddef_d,.phrase.dphrase")
+                if header:
+                    meaning.meaning = header.get_text()
+
+                # Sub Meaning
+                definitions = meaningElm.select(".ddef_b>span.trans")
+                definitionTexts = []
+                for definition in definitions:
+                    definitionTexts.append(definition.get_text())
+                meaning.subMeaning = " ".join(definitionTexts) if len(
+                    definitionTexts) > 0 else ""
+
+                # Examples
                 examples = []
-                extraExample =meanGroup.select(".extraexamps>p", limit=1)
-                if extraExample:
-                    meaning.wordType =extraExample.text
-                    for element in meanGroup.select(".extraexamps>ul>li.eg"):
-                        examples.append(Tag(element).text)
-                    meaning.examples = examples
-                    meanings.append(meaning)
+                for element in meaningElm.select(".eg,.trans.hdb"):
+                    examples.append(element.get_text())
+                meaning.examples = examples
+                meanings.append(meaning)
 
         return HtmlHelper.buildMeaning(self.word, self.wordType, self.phonetic, meanings)
 

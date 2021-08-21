@@ -86,7 +86,7 @@ class BaseGenerator(ABC):
             card.comment = Constant.WORD_NOT_FOUND
             return card
 
-        if translation.equals(Constant.EN_VN):
+        if translation.equals(Constant.EN_VN) or translation.equals(Constant.EN_FR):
             card.wordType = meaningDict.getWordType()
         else:
             card.wordType = mainDict.getWordType()
@@ -181,7 +181,7 @@ class Worker(QObject):
                 else:
                     failureCount += 1
                     self.failureStr.emit(
-                        "{} -> word not found".format(value))
+                        "{} -> Word not found. Could you please check spelling or feedback to us!".format(value))
 
         cardLines: list[str] = []
         for card in self.cards:
@@ -204,8 +204,6 @@ class Worker(QObject):
                 Constant.TAB,
                 card.tag + "\n")
             cardLines.append(cardContent)
-            logging.info("card content = {}".format(
-                cardContent).encode("utf-8"))
 
         try:
             os.remove(self.csvFilePath)

@@ -55,7 +55,6 @@ class OxfordDictionary(BaseDictionary):
         examples: list[str] = []
         for i in range(4):
             example: str = HtmlHelper.getText(self.doc, "span.x", i)
-            logging.info("example: {}".format(example).encode("utf-8"))
             if not example and i == 0:
                 return Constant.NO_EXAMPLE
             elif not example or example is None:
@@ -140,7 +139,6 @@ class OxfordDictionary(BaseDictionary):
         wordFormElm = self.doc.select_one("span.unbox[unbox=\"verbforms\"]")
         if wordFormElm:
             wordFormElms = wordFormElm.select("td.verbforms")
-
             wordForms = []
             for wordForm in wordFormElms:
                 wordForms.append(wordForm.get_text().strip())

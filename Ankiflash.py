@@ -42,4 +42,3 @@ class AnkiFlash():
         self.generator = GeneratorDialog(
             version, self.iconPath, self.addonDir, self.mediaDir)
         self.generator.show()
-        logging.info("Open AnkiFlash Dialog")

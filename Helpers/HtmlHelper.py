@@ -132,6 +132,10 @@ class HtmlHelper:
                 str_list.append(
                     "<li class=\"content-meaning\">{}</li>".format(mean.meaning))
 
+            if mean.subMeaning:
+                str_list.append(
+                    "<div class=\"content-meaning\" style='margin-bottom: 10px;'>{}</div>".format(mean.subMeaning))
+
             if "list" in str(type(mean.examples)) and len(mean.examples) > 0:
                 str_list.append("<ul class=\"content-circle\">")
                 for example in mean.examples:

@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5 import QtCore
 
 from .Ui.UiImporter import UiImporter
+from .Helpers.AnkiHelper import AnkiHelper
 
 from os.path import join
 import logging
@@ -72,18 +73,24 @@ class ImporterDialog(QDialog):
         with open(self.cssFile, 'r', encoding='utf-8') as file:
             self.css = file.read()
 
+        forceCreateNewNote = True
         # Import note type and flashcards
         noteTypeName = u'AnkiFlashTemplate.{}'.format(version)
-        allmodels = mw.col.models.allNames()
+        noteTypeId = mw.col.models.id_for_name(noteTypeName)
+
+        if forceCreateNewNote and noteTypeId != None:
+            while (noteTypeId != None):
+                noteTypeName = u'AnkiFlashTemplate.{}.{}'.format(version, AnkiHelper.id_generator())
+                noteTypeId = mw.col.models.id_for_name(noteTypeName)
 
         # If note type already existed, skip creating note type
-        if noteTypeName not in allmodels:
+        if noteTypeId == None:
             self.createNoteType(
                 noteTypeName, self.front, self.back, self.css)
-            logging.info("Created note type: {}".format(noteTypeName))
+            logging.info("Created note type! {}".format(noteTypeName))
         else:
             logging.info(
-                "Note type existed already => {}".format(noteTypeName))
+                "Note type existed already, skip it! {}".format(noteTypeName))
         self.ui.importProgressBar.setValue(50)
 
         # Import csv text file into Anki
