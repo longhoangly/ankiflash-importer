@@ -1,11 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from aqt.utils import showInfo
-
 from PyQt5.QtWidgets import QDialog, QGroupBox, QMessageBox, QRadioButton
-from PyQt5.QtCore import QThread, Qt
-from PyQt5.QtGui import QPalette
+from PyQt5.QtCore import QThread
+from PyQt5 import QtGui
 
 from .Ui.UiGenerator import UiGenerator
 from .ImporterDialog import ImporterDialog
@@ -19,6 +17,7 @@ from .Service.Card.JapaneseGenerator import JapaneseGenerator
 from .Service.Card.FrenchGenerator import FrenchGenerator
 from .Service.Card.EnglishGenerator import EnglishGenerator
 from .Service.Constant import Constant
+from .Helpers.AnkiHelper import AnkiHelper
 
 from os.path import join
 import logging
@@ -105,7 +104,9 @@ class GeneratorDialog(QDialog):
         inputText = self.ui.inputTxt.toPlainText()
 
         if not inputText:
-            showInfo("Empty input. No word found. Please check your input.")
+            AnkiHelper.messageBox("Info",
+                                  "Empty input, no word found.",
+                                  "Please check your inputs.")
             return
 
         # Increase to 2% as a processing signal to user
@@ -158,13 +159,26 @@ class GeneratorDialog(QDialog):
         thread.finished.connect(self.finishedGenerationProgress)
 
     def finishedGenerationProgress(self):
+
         self.ui.generateBtn.setEnabled(True)
-        btnSelected = QMessageBox.question(None, "Info", "Do you want to import generated cards now?\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(len(self.words), self.cardCount, self.failureCount),
-                                           QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+
+        font = QtGui.QFont()
+        font.setBold(False)
+        font.setWeight(50)
+
+        msgBox = QMessageBox()
+        msgBox.setFont(font)
+
+        msgBox.setWindowTitle("Info")
+        msgBox.setText("Finished generating flashcards.")
+        msgBox.setInformativeText("Do you want to import generated flashcards now?\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
+            len(self.words), self.cardCount, self.failureCount))
+        msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msgBox.setDefaultButton(QMessageBox.Yes)
+
+        btnSelected = msgBox.exec_()
         if btnSelected == QMessageBox.Yes:
-            # Show Importer Dialog
-            self.importer.ui.importProgressBar.setValue(0)
-            self.importer.show()
+            self.btnImporterClicked()
 
     def selectedRadio(self, groupBox: QGroupBox) -> str:
         # Get all radio buttons
@@ -196,7 +210,10 @@ class GeneratorDialog(QDialog):
             self.importer.ui.importProgressBar.setValue(0)
             self.importer.show()
         else:
-            showInfo("Please generate cards first, nothing to import!")
+            AnkiHelper.messageBox(
+                "Info",
+                "No output flashcards available for importing.",
+                "Please generate flashcards first!")
 
     def getSupportedLanguages(self):
         source = self.selectedRadio(self.ui.sourceBox)

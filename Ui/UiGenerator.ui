@@ -50,6 +50,12 @@
       <height>161</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="focusPolicy">
      <enum>Qt::StrongFocus</enum>
     </property>
@@ -71,18 +77,12 @@
     </property>
     <property name="font">
      <font>
-      <weight>75</weight>
-      <bold>true</bold>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
     </property>
     <property name="toolTip">
      <string>Generate flashcards for the input words</string>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
     </property>
     <property name="text">
      <string>Generate</string>
@@ -102,8 +102,8 @@
     </property>
     <property name="font">
      <font>
-      <weight>75</weight>
-      <bold>true</bold>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="text">
@@ -121,9 +121,9 @@
     </property>
     <property name="font">
      <font>
-      <weight>75</weight>
+      <weight>50</weight>
       <italic>false</italic>
-      <bold>true</bold>
+      <bold>false</bold>
       <strikeout>false</strikeout>
       <kerning>true</kerning>
      </font>
@@ -240,8 +240,8 @@
     </property>
     <property name="font">
      <font>
-      <weight>75</weight>
-      <bold>true</bold>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="title">
@@ -396,6 +396,12 @@
       <height>17</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="toolTip">
      <string>If a word has more than one type (noun, adjective, verb...), AnkiFlash will create cards for all of them</string>
     </property>
@@ -414,6 +420,12 @@
       <width>121</width>
       <height>17</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>Usually, card sound will be downloaded to local computer. AnkiFlash provide an option to use online sound, your computer don't need to store sound file.</string>
@@ -453,6 +465,12 @@
       <height>161</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="focusPolicy">
      <enum>Qt::StrongFocus</enum>
     </property>
@@ -474,8 +492,8 @@
     </property>
     <property name="font">
      <font>
-      <weight>75</weight>
-      <bold>true</bold>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="text">
@@ -493,8 +511,8 @@
     </property>
     <property name="font">
      <font>
-      <weight>75</weight>
-      <bold>true</bold>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="text">
@@ -509,6 +527,12 @@
       <width>381</width>
       <height>161</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="focusPolicy">
      <enum>Qt::StrongFocus</enum>
@@ -640,6 +664,12 @@
       <width>113</width>
       <height>32</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="toolTip">
      <string>Cick here to import generated cards.</string>

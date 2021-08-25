@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from aqt import mw
-from aqt.utils import showInfo
 from anki.models import ModelManager
 from anki.importing.csvfile import TextImporter
 
@@ -80,7 +79,8 @@ class ImporterDialog(QDialog):
 
         if forceCreateNewNote and noteTypeId != None:
             while (noteTypeId != None):
-                noteTypeName = u'AnkiFlashTemplate.{}.{}'.format(version, AnkiHelper.id_generator())
+                noteTypeName = u'AnkiFlashTemplate.{}.{}'.format(
+                    version, AnkiHelper.id_generator())
                 noteTypeId = mw.col.models.id_for_name(noteTypeName)
 
         # If note type already existed, skip creating note type
@@ -99,7 +99,9 @@ class ImporterDialog(QDialog):
         self.ui.importProgressBar.setValue(100)
         logging.info("Imported csv file: {}".format(self.ankiCsvPath))
 
-        showInfo("AnkiFlash cards imported successfully...")
+        AnkiHelper.messageBox("Info",
+                              "Importing completed!",
+                              "AnkiFlash cards imported successfully...")
         self.close()
 
     def createNoteType(self, noteTypeName, front, back, css):
