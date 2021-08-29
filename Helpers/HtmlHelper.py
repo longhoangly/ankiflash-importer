@@ -104,6 +104,7 @@ class HtmlHelper:
 
     @staticmethod
     def buildMeaning(word: str, wordType: str, phonetic: str, meanings: List[Meaning], isJapanese: bool = False) -> str:
+        
         str_list = []
 
         if (isJapanese):
@@ -124,7 +125,10 @@ class HtmlHelper:
         str_list.append("<ol class=\"content-order\">")
 
         for mean in meanings:
+
             if mean.wordType:
+                str_list.append("</ol>")
+                str_list.append("<ol class=\"content-order\">")
                 str_list.append(
                     "<h4 class=\"content-type\" style='margin-left: -20px;'>{}</h4>".format(mean.wordType))
 
@@ -134,7 +138,7 @@ class HtmlHelper:
 
             if mean.subMeaning:
                 str_list.append(
-                    "<div class=\"content-meaning\" style='margin-bottom: 10px;'>{}</div>".format(mean.subMeaning))
+                    "<div class=\"content-sub-meaning\">{}</div>".format(mean.subMeaning))
 
             if "list" in str(type(mean.examples)) and len(mean.examples) > 0:
                 str_list.append("<ul class=\"content-circle\">")

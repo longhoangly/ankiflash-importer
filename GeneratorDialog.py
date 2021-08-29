@@ -105,8 +105,8 @@ class GeneratorDialog(QDialog):
 
         if not inputText:
             AnkiHelper.messageBox("Info",
-                                  "Empty input, no word found.",
-                                  "Please check your inputs.")
+                                  "No input words available for generating.",
+                                  "Please check your input words!")
             return
 
         # Increase to 2% as a processing signal to user
@@ -213,7 +213,7 @@ class GeneratorDialog(QDialog):
             AnkiHelper.messageBox(
                 "Info",
                 "No output flashcards available for importing.",
-                "Please generate flashcards first!")
+                "Please check your input words!")
 
     def getSupportedLanguages(self):
         source = self.selectedRadio(self.ui.sourceBox)

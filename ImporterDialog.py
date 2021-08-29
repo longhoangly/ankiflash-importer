@@ -101,7 +101,7 @@ class ImporterDialog(QDialog):
 
         AnkiHelper.messageBox("Info",
                               "Importing completed!",
-                              "AnkiFlash cards imported successfully...")
+                              "Imported successfully...")
         self.close()
 
     def createNoteType(self, noteTypeName, front, back, css):

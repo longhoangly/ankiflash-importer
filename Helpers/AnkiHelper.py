@@ -17,6 +17,7 @@ class AnkiHelper:
 
     @staticmethod
     def messageBox(title, text, infoText):
+        
         font = QtGui.QFont()
         font.setBold(False)
         font.setWeight(50)
