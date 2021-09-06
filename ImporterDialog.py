@@ -22,16 +22,17 @@ class ImporterDialog(QDialog):
     keyPressed = QtCore.pyqtSignal(int)
 
     def __init__(self, version, iconPath, addonDir):
+
         super().__init__()
         self.version = version
         self.addonDir = addonDir
+        self.iconPath = iconPath
 
         # Paths
         self.ankiCsvPath = join(self.addonDir, r'AnkiDeck.csv')
         self.frontFile = join(self.addonDir, r'Resources/front.html')
         self.backFile = join(self.addonDir, r'Resources/back.html')
         self.cssFile = join(self.addonDir, r'Resources/style.css')
-        self.iconPath = join(self.addonDir, r'Resources/anki.png')
 
         # Importer GUI
         self.ui = UiImporter()
@@ -61,7 +62,7 @@ class ImporterDialog(QDialog):
             self.ui.importBtn.setEnabled(False)
 
     def btnImportClicked(self, version):
-        self.ui.importProgressBar.setValue(10)
+        self.ui.importProgressBar.setValue(20)
 
         with open(self.frontFile, 'r', encoding='utf-8') as file:
             self.front = file.read()
@@ -80,7 +81,7 @@ class ImporterDialog(QDialog):
         if forceCreateNewNote and noteTypeId != None:
             while (noteTypeId != None):
                 noteTypeName = u'AnkiFlashTemplate.{}.{}'.format(
-                    version, AnkiHelper.id_generator())
+                    version, AnkiHelper.idGenerator())
                 noteTypeId = mw.col.models.id_for_name(noteTypeName)
 
         # If note type already existed, skip creating note type
@@ -100,8 +101,9 @@ class ImporterDialog(QDialog):
         logging.info("Imported csv file: {}".format(self.ankiCsvPath))
 
         AnkiHelper.messageBox("Info",
-                              "Importing completed!",
-                              "Imported successfully...")
+                              "Finished importing flashcards.",
+                              "Let's enjoy learning curve.",
+                              self.iconPath)
         self.close()
 
     def createNoteType(self, noteTypeName, front, back, css):

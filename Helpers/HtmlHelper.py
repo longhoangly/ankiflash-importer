@@ -32,6 +32,7 @@ class HtmlHelper:
 
     @staticmethod
     def getDocument(url: str) -> BeautifulSoup:
+        logging.info("url {}".format(url))
         html_text = requests.get(
             url, headers={"User-Agent": "Mozilla/5.0"}).text
         return BeautifulSoup(html_text, 'html.parser')
@@ -104,7 +105,7 @@ class HtmlHelper:
 
     @staticmethod
     def buildMeaning(word: str, wordType: str, phonetic: str, meanings: List[Meaning], isJapanese: bool = False) -> str:
-        
+
         str_list = []
 
         if (isJapanese):

@@ -112,6 +112,7 @@ body {
 .content-sub-meaning {
     font-weight: bold;
     font-style: normal;
+    font-style: italic;
     margin-top: 10px;
     margin-bottom: 10px;
 }

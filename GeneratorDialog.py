@@ -29,8 +29,10 @@ class GeneratorDialog(QDialog):
     """Generator Dialog"""
 
     def __init__(self, version, iconPath, addonDir, mediaDir):
+
         super().__init__()
         self.mediaDir = mediaDir
+        self.iconPath = iconPath
 
         # Paths
         self.ankiCsvPath = join(addonDir, r'AnkiDeck.csv')
@@ -64,6 +66,19 @@ class GeneratorDialog(QDialog):
         self.ui.source2.clicked.connect(self.getSupportedLanguages)
         self.ui.source3.clicked.connect(self.getSupportedLanguages)
         self.ui.source4.clicked.connect(self.getSupportedLanguages)
+
+    def closeEvent(self, event):
+        btnSelected = AnkiHelper.messageBoxButtons("Dialog Close",
+                                                   "Are you sure you want to close AnkiFlash?",
+                                                   "Thanks for using AnkiFlash!",
+                                                   QMessageBox.No | QMessageBox.Yes,
+                                                   QMessageBox.No,
+                                                   self.iconPath)
+        if btnSelected == QMessageBox.Yes:
+            logging.shutdown()
+            event.accept()
+        else:
+            event.ignore()
 
     def inputTextChanged(self):
         words = self.ui.inputTxt.toPlainText().split("\n")
@@ -106,7 +121,8 @@ class GeneratorDialog(QDialog):
         if not inputText:
             AnkiHelper.messageBox("Info",
                                   "No input words available for generating.",
-                                  "Please check your input words!")
+                                  "Please check your input words!",
+                                  self.iconPath)
             return
 
         # Increase to 2% as a processing signal to user
@@ -161,22 +177,13 @@ class GeneratorDialog(QDialog):
     def finishedGenerationProgress(self):
 
         self.ui.generateBtn.setEnabled(True)
-
-        font = QtGui.QFont()
-        font.setBold(False)
-        font.setWeight(50)
-
-        msgBox = QMessageBox()
-        msgBox.setFont(font)
-
-        msgBox.setWindowTitle("Info")
-        msgBox.setText("Finished generating flashcards.")
-        msgBox.setInformativeText("Do you want to import generated flashcards now?\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
-            len(self.words), self.cardCount, self.failureCount))
-        msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        msgBox.setDefaultButton(QMessageBox.Yes)
-
-        btnSelected = msgBox.exec_()
+        btnSelected = AnkiHelper.messageBoxButtons("Info",
+                                                   "Finished generating flashcards.",
+                                                   "Do you want to import generated flashcards now?\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
+                                                       len(self.words), self.cardCount, self.failureCount),
+                                                   QMessageBox.No | QMessageBox.Yes,
+                                                   QMessageBox.Yes,
+                                                   self.iconPath)
         if btnSelected == QMessageBox.Yes:
             self.btnImporterClicked()
 
@@ -213,7 +220,8 @@ class GeneratorDialog(QDialog):
             AnkiHelper.messageBox(
                 "Info",
                 "No output flashcards available for importing.",
-                "Please check your input words!")
+                "Please check your input words!",
+                self.iconPath)
 
     def getSupportedLanguages(self):
         source = self.selectedRadio(self.ui.sourceBox)
