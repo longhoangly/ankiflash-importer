@@ -113,15 +113,15 @@ class HtmlHelper:
         else:
             str_list.append("<div class=\"content-container\">")
 
-        str_list.append("<h2 class=\"h\">{}</h2>".format(word))
+        str_list.append("<h2 class=\"h\">{}</h2>".format(word.strip()))
 
         if wordType:
             str_list.append(
-                "<span class=\"content-type\">{}</span>".format(wordType))
+                "<span class=\"content-type\">{}</span>".format(wordType.strip()))
 
         if phonetic:
             str_list.append(
-                "<span class=\"content-phonetic\">{}</span>".format(phonetic))
+                "<span class=\"content-phonetic\">{}</span>".format(phonetic.strip()))
 
         str_list.append("<ol class=\"content-order\">")
 
@@ -131,21 +131,21 @@ class HtmlHelper:
                 str_list.append("</ol>")
                 str_list.append("<ol class=\"content-order\">")
                 str_list.append(
-                    "<h4 class=\"content-type\" style='margin-left: -20px;'>{}</h4>".format(mean.wordType))
+                    "<h4 class=\"content-type\" style='margin-left: -20px;'>{}</h4>".format(mean.wordType.strip()))
 
             if mean.meaning:
                 str_list.append(
-                    "<li class=\"content-meaning\">{}</li>".format(mean.meaning))
+                    "<li class=\"content-meaning\">{}</li>".format(mean.meaning.strip()))
 
             if mean.subMeaning:
                 str_list.append(
-                    "<div class=\"content-sub-meaning\">{}</div>".format(mean.subMeaning))
+                    "<div class=\"content-sub-meaning\">{}</div>".format(mean.subMeaning.strip()))
 
             if "list" in str(type(mean.examples)) and len(mean.examples) > 0:
                 str_list.append("<ul class=\"content-circle\">")
                 for example in mean.examples:
                     str_list.append(
-                        "<li class=\"content-example\">{}</li>".format(example))
+                        "<li class=\"content-example\">{}</li>".format(example.strip()))
                 str_list.append("</ul>")
 
         str_list.append("</ol>")

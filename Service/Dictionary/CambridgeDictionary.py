@@ -81,7 +81,7 @@ class CambridgeDictionary(BaseDictionary):
         self.getPhonetic()
 
         meanings: List[Meaning] = []
-        headerGroups = self.doc.select("div[class*=kdic]")
+        headerGroups = self.doc.select("div[class*=kdic],div[class*=entry-body__el]")
         for headerGroup in headerGroups:
             # Word Type
             meaning = Meaning()
@@ -115,7 +115,7 @@ class CambridgeDictionary(BaseDictionary):
                 meaning.examples = examples
                 meanings.append(meaning)
 
-        return HtmlHelper.buildMeaning(self.word, self.wordType, self.phonetic, meanings)
+        return HtmlHelper.buildMeaning(self.word, self.wordType, self.phonetic, meanings, True)
 
     def getDictionaryName(self) -> str:
         return "Cambridge Dictionary"

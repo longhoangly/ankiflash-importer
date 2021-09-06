@@ -68,17 +68,7 @@ class GeneratorDialog(QDialog):
         self.ui.source4.clicked.connect(self.getSupportedLanguages)
 
     def closeEvent(self, event):
-        btnSelected = AnkiHelper.messageBoxButtons("Dialog Close",
-                                                   "Are you sure you want to close AnkiFlash?",
-                                                   "Thanks for using AnkiFlash!",
-                                                   QMessageBox.No | QMessageBox.Yes,
-                                                   QMessageBox.No,
-                                                   self.iconPath)
-        if btnSelected == QMessageBox.Yes:
-            logging.shutdown()
-            event.accept()
-        else:
-            event.ignore()
+        logging.shutdown()
 
     def inputTextChanged(self):
         words = self.ui.inputTxt.toPlainText().split("\n")
@@ -178,7 +168,7 @@ class GeneratorDialog(QDialog):
 
         self.ui.generateBtn.setEnabled(True)
         btnSelected = AnkiHelper.messageBoxButtons("Info",
-                                                   "Finished generating flashcards.",
+                                                   "Finished generating flashcards.\nThanks for using AnkiFlash!",
                                                    "Do you want to import generated flashcards now?\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
                                                        len(self.words), self.cardCount, self.failureCount),
                                                    QMessageBox.No | QMessageBox.Yes,
