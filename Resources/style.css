@@ -1,5 +1,3 @@
-/* Front-Back-Template */
-
 body {
     width: 100%;
     height: 100%;
@@ -43,7 +41,7 @@ body {
     padding: 2px 10px;
 }
 
-.image>a {
+.image > a {
     color: white !important;
     text-decoration: underline;
 }
@@ -69,9 +67,6 @@ body {
     margin: 10px;
 }
 
-
-/* Content-Example-Template */
-
 .content-container {
     margin: 10px;
 }
@@ -83,10 +78,22 @@ body {
     margin-bottom: 0px !important;
 }
 
+.content-circle {
+    padding-inline-start: 5px !important;
+}
+
 .content-type {
     font-style: normal;
     margin-left: 10px;
     margin-top: 15px;
+}
+
+.content-meaning-type {
+    font-style: normal;
+    margin-left: 10px;
+    margin-top: 15px;
+    display: list-item;
+    list-style: square;
 }
 
 .content-phonetic {
@@ -94,9 +101,6 @@ body {
     margin-left: 10px;
     margin-right: 10px;
 }
-
-
-/* Meaning in Order */
 
 .content-order {
     margin-left: 10px;
@@ -107,6 +111,8 @@ body {
     font-weight: bold;
     font-style: normal;
     margin-top: 10px;
+    display: list-item;
+    list-style: initial;
 }
 
 .content-sub-meaning {
@@ -117,17 +123,6 @@ body {
     margin-bottom: 10px;
 }
 
-
-/* Example non Order */
-
-ul {
-    list-style: none
-}
-
-.content-circle {
-    padding-inline-start: 5px !important;
-}
-
 .content-example {
     padding-top: 5px;
     padding-bottom: 5px;
@@ -136,26 +131,27 @@ ul {
     font-style: italic;
 }
 
-
 /* Japanese */
-
 .japanese_gothic,
 .japan-font {
-    font-family: "HiraKakuPro-W3", "Hiragino Kaku Gothic Pro W3", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3", "メイリオ", Meiryo, "游ゴシック", YuGothic, "ＭＳ Ｐゴシック", "MS PGothic", "ＭＳ ゴシック", "MS Gothic", sans-serif !important;
-    font-size: 16px;
+    font-family: "HiraKakuPro-W3", "Hiragino Kaku Gothic Pro W3",
+        "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3", "メイリオ", Meiryo,
+        "游ゴシック", YuGothic, "ＭＳ Ｐゴシック", "MS PGothic", "ＭＳ ゴシック",
+        "MS Gothic", sans-serif !important;
+    font-size: 17px;
 }
 
 #search-kanji-list {
     padding-bottom: 10px;
 }
 
-#search-kanji-list>.rdf>div {
+#search-kanji-list > .rdf > div {
     display: inline-block;
     padding-left: 10px;
     margin-top: 10px;
 }
 
-#search-kanji-list>.rdf>div>a {
+#search-kanji-list > .rdf > div > a {
     margin-right: 15px;
     float: left;
     color: #333;
@@ -164,7 +160,7 @@ ul {
     font-size: 40px;
 }
 
-#search-kanji-list>.rdf>div span.sinovn {
+#search-kanji-list > .rdf > div span.sinovn {
     font-size: 14px;
     font-weight: 700;
     text-transform: uppercase;
@@ -176,19 +172,19 @@ ul {
     text-overflow: ellipsis;
 }
 
-.kanji-plus-info>p {
+.kanji-plus-info > p {
     margin-block-start: 2px;
     margin-block-end: 0px;
 }
 
-#word-detail-info>p {
+#word-detail-info > p {
     display: block;
     width: 100%;
     font-size: 13px;
     clear: both;
 }
 
-#search-kanji-list .kmr-kunon>a {
+#search-kanji-list .kmr-kunon > a {
     margin-top: 3px;
     margin-right: 3px;
     display: inline-block;
@@ -215,97 +211,4 @@ ul.japanese {
     padding-inline-start: 0px;
     display: list-item;
     list-style: circle;
-}
-
-.btn {
-    display: inline-block;
-    font-weight: 400;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    border: 1px solid transparent;
-    padding: .375rem .75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    border-radius: .25rem;
-    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out
-}
-
-@media screen and (prefers-reduced-motion:reduce) {
-    .btn {
-        transition: none
-    }
-}
-
-.btn:focus,
-.btn:hover {
-    text-decoration: none
-}
-
-.btn.focus,
-.btn:focus {
-    outline: 0;
-    box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .25)
-}
-
-.btn.disabled,
-.btn:disabled {
-    opacity: .65
-}
-
-.btn:not(:disabled):not(.disabled) {
-    cursor: pointer
-}
-
-a.btn.disabled,
-fieldset:disabled a.btn {
-    pointer-events: none
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #007bff;
-    border-color: #007bff
-}
-
-.btn-info {
-    color: #fff;
-    background-color: #17a2b8;
-    border-color: #17a2b8
-}
-
-.btn-info:hover {
-    color: #fff;
-    background-color: #138496;
-    border-color: #117a8b
-}
-
-.btn-info.focus,
-.btn-info:focus {
-    box-shadow: 0 0 0 .2rem rgba(23, 162, 184, .5)
-}
-
-.btn-info.disabled,
-.btn-info:disabled {
-    color: #fff;
-    background-color: #17a2b8;
-    border-color: #17a2b8
-}
-
-.btn-info:not(:disabled):not(.disabled).active,
-.btn-info:not(:disabled):not(.disabled):active,
-.show>.btn-info.dropdown-toggle {
-    color: #fff;
-    background-color: #117a8b;
-    border-color: #10707f
-}
-
-.btn-info:not(:disabled):not(.disabled).active:focus,
-.btn-info:not(:disabled):not(.disabled):active:focus,
-.show>.btn-info.dropdown-toggle:focus {
-    box-shadow: 0 0 0 .2rem rgba(23, 162, 184, .5)
 }

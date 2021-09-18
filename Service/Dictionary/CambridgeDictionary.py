@@ -1,9 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import logging
 from typing import List
-from bs4.element import Tag
 
 from ..Enum.Meaning import Meaning
 from ..Enum.Translation import Translation
@@ -11,6 +9,7 @@ from ..Enum.Translation import Translation
 from ..Constant import Constant
 from ..BaseDictionary import BaseDictionary
 from ...Helpers.HtmlHelper import HtmlHelper
+from ...Helpers.AnkiHelper import AnkiHelper
 
 
 class CambridgeDictionary(BaseDictionary):
@@ -57,7 +56,7 @@ class CambridgeDictionary(BaseDictionary):
 
     def getWordType(self) -> str:
         if not self.wordType:
-            wordTypes = HtmlHelper.getTexts(self.doc, "span.pos")
+            wordTypes = HtmlHelper.getTexts(self.doc, "span.pos.dpos", True)
             self.wordType = " | ".join(wordTypes) if len(wordTypes) > 0 else ""
             self.wordType = "({})".format(self.wordType)
         return self.wordType
@@ -67,7 +66,7 @@ class CambridgeDictionary(BaseDictionary):
 
     def getPhonetic(self) -> str:
         if not self.phonetic:
-            self.phonetic = HtmlHelper.getText(self.doc, "span.pron", 0)
+            self.phonetic = HtmlHelper.getText(self.doc, "span.pron.dpron", 0)
         return self.phonetic
 
     def getImage(self, ankiDir: str, isOnline: bool) -> str:
@@ -80,25 +79,29 @@ class CambridgeDictionary(BaseDictionary):
         self.getWordType()
         self.getPhonetic()
 
+        allMeaningTexts: List[str] = []
         meanings: List[Meaning] = []
-        headerGroups = self.doc.select("div[class*=kdic],div[class*=entry-body__el]")
+        headerGroups = self.doc.select(
+            "div[class*=kdic],div[class*=entry-body__el]")
         for headerGroup in headerGroups:
             # Word Type
-            meaning = Meaning()
-            elements = headerGroup.select(".pos,.pron")
+            typeMeaning = Meaning()
+            elements = headerGroup.select(".pos.dpos,.pron.dpron,.guideword")
             headerTexts = []
             for element in elements:
-                headerTexts.append(element.get_text())
-            meaning.wordType = " ".join(headerTexts)
-            meanings.append(meaning)
+                headerTexts.append(element.get_text().replace("\n", " "))
+            typeMeaning.wordType = AnkiHelper.stringify(
+                " ".join(headerTexts)).replace(") (", " | ")
 
+            indexMeaning = 0
             meaningElms = headerGroup.select("div[class*=def-block]")
             for meaningElm in meaningElms:
                 # Meaning
                 meaning = Meaning()
                 header = meaningElm.select_one(".def.ddef_d,.phrase.dphrase")
                 if header:
-                    meaning.meaning = header.get_text()
+                    meaning.meaning = header.get_text().replace("\n", " ")
+                    meaning.meaning = AnkiHelper.stringify(meaning.meaning)
 
                 # Sub Meaning
                 definitions = meaningElm.select(".ddef_b>span.trans")
@@ -113,7 +116,16 @@ class CambridgeDictionary(BaseDictionary):
                 for element in meaningElm.select(".eg,.trans.hdb"):
                     examples.append(element.get_text())
                 meaning.examples = examples
-                meanings.append(meaning)
+
+                # Only add wordtype if there is a meaning
+                if meaning.meaning not in allMeaningTexts:
+                    # Only add after the first meaning
+                    if(indexMeaning == 0):
+                        meanings.append(typeMeaning)
+                    meanings.append(meaning)
+                    indexMeaning += 1
+                    # Don't add duplicated meaning!
+                    allMeaningTexts.append(meaning.meaning)
 
         return HtmlHelper.buildMeaning(self.word, self.wordType, self.phonetic, meanings, True)
 

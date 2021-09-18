@@ -136,6 +136,7 @@ class OxfordDictionary(BaseDictionary):
 
         meanings: list[Meaning] = []
 
+        # Word Form
         wordFormElm = self.doc.select_one("span.unbox[unbox=\"verbforms\"]")
         if wordFormElm:
             wordFormElms = wordFormElm.select("td.verbforms")
@@ -151,8 +152,8 @@ class OxfordDictionary(BaseDictionary):
         for meanElem in meanGroups:
             defElm = meanElem.select_one(".def")
 
+            # See Also
             examples = []
-            # SEE ALSO section
             subDefElm = meanElem.select_one(".xrefs")
             if subDefElm:
                 subDefPrefix = subDefElm.select_one(".prefix")
@@ -161,13 +162,14 @@ class OxfordDictionary(BaseDictionary):
                     examples.append("<a href=\"{}\">{} {}</a>".format(subDefLink.get(
                         "href"), subDefPrefix.get_text().strip().upper(), subDefLink.get_text().strip()))
 
+            # Examples
             exampleElms = meanElem.select(".x")
             for exampleElem in exampleElms:
                 examples.append(exampleElem.get_text().strip())
-
             meanings.append(
                 Meaning(defElm.get_text().strip() if defElm else "", examples))
 
+            # Extra Examples
             extraExample = HtmlHelper.getChildElement(
                 meanElem, "span.unbox[unbox=\"extra_examples\"]", 0)
             if extraExample:
@@ -178,9 +180,9 @@ class OxfordDictionary(BaseDictionary):
                     examples.append(exampleElm.get_text().strip())
 
                 meaning = Meaning("", examples)
-                meaning.wordType = "Extra Examples"
                 meanings.append(meaning)
 
+        # Word Family
         wordFamilyElm = self.doc.select_one("span.unbox[unbox=\"wordfamily\"]")
         if wordFamilyElm:
             wordFamilyElms = wordFamilyElm.select("span.p")

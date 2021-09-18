@@ -1,11 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import re
 import string
 import random
-from os.path import join
-
-from aqt import mw
+import hashlib
 
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMessageBox
@@ -13,6 +12,16 @@ from PyQt5.QtWidgets import QMessageBox
 
 class AnkiHelper:
     """All Dictionary related utilities methods"""
+
+    @staticmethod
+    def md5Utf8(string: str):
+        return hashlib.md5(string.encode("utf-8")).hexdigest()
+
+    @staticmethod
+    def stringify(string: str):
+        output = re.sub('\t+', ' ', string)
+        output = re.sub('\s+', ' ', output)
+        return output
 
     @staticmethod
     def idGenerator(size=6, chars=string.ascii_uppercase + string.digits):

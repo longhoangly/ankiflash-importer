@@ -12,6 +12,7 @@ from .Ui.UiImporter import UiImporter
 from .Helpers.AnkiHelper import AnkiHelper
 
 from os.path import join
+
 import logging
 import csv
 csv.field_size_limit(2**30)
@@ -73,25 +74,36 @@ class ImporterDialog(QDialog):
         with open(self.cssFile, 'r', encoding='utf-8') as file:
             self.css = file.read()
 
-        forceCreateNewNote = True
-        # Import note type and flashcards
+        updateExistingNote = self.ui.checkBox.isChecked()
+        # Create note type if needs
         noteTypeName = u'AnkiFlashTemplate.{}'.format(version)
-        noteTypeId = mw.col.models.id_for_name(noteTypeName)
+        isNoteTypeDiff = self.isNoteTypeDiff(
+            noteTypeName, self.front, self.back, self.css)
 
-        if forceCreateNewNote and noteTypeId != None:
-            while (noteTypeId != None):
+        # Create new note type if not exist or existent but won't to update existing!
+        if (isNoteTypeDiff == None) or (isNoteTypeDiff != None and not updateExistingNote):
+            # If note type already existed, and we don't want to udpate existing! We need a new name!
+            if isNoteTypeDiff != None:
                 noteTypeName = u'AnkiFlashTemplate.{}.{}'.format(
                     version, AnkiHelper.idGenerator())
                 noteTypeId = mw.col.models.id_for_name(noteTypeName)
+                while (noteTypeId != None):
+                    noteTypeName = u'AnkiFlashTemplate.{}.{}'.format(
+                        version, AnkiHelper.idGenerator())
+                    noteTypeId = mw.col.models.id_for_name(noteTypeName)
 
-        # If note type already existed, skip creating note type
-        if noteTypeId == None:
             self.createNoteType(
                 noteTypeName, self.front, self.back, self.css)
-            logging.info("Created note type! {}".format(noteTypeName))
+            logging.info("{} Note type created.".format(noteTypeName))
+
+        elif isNoteTypeDiff and updateExistingNote:
+            self.updateNoteType(
+                noteTypeName, self.front, self.back, self.css)
+            logging.info(
+                "{} Note type is existent, override it.".format(noteTypeName))
         else:
             logging.info(
-                "Note type existed already, skip it! {}".format(noteTypeName))
+                "{} Note type is existent, the same with AnkiFlash, use it.".format(noteTypeName))
         self.ui.importProgressBar.setValue(50)
 
         # Import csv text file into Anki
@@ -105,6 +117,38 @@ class ImporterDialog(QDialog):
                               "Let's enjoy learning curve.",
                               self.iconPath)
         self.close()
+
+    def isNoteTypeDiff(self, noteTypeName, front, back, css):
+        # Get note type
+        noteType = mw.col.models.byName(noteTypeName)
+        if noteType == None:
+            return None
+
+        # Get template
+        tempates = noteType["tmpls"]
+        for temp in tempates:
+            if temp["name"] == "AnkiFlash":
+                template = temp
+
+        # Compare question
+        asIsFrontMd5 = AnkiHelper.md5Utf8(template["qfmt"])
+        toBeFrontMd5 = AnkiHelper.md5Utf8(front)
+        if(asIsFrontMd5 != toBeFrontMd5):
+            return True
+
+        # Compare answers
+        asIsBackMd5 = AnkiHelper.md5Utf8(template["afmt"])
+        toBeBackMd5 = AnkiHelper.md5Utf8(back)
+        if(asIsBackMd5 != toBeBackMd5):
+            return True
+
+        # Compate css
+        asIsCssMd5 = AnkiHelper.md5Utf8(noteType["css"])
+        toBeCssMd5 = AnkiHelper.md5Utf8(css)
+        if(asIsCssMd5 != toBeCssMd5):
+            return True
+
+        return False
 
     def createNoteType(self, noteTypeName, front, back, css):
         # Create empty note type
@@ -130,6 +174,31 @@ class ImporterDialog(QDialog):
 
         # Save model / note type
         mm.save(nt)
+
+        # Update UI
+        mw.reset()
+
+    def updateNoteType(self, noteTypeName, front, back, css):
+
+        noteType = mw.col.models.byName(noteTypeName)
+        if noteType == None:
+            raise RuntimeError(
+                "{} Note type not found!".format(noteTypeName))
+
+        # Get template
+        tempates = noteType["tmpls"]
+        for temp in tempates:
+            if temp["name"] == "AnkiFlash":
+                template = temp
+
+        # Add template into note type
+        template["qfmt"] = front
+        template["afmt"] = back
+        noteType["css"] = css
+
+        # Save model / note type
+        mm = ModelManager(mw.col)
+        mm.save(noteType)
 
         # Update UI
         mw.reset()

@@ -53,11 +53,14 @@ class HtmlHelper:
         return element.get_text().strip() if element else ""
 
     @staticmethod
-    def getTexts(doc: BeautifulSoup, selector: str) -> List[str]:
+    def getTexts(doc: BeautifulSoup, selector: str, isUnique: bool = False) -> List[str]:
         elements = doc.select(selector)
         texts = []
         for element in elements:
-            texts.append(element.get_text().strip())
+            if not isUnique:
+                texts.append(element.get_text().strip())
+            elif element.get_text() not in texts:
+                texts.append(element.get_text().strip())
         return texts
 
     @staticmethod
@@ -114,7 +117,6 @@ class HtmlHelper:
             str_list.append("<div class=\"content-container\">")
 
         str_list.append("<h2 class=\"h\">{}</h2>".format(word.strip()))
-
         if wordType:
             str_list.append(
                 "<span class=\"content-type\">{}</span>".format(wordType.strip()))
@@ -123,15 +125,14 @@ class HtmlHelper:
             str_list.append(
                 "<span class=\"content-phonetic\">{}</span>".format(phonetic.strip()))
 
-        str_list.append("<ol class=\"content-order\">")
-
+        str_list.append("<ul class=\"content-order\">")
         for mean in meanings:
 
             if mean.wordType:
-                str_list.append("</ol>")
-                str_list.append("<ol class=\"content-order\">")
+                str_list.append("</ul>")
+                str_list.append("<ul class=\"content-order\">")
                 str_list.append(
-                    "<h4 class=\"content-type\" style='margin-left: -20px;'>{}</h4>".format(mean.wordType.strip()))
+                    "<h4 class=\"content-meaning-type\" style='margin-left: -20px;'>{}</h4>".format(mean.wordType.strip()))
 
             if mean.meaning:
                 str_list.append(
@@ -148,7 +149,7 @@ class HtmlHelper:
                         "<li class=\"content-example\">{}</li>".format(example.strip()))
                 str_list.append("</ul>")
 
-        str_list.append("</ol>")
+        str_list.append("</ul>")
         str_list.append("</div>")
 
         return "".join(str_list)

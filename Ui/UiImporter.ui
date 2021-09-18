@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>424</width>
-    <height>100</height>
+    <width>422</width>
+    <height>122</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -99,6 +99,22 @@
    </property>
    <property name="default">
     <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox">
+   <property name="geometry">
+    <rect>
+     <x>21</x>
+     <y>95</y>
+     <width>220</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Overwite if the note type already exists?</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>

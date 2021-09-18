@@ -22,10 +22,10 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class UiImporter(object):
     def setupUi(self, Dialog, version, iconPath):
         Dialog.setObjectName("Dialog")
-        Dialog.setFixedSize(424, 100)
         Dialog.setWindowTitle("Importer {}".format(version))
         icon = QtGui.QIcon(iconPath)
         Dialog.setWindowIcon(icon)
+        Dialog.setFixedSize(422, 122)
         self.deckNameTxt = QtWidgets.QLineEdit(Dialog)
         self.deckNameTxt.setGeometry(QtCore.QRect(100, 10, 301, 31))
         self.deckNameTxt.setObjectName("deckNameTxt")
@@ -56,6 +56,10 @@ class UiImporter(object):
         self.importBtn.setCheckable(False)
         self.importBtn.setDefault(False)
         self.importBtn.setObjectName("importBtn")
+        self.checkBox = QtWidgets.QCheckBox(Dialog)
+        self.checkBox.setGeometry(QtCore.QRect(21, 95, 220, 17))
+        self.checkBox.setChecked(True)
+        self.checkBox.setObjectName("checkBox")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -66,3 +70,4 @@ class UiImporter(object):
         self.deckNameLbl.setText(_translate("Dialog", "Deck Name"))
         self.importBtn.setToolTip(_translate("Dialog", "Import generated flashcards into Anki"))
         self.importBtn.setText(_translate("Dialog", "Import"))
+        self.checkBox.setText(_translate("Dialog", "Overwite if the note type already exists?"))

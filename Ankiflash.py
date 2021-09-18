@@ -17,6 +17,9 @@ class AnkiFlash():
 
     def __init__(self, version):
 
+        # disable old log process
+        logging.shutdown()
+        
         # Directories
         self.addonDir = join(mw.pm.addonFolder(), "1129289384")
         self.mediaDir = mw.col.media.dir()
