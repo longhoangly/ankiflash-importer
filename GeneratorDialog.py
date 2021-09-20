@@ -167,15 +167,24 @@ class GeneratorDialog(QDialog):
     def finishedGenerationProgress(self):
 
         self.ui.generateBtn.setEnabled(True)
-        btnSelected = AnkiHelper.messageBoxButtons("Info",
-                                                   "Finished generating flashcards.\nThanks for using AnkiFlash!",
-                                                   "Do you want to import generated flashcards now?\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
-                                                       len(self.words), self.cardCount, self.failureCount),
-                                                   QMessageBox.No | QMessageBox.Yes,
-                                                   QMessageBox.Yes,
-                                                   self.iconPath)
-        if btnSelected == QMessageBox.Yes:
-            self.btnImporterClicked()
+        if self.ui.outputTxt.toPlainText():
+            btnSelected = AnkiHelper.messageBoxButtons("Info",
+                                                       "Finished generating flashcards.\nThanks for using AnkiFlash!",
+                                                       "Do you want to import generated flashcards now?\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
+                                                           len(self.words), self.cardCount, self.failureCount),
+                                                       QMessageBox.No | QMessageBox.Yes,
+                                                       QMessageBox.Yes,
+                                                       self.iconPath)
+            if btnSelected == QMessageBox.Yes:
+                self.btnImporterClicked()
+        else:
+            AnkiHelper.messageBoxButtons("Info",
+                                         "Finished generating flashcards.\nThanks for using AnkiFlash!",
+                                         "No output flashcards available for importing.\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
+                                             len(self.words), self.cardCount, self.failureCount),
+                                         QMessageBox.Close,
+                                         QMessageBox.Close,
+                                         self.iconPath)
 
     def selectedRadio(self, groupBox: QGroupBox) -> str:
         # Get all radio buttons

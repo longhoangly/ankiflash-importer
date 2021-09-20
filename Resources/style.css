@@ -82,18 +82,21 @@ body {
     padding-inline-start: 5px !important;
 }
 
+.content-order > li {
+    margin-left: -5px !important;
+}
+
 .content-type {
     font-style: normal;
-    margin-left: 10px;
     margin-top: 15px;
+    margin-left: 10px;
 }
 
 .content-meaning-type {
     font-style: normal;
-    margin-left: 10px;
-    margin-top: 15px;
     display: list-item;
     list-style: square;
+    margin-left: -15px !important;
 }
 
 .content-phonetic {
@@ -102,15 +105,11 @@ body {
     margin-right: 10px;
 }
 
-.content-order {
-    margin-left: 10px;
-    padding-inline-start: 10px !important;
-}
-
 .content-meaning {
     font-weight: bold;
     font-style: normal;
     margin-top: 10px;
+    margin-bottom: 10px;
     display: list-item;
     list-style: initial;
 }
@@ -119,7 +118,6 @@ body {
     font-weight: bold;
     font-style: normal;
     font-style: italic;
-    margin-top: 10px;
     margin-bottom: 10px;
 }
 
@@ -154,7 +152,6 @@ body {
 #search-kanji-list > .rdf > div > a {
     margin-right: 15px;
     float: left;
-    color: #333;
     padding: 6px;
     height: 45px;
     font-size: 40px;
@@ -182,6 +179,14 @@ body {
     width: 100%;
     font-size: 13px;
     clear: both;
+}
+
+.content-sub-example {
+    padding-bottom: 15px;
+    display: list-item;
+    list-style: none;
+    font-size: 15px;
+    font-family: "Raleway", sans-serif;
 }
 
 #search-kanji-list .kmr-kunon > a {

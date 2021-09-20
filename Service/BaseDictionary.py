@@ -29,7 +29,7 @@ class BaseDictionary(ABC):
 
     @abstractmethod
     def search(self, formattedWord, translation: Translation) -> bool:
-        """Find input word from dictionary data"""
+        """Find input word from dictionary data. Return True if Not Found"""
         raise NotImplementedError
 
     @abstractmethod

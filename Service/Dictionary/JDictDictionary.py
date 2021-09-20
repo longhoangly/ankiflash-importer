@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import logging
+import urllib.parse
+
 from typing import List
 from bs4.element import Tag
 
@@ -30,24 +33,24 @@ class JDictDictionary(BaseDictionary):
         urlParameters = "m=dictionary&fn=detail_word&id={}".format(self.wordId)
         self.doc = DictHelper.getJDictDoc(
             Constant.JDICT_URL_VN_JP_OR_JP_VN, urlParameters)
+        logging.info("self.doc {}".format(self.doc))
 
         return True if not self.doc else False
 
     def isInvalidWord(self) -> bool:
         """Check if the input word exists in dictionary?"""
-        
-        elements = self.doc.select("#txtKanji")
-        if len(elements) == 0:
-            return True
 
-        elements = self.doc.select("#word-detail-info")
-        return len(elements) > 0
+        mainWord = self.doc.select_one("#txtKanji")
+        wordDetail = self.doc.select_one("#word-detail-info")
+
+        return not mainWord and not wordDetail
 
     def getWordType(self) -> str:
         if not self.wordType:
             element: Tag = HtmlHelper.getDocElement(
                 self.doc, "label[class*=word-type]", 0)
-            self.wordType = "(" + element.get_text().strip() + ")" if element else ""
+            self.wordType = "(" + element.get_text().strip() + \
+                ")" if element else ""
         return self.wordType
 
     def getExample(self) -> str:
@@ -92,9 +95,9 @@ class JDictDictionary(BaseDictionary):
             self.image = googleImage
             return self.image
 
-        if "https" in self.imageLink:
-            self.imageLink = "https://j-dict.com" + self.imageLink
-        self.imageLink = self.imageLink.replace("\\?w=.*$", "", count=1)
+        if "https" not in self.imageLink:
+            self.imageLink = "https://kantan.vn" + self.imageLink
+        self.imageLink = self.imageLink.replace("\\?w=.*$", "", 1)
         imageName = DictHelper.getFileName(self.imageLink)
         if isOnline:
             self.image = "<img src=\"" + self.imageLink + "\"/>"
@@ -128,12 +131,14 @@ class JDictDictionary(BaseDictionary):
         return self.sounds
 
     def getMeaning(self) -> str:
+
         self.getWordType()
         self.getPhonetic()
 
         meanings: List[Meaning] = []
-        meaning = Meaning()
 
+        # WordType
+        meaning = Meaning()
         meanGroup: Tag = HtmlHelper.getDocElement(
             self.doc, "#word-detail-info", 0)
         wordType: Tag = HtmlHelper.getChildElement(
@@ -142,13 +147,15 @@ class JDictDictionary(BaseDictionary):
             meaning.wordType = wordType.get_text().strip()
         meanings.append(meaning)
 
+        # Meaning
         meanElms = meanGroup.select("ol.ol-decimal>li")
         for meanElm in meanElms:
             meaning = Meaning()
             mean: Tag = HtmlHelper.getChildElement(meanElm, ".nvmn-meaning", 0)
             if mean:
-                meaning.meaning = mean.text
+                meaning.meaning = mean.get_text()
 
+            # Examples
             exampleElms = meanElm.select(
                 "ul.ul-disc>li>u,ul.ul-disc>li>p")
             innerExamples: list[str] = getJDictExamples(exampleElms)
@@ -156,12 +163,14 @@ class JDictDictionary(BaseDictionary):
                 meaning.examples = innerExamples
             meanings.append(meaning)
 
+        # Kanji Meaning
         meaning = Meaning()
         kanji = HtmlHelper.getChildOuterHtml(
             meanGroup, "#search-kanji-list", 0)
-        if not kanji:
+        if kanji:
             meaning.meaning = kanji.replace("\n", "")
 
+        # Examples
         exampleElms = meanGroup.select(
             "#word-detail-info>ul.ul-disc>li>u,#word-detail-info>ul.ul-disc>li>p")
         examples = getJDictExamples(exampleElms)
@@ -172,28 +181,29 @@ class JDictDictionary(BaseDictionary):
         return HtmlHelper.buildMeaning(self.word, self.wordType, self.phonetic, meanings, True)
 
     def getDictionaryName(self) -> str:
-        return "J-Dict Dictionary"
+        return "Kantan Dictionary (Kantan.vn)"
 
 
 def getJDictExamples(exampleElms: List[Tag]) -> List[str]:
 
     examples: List[str] = []
-    if not exampleElms:
+    if exampleElms:
         jpExamples: list[str] = []
         for exampleElem in exampleElms:
-            if not exampleElem["class"]:
-                examples.append(">>>>>" + exampleElem.text())
-                jpExamples.append(exampleElem.text())
+            if exampleElem.get("class"):
+                examples.append(">>>>>" + exampleElem.get_text())
+                jpExamples.append(exampleElem.get_text())
             else:
-                examples.append(exampleElem.text())
+                examples.append(exampleElem.get_text())
 
-        sentencesChain = "".join("=>=>=>=>=>", jpExamples)
-        urlParams = "".format(
-            "m=dictionary&fn=furigana&keyword={}", sentencesChain)
+        sentencesChain = "=>=>=>=>=>".join(jpExamples)
+        sentencesChain = urllib.parse.quote(sentencesChain)
+
+        urlParams = "m=dictionary&fn=furigana&keyword={}".format(
+            sentencesChain)
         doc = DictHelper.getJDictDoc(
             Constant.JDICT_URL_VN_JP_OR_JP_VN, urlParams)
-        sentencesChain = doc.body.html.replace(
-            "\n", "") if doc else sentencesChain
+        sentencesChain = str(doc).replace("\n", "") if doc else sentencesChain
         jpExamples = sentencesChain.split("=&gt;=&gt;=&gt;=&gt;=&gt;")
 
         index = 0

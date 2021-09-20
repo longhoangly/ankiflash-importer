@@ -64,24 +64,24 @@ class HtmlHelper:
         return texts
 
     @staticmethod
-    def getInnerHtml(doc: BeautifulSoup, selector: str, index: int) -> str:
+    def getElementInnerHtml(doc: BeautifulSoup, selector: str, index: int) -> str:
         element = HtmlHelper.getDocElement(doc, selector, index)
-        return element.text if element else ""
+        return element.decode_contents() if element else ""
 
     @staticmethod
-    def getInnerHtml(element: Tag, selector: str, index: int) -> str:
+    def getChildInnerHtml(element: Tag, selector: str, index: int) -> str:
         element = HtmlHelper.getChildElement(element, selector, index)
-        return element.text if element else ""
+        return element.decode_contents() if element else ""
 
     @staticmethod
-    def getDocOuterHtml(doc: BeautifulSoup, selector: str, index: int) -> str:
+    def getElementOuterHtml(doc: BeautifulSoup, selector: str, index: int) -> str:
         element = HtmlHelper.getDocElement(doc, selector, index)
-        return element.parent.text if element else ""
+        return str(element) if element else ""
 
     @staticmethod
     def getChildOuterHtml(element: Tag, selector: str, index: str) -> str:
         element = HtmlHelper.getChildElement(element, selector, index)
-        return element.parent.text if element else ""
+        return str(element) if element else ""
 
     @staticmethod
     def getAttribute(doc: BeautifulSoup, selector: str, index: int, attr: str) -> str:
@@ -98,9 +98,22 @@ class HtmlHelper:
             str_list.append("<div class=\"content-container\">")
 
         str_list.append("<ul class=\"content-circle\">")
-        for example in examples:
-            str_list.append(
-                "<li class=\"content-example\">{}</li>".format(example))
+
+        if (isJapanese):
+            index = 0
+            for example in examples:
+                if index % 2 == 0:
+                    str_list.append(
+                        "<li class=\"content-example\">{}</li>".format(example.strip()))
+                else:
+                    str_list.append(
+                        "<li class=\"content-sub-example\">{}</li>".format(example.strip()))
+                index += 1
+        else:
+            for example in examples:
+                str_list.append(
+                    "<li class=\"content-example\">{}</li>".format(example.strip()))
+
         str_list.append("</ul>")
         str_list.append("</div>")
 
@@ -129,10 +142,10 @@ class HtmlHelper:
         for mean in meanings:
 
             if mean.wordType:
+                str_list.append(
+                    "<h4 class=\"content-meaning-type\"'>{}</h4>".format(mean.wordType.strip()))
                 str_list.append("</ul>")
                 str_list.append("<ul class=\"content-order\">")
-                str_list.append(
-                    "<h4 class=\"content-meaning-type\" style='margin-left: -20px;'>{}</h4>".format(mean.wordType.strip()))
 
             if mean.meaning:
                 str_list.append(
@@ -144,9 +157,22 @@ class HtmlHelper:
 
             if "list" in str(type(mean.examples)) and len(mean.examples) > 0:
                 str_list.append("<ul class=\"content-circle\">")
-                for example in mean.examples:
-                    str_list.append(
-                        "<li class=\"content-example\">{}</li>".format(example.strip()))
+
+                if (isJapanese):
+                    index = 0
+                    for example in mean.examples:
+                        if index % 2 == 0:
+                            str_list.append(
+                                "<li class=\"content-example\">{}</li>".format(example.strip()))
+                        else:
+                            str_list.append(
+                                "<li class=\"content-sub-example\">{}</li>".format(example.strip()))
+                        index += 1
+                else:
+                    for example in mean.examples:
+                        str_list.append(
+                            "<li class=\"content-example\">{}</li>".format(example.strip()))
+
                 str_list.append("</ul>")
 
         str_list.append("</ul>")

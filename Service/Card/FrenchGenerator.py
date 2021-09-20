@@ -40,7 +40,7 @@ class FrenchGenerator(BaseGenerator):
                 formattedWord, translation, ankiDir, isOnline, card, lacVietDict)
 
         # French to English
-        elif translation.equals(Translation.FR_EN):
+        elif translation.equals(Constant.FR_EN):
 
             card = self.singleDictionaryCard(
                 formattedWord, translation, ankiDir, isOnline, card, collinsDict)

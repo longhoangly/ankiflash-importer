@@ -19,7 +19,7 @@ class AnkiFlash():
 
         # disable old log process
         logging.shutdown()
-        
+
         # Directories
         self.addonDir = join(mw.pm.addonFolder(), "1129289384")
         self.mediaDir = mw.col.media.dir()
@@ -33,12 +33,13 @@ class AnkiFlash():
         self.ankiFlashLog = join(self.addonDir, r'Logs/ankiflash.log')
 
         rfh = RotatingFileHandler(
-            filename=self.ankiFlashLog, maxBytes=50000000, backupCount=3)
+            filename=self.ankiFlashLog, maxBytes=50000000, backupCount=3, encoding='utf-8')
         should_roll_over = os.path.isfile(self.ankiFlashLog)
         if should_roll_over:
             rfh.doRollover()
         logging.basicConfig(level=logging.INFO,
-                            format='%(asctime)s - %(threadName)s [%(thread)d] - %(message)s', datefmt='%d-%b-%y %H:%M:%S',
+                            format=u"%(asctime)s - %(threadName)s [%(thread)d] - %(message)s",
+                            datefmt="%d-%b-%y %H:%M:%S",
                             handlers=[rfh])
 
         # Create Generator Dialog

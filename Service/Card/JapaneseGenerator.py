@@ -33,7 +33,7 @@ class JapaneseGenerator(BaseGenerator):
         card: Card = self.initializeCard(formattedWord, translation)
         card.status = Status.SUCCESS
         card.comment = Constant.SUCCESS
-        
+
         jDict = JDictDictionary()
         jishoDict = JishoDictionary()
 
@@ -44,7 +44,7 @@ class JapaneseGenerator(BaseGenerator):
                 formattedWord, translation, ankiDir, isOnline, card, jDict)
 
         # Japanese to English
-        elif translation.equals(Translation.JP_EN):
+        elif translation.equals(Constant.JP_EN):
 
             card = self.singleDictionaryCard(
                 formattedWord, translation, ankiDir, isOnline, card, jishoDict)

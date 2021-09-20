@@ -70,7 +70,7 @@ class OxfordDictionary(BaseDictionary):
                     example = "{} {}".format(example, "{{c1::...}}")
                 examples.append(example)
 
-        logging.info("examples: {}".format(examples).encode("utf-8"))
+        logging.info("examples: {}".format(examples))
         return HtmlHelper.buildExample(examples)
 
     def getPhonetic(self) -> str:

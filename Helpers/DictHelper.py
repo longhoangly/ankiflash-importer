@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import json
+import urllib.parse
+
 import requests
 import logging
 import os
@@ -38,15 +41,24 @@ class DictHelper:
 
     @staticmethod
     def getJDictDoc(url: str, body: str):
-        logging.info("url={}, body={}".format(url, body).encode("utf-8"))
-        html = requests.post(url=url, data=body, headers={
-                             "User-Agent": "Mozilla/5.0"})
-        return BeautifulSoup(html.text, 'html.parser')
+
+        logging.info("url={}, body={}".format(url, body))
+        response = requests.post(url=url, data=body, headers={
+            "User-Agent": "Mozilla/5.0",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"})
+
+        resp = json.loads(response.text)
+        content = resp["Content"].replace("\n", " ").replace("\r", " ")
+        logging.info("JP document {}".format(content))
+
+        return BeautifulSoup(content, 'html.parser')
 
     @staticmethod
     def getJDictWords(word: str) -> List[str]:
+
+        search_word = urllib.parse.quote(word)
         urlParameters = "m=dictionary&fn=search_word&keyword={}&allowSentenceAnalyze=true".format(
-            word)
+            search_word)
         document = DictHelper.getJDictDoc(
             Constant.JDICT_URL_VN_JP_OR_JP_VN, urlParameters)
         wordElms: List[Tag] = []
@@ -55,11 +67,17 @@ class DictHelper:
 
         jDictWords = []
         for wordElm in wordElms:
-            dataId = wordElm.find(attrs={"data-id": True})
-            if word.lower() in str(wordElm.get("title")).lower() and not dataId:
+            dataId = wordElm.get("data-id")
+            logging.info("JP wordElms {}".format(wordElm))
+            logging.info("JP word.lower() {}".format(word.lower()))
+            logging.info("JP title.lower() {}".format(
+                wordElm.get("title").lower()))
+
+            if word.lower() in wordElm.get("title").lower() and dataId:
                 jDictWords.append(wordElm.get("title") + Constant.SUB_DELIMITER +
                                   dataId + Constant.SUB_DELIMITER + word)
 
+        logging.info("JP jDictWords {}".format(jDictWords))
         return jDictWords
 
     @staticmethod

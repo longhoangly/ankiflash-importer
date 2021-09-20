@@ -186,7 +186,8 @@ class Worker(QObject):
         cardLines: list[str] = []
         for card in self.cards:
             cardContent = "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}".format(
-                card.oriWord,
+                card.word if self.translation.equals(
+                    Constant.VN_JP) else card.oriWord,
                 Constant.TAB,
                 card.wordType,
                 Constant.TAB,

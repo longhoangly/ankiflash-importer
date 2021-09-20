@@ -36,13 +36,13 @@ class VietnameseGenerator(BaseGenerator):
         jDict = JDictDictionary()
 
         # Vietnamese to English/French
-        if translation.equals(Translation.VN_EN) or translation.equals(Translation.VN_FR):
+        if translation.equals(Constant.VN_EN) or translation.equals(Constant.VN_FR):
 
             card = self.singleDictionaryCard(
                 formattedWord, translation, ankiDir, isOnline, card, lacVietDict)
 
         # Vietnamese to Japanese
-        elif translation.equals(Translation.VN_JP):
+        elif translation.equals(Constant.VN_JP):
 
             card = self.singleDictionaryCard(
                 formattedWord, translation, ankiDir, isOnline, card, jDict)

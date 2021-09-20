@@ -36,7 +36,7 @@ class EnglishGenerator(BaseGenerator):
         card: Card = self.initializeCard(formattedWord, translation)
         card.status = Status.SUCCESS
         card.comment = Constant.SUCCESS
-        
+
         oxfordDict = OxfordDictionary()
         cambridgeDict = CambridgeDictionary()
         lacVietDict = LacVietDictionary()
