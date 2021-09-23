@@ -180,8 +180,7 @@ class Worker(QObject):
                                 "{} -> {}".format(formattedWord.split(self.delimiter)[0], card.comment))
                 else:
                     failureCount += 1
-                    self.failureStr.emit(
-                        "{} -> Word not found. Could you please check spelling or feedback to us!".format(value))
+                    self.failureStr.emit(Constant.WORD_NOT_FOUND.format(value))
 
         cardLines: list[str] = []
         for card in self.cards:
