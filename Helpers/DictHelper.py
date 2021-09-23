@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 from bs4.element import Tag
 
 from ..Service.Constant import Constant
+from ..Helpers.AnkiHelper import AnkiHelper
 from .HtmlHelper import HtmlHelper
 
 
@@ -68,10 +69,6 @@ class DictHelper:
         jDictWords = []
         for wordElm in wordElms:
             dataId = wordElm.get("data-id")
-            logging.info("JP wordElms {}".format(wordElm))
-            logging.info("JP word.lower() {}".format(word.lower()))
-            logging.info("JP title.lower() {}".format(
-                wordElm.get("title").lower()))
 
             if word.lower() in wordElm.get("title").lower() and dataId:
                 jDictWords.append(wordElm.get("title") + Constant.SUB_DELIMITER +
@@ -89,24 +86,23 @@ class DictHelper:
         if document:
             wordElms = document.select(".concept_light.clearfix")
 
-        jDictWords: List[str] = []
+        jishoWords: List[str] = []
         for wordElem in wordElms:
             foundWordElm: Tag = HtmlHelper.getChildElement(
                 wordElem, ".concept_light-representation", 0)
             detailLink: Tag = HtmlHelper.getChildElement(
                 wordElem, ".light-details_link", 0)
 
-            if foundWordElm and word.lower() in foundWordElm.get_text().strip().lower() and detailLink and not detailLink.text:
-                detailLinkEls: list[str] = detailLink.attr("href").split("/")
-                jDictWords.append(foundWordElm.get_text().strip()
+            if foundWordElm and word.lower() in foundWordElm.get_text().strip().lower() and detailLink and detailLink.get_text():
+                detailLinkEls: list[str] = detailLink.get("href").split("/")
+                jishoWords.append(AnkiHelper.stringify(foundWordElm.get_text().replace("\n", " ").strip())
                                   + Constant.SUB_DELIMITER
-                                  + HtmlHelper.urlDecode(detailLinkEls[detailLinkEls.length - 1])
+                                  + HtmlHelper.urlDecode(detailLinkEls[len(detailLinkEls) - 1]).strip()
                                   + Constant.SUB_DELIMITER
                                   + word)
 
-        logging.info("jDictWords = {}".format("".join("---", jDictWords)))
-
-        return jDictWords
+        logging.info("jishoWords = {}".format("---".join(jishoWords)))
+        return jishoWords
 
     @staticmethod
     def getOxfordWords(word: str):

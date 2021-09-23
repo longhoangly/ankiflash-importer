@@ -141,14 +141,14 @@ class LacVietDictionary(BaseDictionary):
                 firstMeaning = True
 
                 for meanElm in meanElms:
-                    if meanElm.has_attr("class") and "ub" in meanElm["class"]:
+                    if meanElm.has_attr("class") and "ub" in meanElm.get("class"):
                         if meanCount > 0:
                             # has meaning -> get text
                             meaning.wordType = meanElm.get_text().strip()
                         else:
                             # only type -> get inner html
                             meaning.wordType = meanElm.get_text().strip().replace("\n", "")
-                    elif meanElm.has_attr("class") and "m" in meanElm["class"]:
+                    elif meanElm.has_attr("class") and "m" in meanElm.get("class"):
                         # from the second meaning tag
                         if not firstMeaning:
                             meaning.examples = examples
@@ -156,10 +156,20 @@ class LacVietDictionary(BaseDictionary):
                             # reset value
                             meaning = Meaning()
                             examples = []
+                        meaningTags = meanElm.select("a")
+                        if len(meaningTags) > 0:
+                            # add correct url prefix for all <a> tags
+                            for aTag in meaningTags:
+                                replaceTag = aTag
+                                replaceTag["href"] = "http://tratu.coviet.vn/" + \
+                                    aTag.get("href")
+                                aTag.replaceWith(replaceTag)
 
-                        meaning.meaning = meanElm.get_text().strip()
+                            meaning.meaning = str(meanElm).strip()
+                        else:
+                            meaning.meaning = meanElm.get_text().strip()
                         firstMeaning = False
-                    elif meanElm.has_attr("class") and ("e" in meanElm["class"] or "em" in meanElm["class"] or "im" in meanElm["class"] or "id" in meanElm["class"] or "href" in meanElm["class"]):
+                    elif meanElm.has_attr("class") and ("e" in meanElm.get("class") or "em" in meanElm.get("class") or "im" in meanElm.get("class") or "id" in meanElm.get("class") or "href" in meanElm.get("class")):
                         examples.append(meanElm.get_text().strip())
 
                 meaning.examples = examples

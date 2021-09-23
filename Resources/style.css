@@ -2,6 +2,7 @@ body {
     width: 100%;
     height: 100%;
     font-size: 16px;
+    font-family: "Open Sans", "Raleway";
 }
 
 .anki-container {
@@ -106,7 +107,6 @@ body {
 }
 
 .content-meaning {
-    font-weight: bold;
     font-style: normal;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -115,9 +115,8 @@ body {
 }
 
 .content-sub-meaning {
-    font-weight: bold;
     font-style: normal;
-    font-style: italic;
+    font-style: initial;
     margin-bottom: 10px;
 }
 
@@ -129,7 +128,7 @@ body {
     font-style: italic;
 }
 
-/* Japanese */
+/* Japanese JDict */
 .japanese_gothic,
 .japan-font {
     font-family: "HiraKakuPro-W3", "Hiragino Kaku Gothic Pro W3",
@@ -216,4 +215,22 @@ ul.japanese {
     padding-inline-start: 0px;
     display: list-item;
     list-style: circle;
+}
+
+/* Collins */
+.cit.type-translation.quote,
+.cit.type-translation .quote {
+    font-weight: bold;
+    font-style: normal;
+}
+
+.subc,
+.sense .lbl,
+.lbl.type-subj,
+.lbl.type-geo,
+.lbl.type-lang,
+.hi.rend-r,
+.colloc {
+    font-style: italic;
+    font-weight: normal;
 }

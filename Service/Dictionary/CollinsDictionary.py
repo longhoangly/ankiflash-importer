@@ -34,7 +34,7 @@ class CollinsDictionary(BaseDictionary):
 
     def isInvalidWord(self) -> bool:
         """Check if the input word exists in dictionary?"""
-        
+
         mainContent = HtmlHelper.getText(self.doc, "div.content-box", 0)
         if Constant.COLLINS_SPELLING_WRONG in mainContent:
             return True
@@ -45,7 +45,7 @@ class CollinsDictionary(BaseDictionary):
     def getWordType(self) -> str:
         if not self.wordType:
             texts = HtmlHelper.getTexts(self.doc, "span.pos")
-            self.wordType = "(" + "".join(" / ", texts) + \
+            self.wordType = "(" + " / ".join(texts) + \
                 ")" if len(texts) > 0 else ""
         return self.wordType
 
@@ -115,29 +115,30 @@ class CollinsDictionary(BaseDictionary):
         for meanElm in meanElms:
             meaning = Meaning()
             # WordType
-            wordType = HtmlHelper.getElement(meanElm, ".pos", 0)
-            meaning.wordType = wordType.text if wordType else ""
+            wordType = HtmlHelper.getChildElement(meanElm, "span.pos", 0)
+            meaning.wordType = wordType.get_text().capitalize() if wordType else ""
 
             # Meaning
-            means = meanElm.select(">div.sense")
+            means = meanElm.select("div.sense")
             for mean in means:
-                re = mean.select("span[class*=sensenum]", limit=1)
+                re = mean.select_one("span[class*=sensenum]")
                 if re:
                     re.decompose()
-                meaning.meaning = str(Tag(mean).parent.text).replace("\n", "")
+                meaning.meaning = str(mean).replace("\n", " ")
                 meanings.append(meaning)
                 meaning = Meaning()
 
+        # Examples
         meaning = Meaning()
         examples = []
-        examElms = self.doc.select("div.example_box>blockquote")
+        examElms = self.doc.select("div.listExBlock .quote")
         for exam in examElms:
-            examples.append(Tag(exam).text)
+            examples.append(exam.get_text())
         meaning.examples = examples
-        meaning.wordType = "Extra Examples"
+        meaning.wordType = "Extra examples"
         meanings.append(meaning)
 
         return HtmlHelper.buildMeaning(self.word, self.wordType, self.phonetic, meanings)
 
     def getDictionaryName(self) -> str:
-        return "Cambridge Dictionary"
+        return "Collins Dictionary"

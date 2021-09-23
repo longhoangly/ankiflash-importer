@@ -36,7 +36,7 @@ class JishoDictionary(BaseDictionary):
     def isInvalidWord(self) -> bool:
         """Check if the input word exists in dictionary?"""
 
-        if Constant.JISHO_WORD_NOT_FOUND in self.doc.parent.text:
+        if Constant.JISHO_WORD_NOT_FOUND in self.doc.get_text():
             return True
 
         word = HtmlHelper.getText(self.doc, ".concept_light-representation", 0)
@@ -51,35 +51,36 @@ class JishoDictionary(BaseDictionary):
             for element in elements:
                 wType = element.get_text().strip()
                 if wType and "Wikipedia definition" != wType and "Other forms" != wType:
-                    wordTypes.add("[" + wType + "]")
+                    wordTypes.append("[" + wType + "]")
 
-            self.wordType = "(" + "".join(" / ", wordTypes) + \
+            self.wordType = "(" + " / ".join(wordTypes) + \
                 ")" if len(wordTypes) > 0 else ""
         return self.wordType
 
     def getExample(self) -> str:
         examples: list[str] = []
         for i in range(4):
-            example = HtmlHelper.getInnerHtml(self.doc, ".sentence", i)
-            if example and i == 0:
+            example = HtmlHelper.getChildInnerHtml(
+                self.doc, ".sentence", i)
+            if not example and i == 0:
                 return Constant.NO_EXAMPLE
-            elif example:
+            elif not example and i != 0:
                 break
             else:
                 lowerWord = self.oriWord.lower()
-                example = example.get_text().strip().lower()
+                exampleStr = example.strip().lower()
 
-                if lowerWord in example:
-                    example = example.replace(
+                if lowerWord in exampleStr:
+                    exampleStr = exampleStr.replace(
                         lowerWord, "{{c1::" + lowerWord + "}}")
                 else:
-                    example = "".format("{} {}", example, "{{c1::...}}")
-                examples.append(example.replace("\n", ""))
+                    exampleStr = "{} {}".format(exampleStr, "{{c1::...}}")
+                examples.append(exampleStr.replace("\n", ""))
 
         return HtmlHelper.buildExample(examples, True)
 
     def getPhonetic(self) -> str:
-        raise NotImplementedError
+        return ""
 
     def getImage(self, ankiDir: str, isOnline: bool) -> str:
         self.ankiDir = ankiDir
@@ -91,7 +92,7 @@ class JishoDictionary(BaseDictionary):
     def getSounds(self, ankiDir: str, isOnline: bool) -> List[str]:
         self.ankiDir = ankiDir
         self.soundLinks = HtmlHelper.getAttribute(
-            self.doc, "audio>source[type=audio/mpeg]", 0, "src")
+            self.doc, "audio>source", 0, "src")
 
         if not self.soundLinks:
             self.sounds = ""
@@ -122,11 +123,13 @@ class JishoDictionary(BaseDictionary):
             meaning: Meaning
             meanElms = meanGroup.select(".meaning-tags,.meaning-wrapper")
             for meanElm in meanElms:
+                # Word type
                 if "meaning-tags" in meanElm["class"]:
                     meaning = Meaning()
                     meaning.wordType = meanElm.text
                     meanings.append(meaning)
 
+                # Meaning
                 if "meaning-wrapper" in meanElm["class"]:
                     meaning = Meaning()
                     mean = HtmlHelper.getChildElement(
@@ -144,10 +147,11 @@ class JishoDictionary(BaseDictionary):
                     meaning.examples = examples
                     meanings.append(meaning)
 
+            # Extra examples
             meaning = Meaning()
             extraExamples = getJishoJapaneseSentences(self.word)
             if extraExamples:
-                meaning.wordType = "Extra Examples"
+                meaning.wordType = "Extra examples"
                 meaning.examples = extraExamples
                 meanings.append(meaning)
 
@@ -170,7 +174,7 @@ def getJishoJapaneseSentences(word: str) -> List[str]:
 
     maxCount = 1
     for sentenceElm in sentenceElms:
-        sentences.append(sentenceElm.html.replace("\n", ""))
+        sentences.append(sentenceElm.decode_contents().replace("\n", ""))
 
         if maxCount >= 10:
             break
