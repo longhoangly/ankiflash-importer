@@ -2,6 +2,7 @@
     <div id="playBtn">
         <div id="myAudio">{{Sound}}</div>
     </div>
+
     <div class="phonetic">{{Phonetic}}</div>
     <div class="type">{{WordType}}</div>
 
@@ -14,60 +15,62 @@
             <div class="image">{{Image}}</div>
         </div>
     </div>
+
     <div class="word-type">{{type:Word}}</div>
 </div>
-<div>
 
+<script language="JavaScript">
 
-    <script language="JavaScript">
-        //Play sounds
-        function playSounds() {
-            var myAudio = document.getElementById('myAudio');
-            var audios = document.getElementsByTagName('audio');
-            sequencePlaySounds(audios, 0);
+    function playSounds() {
+        var myAudio = document.getElementById('myAudio');
+        var audios = document.getElementsByTagName('audio');
+        sequencePlaySounds(audios, 0);
+    }
+
+    // Play sounds on page loaded
+    document.onload = playSounds();
+
+    // Recursive to play sounds
+    function sequencePlaySounds(sounds, idx) {
+
+        // Finish condition.1
+        if (idx >= sounds.length)
+            return;
+
+        let next = function () {
+            sequencePlaySounds(sounds, idx + 1)
+        };
+
+        sounds[idx].onended = next;
+        if (sounds[idx].getAttribute('src').includes('http')) {
+            sounds[idx].play();
         }
-        document.onload = playSounds();
+    }
 
-        // Recursive to play sounds
-        function sequencePlaySounds(sounds, idx) {
-            // Finish condition.1
-            if (idx >= sounds.length)
-                return;
-
-            let next = function () {
-                sequencePlaySounds(sounds, idx + 1)
-            };
-
-            sounds[idx].onended = next;
-            if (sounds[idx].getAttribute('src').includes('http')) {
-                sounds[idx].play();
-            }
+    // Show/hide elements
+    function ShowHide(divId) {
+        if (document.getElementById(divId).style.display === 'none') {
+            document.getElementById(divId).style.display = 'block';
+        } else {
+            document.getElementById(divId).style.display = 'none';
         }
+    }
 
-        // Show/hide elements
-        function ShowHide(divId) {
-            if (document.getElementById(divId).style.display == 'none') {
-                document.getElementById(divId).style.display = 'block';
-            } else {
-                document.getElementById(divId).style.display = 'none';
-            }
+    // Replace vowel
+    var str = document.getElementById("dropped-vowel").innerHTML;
+    letters = '';
+    for (var i = 0, len = str.length; i < len; i++) {
+        if (str[i].match(/[AEOUIaeoui]/i)) {
+            letters += '<span class="hint">' + '_' + '</span>';
+        } else {
+            letters += str[i];
         }
+    }
+    document.getElementById("dropped-vowel").innerHTML = letters;
 
-        // Replace vowel
-        var str = document.getElementById("dropped-vowel").innerHTML;
-        letters = '';
-        for (var i = 0, len = str.length; i < len; i++) {
-            if (str[i].match(/[AEOUIaeoui]/i)) {
-                letters += '<span class="hint">' + '_' + '</span>';
-            } else {
-                letters += str[i];
-            }
-        }
-        document.getElementById("dropped-vowel").innerHTML = letters;
-
-        // Show/hide play sounds element
-        var playBtn = document.getElementById('playBtn');
-        if (document.getElementById('myAudio').textContent == '') {
-            playBtn.parentNode.removeChild(playBtn);
-        }
-    </script>
+    // Show/hide play sounds element
+    var playBtn = document.getElementById('playBtn');
+    if (document.getElementById('myAudio').textContent === '') {
+        playBtn.parentNode.removeChild(playBtn);
+    }
+</script>

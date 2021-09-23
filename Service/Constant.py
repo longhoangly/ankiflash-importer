@@ -55,7 +55,7 @@ class Constant:
     NO_EXAMPLE = "No example {{c1::...}}"
     SUCCESS = "Success"
     COPYRIGHT = "This card's content is collected from the following dictionaries: {}"
-    WORD_NOT_FOUND = "Word not found! Could you please check spelling or feedback to us!"
+    WORD_NOT_FOUND = "{} -> Word not found. Could you please check spelling or feedback to us!"
     CONNECTION_FAILED = "Cannot connect to dictionaries, please try again later!"
     NOT_SUPPORTED_TRANSLATION = "The translation from {} to {} is not supported!"
 

@@ -46,12 +46,14 @@ class JishoDictionary(BaseDictionary):
         if not self.wordType:
             elements = self.doc.select(
                 "div.concept_light.clearfix div.meaning-tags")
-            wordTypes = []
 
+            wordTypes = []
             for element in elements:
                 wType = element.get_text().strip()
+
                 if wType and "Wikipedia definition" != wType and "Other forms" != wType:
-                    wordTypes.append("[" + wType + "]")
+                    if wType not in wordTypes:
+                        wordTypes.append(wType)
 
             self.wordType = "(" + " / ".join(wordTypes) + \
                 ")" if len(wordTypes) > 0 else ""
@@ -122,12 +124,16 @@ class JishoDictionary(BaseDictionary):
         if meanGroup:
             meaning: Meaning
             meanElms = meanGroup.select(".meaning-tags,.meaning-wrapper")
+
+            wordTypes = []
             for meanElm in meanElms:
                 # Word type
                 if "meaning-tags" in meanElm["class"]:
                     meaning = Meaning()
-                    meaning.wordType = meanElm.text
-                    meanings.append(meaning)
+                    meaning.wordType = meanElm.get_text()
+                    if meaning.wordType not in wordTypes:
+                        wordTypes.append(meaning.wordType)
+                        meanings.append(meaning)
 
                 # Meaning
                 if "meaning-wrapper" in meanElm["class"]:
@@ -142,7 +148,7 @@ class JishoDictionary(BaseDictionary):
                     for exampleElm in exampleElms:
                         if exampleElm:
                             examples.append(
-                                exampleElm.text.replace("\n", ""))
+                                exampleElm.get_text().replace("\n", ""))
 
                     meaning.examples = examples
                     meanings.append(meaning)
