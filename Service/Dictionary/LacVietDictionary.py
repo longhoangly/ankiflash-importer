@@ -144,10 +144,10 @@ class LacVietDictionary(BaseDictionary):
                     if meanElm.has_attr("class") and "ub" in meanElm.get("class"):
                         if meanCount > 0:
                             # has meaning -> get text
-                            meaning.wordType = meanElm.get_text().strip()
+                            meaning.wordType = meanElm.get_text().strip().capitalize()
                         else:
                             # only type -> get inner html
-                            meaning.wordType = meanElm.get_text().strip().replace("\n", "")
+                            meaning.wordType = meanElm.get_text().strip().replace("\n", "").capitalize()
                     elif meanElm.has_attr("class") and "m" in meanElm.get("class"):
                         # from the second meaning tag
                         if not firstMeaning:

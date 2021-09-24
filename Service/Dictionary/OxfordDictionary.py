@@ -145,7 +145,7 @@ class OxfordDictionary(BaseDictionary):
                 wordForms.append(wordForm.get_text().strip())
 
             meaning = Meaning("", wordForms)
-            meaning.wordType = "Verb Forms"
+            meaning.wordType = "Verb forms"
             meanings.append(meaning)
 
         meanGroups = self.doc.select(".sense")
@@ -192,7 +192,7 @@ class OxfordDictionary(BaseDictionary):
                 wordFamilies.append(wordFamily.get_text().strip())
 
             meaning = Meaning("", wordFamilies)
-            meaning.wordType = "Word Family"
+            meaning.wordType = "Word family"
             meanings.append(meaning)
 
         return HtmlHelper.buildMeaning(self.oriWord, self.wordType, self.phonetic, meanings)

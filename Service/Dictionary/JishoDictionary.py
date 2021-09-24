@@ -130,7 +130,7 @@ class JishoDictionary(BaseDictionary):
                 # Word type
                 if "meaning-tags" in meanElm["class"]:
                     meaning = Meaning()
-                    meaning.wordType = meanElm.get_text()
+                    meaning.wordType = meanElm.get_text().capitalize()
                     if meaning.wordType not in wordTypes:
                         wordTypes.append(meaning.wordType)
                         meanings.append(meaning)

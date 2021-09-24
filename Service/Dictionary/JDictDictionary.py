@@ -144,7 +144,7 @@ class JDictDictionary(BaseDictionary):
         wordType: Tag = HtmlHelper.getChildElement(
             meanGroup, "label[class*=word-type]", 0)
         if wordType:
-            meaning.wordType = wordType.get_text().strip()
+            meaning.wordType = wordType.get_text().strip().capitalize()
         meanings.append(meaning)
 
         # Meaning

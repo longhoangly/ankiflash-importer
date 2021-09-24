@@ -89,7 +89,8 @@ class CambridgeDictionary(BaseDictionary):
             elements = headerGroup.select(".pos.dpos,.pron.dpron,.guideword")
             headerTexts = []
             for element in elements:
-                headerTexts.append(element.get_text().replace("\n", " "))
+                headerTexts.append(
+                    element.get_text().replace("\n", " ").capitalize())
             typeMeaning.wordType = AnkiHelper.stringify(
                 " ".join(headerTexts)).replace(") (", " | ")
 
