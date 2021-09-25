@@ -71,7 +71,7 @@
      <rect>
       <x>20</x>
       <y>390</y>
-      <width>101</width>
+      <width>71</width>
       <height>31</height>
      </rect>
     </property>
@@ -368,9 +368,9 @@
    <widget class="QProgressBar" name="generateProgressBar">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>100</x>
       <y>390</y>
-      <width>271</width>
+      <width>241</width>
       <height>31</height>
      </rect>
     </property>
@@ -435,6 +435,31 @@
     </property>
     <property name="checked">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="cancelBtn">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>390</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>Cancel flashcards generation process</string>
+    </property>
+    <property name="text">
+     <string>Cancel</string>
+    </property>
+    <property name="default">
+     <bool>false</bool>
     </property>
    </widget>
   </widget>

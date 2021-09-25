@@ -11,7 +11,7 @@ from .Enum.Status import Status
 from .Constant import Constant
 from .Enum.Card import Card
 
-from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QObject, pyqtSignal
 
 import os
 import csv
@@ -141,6 +141,11 @@ class Worker(QObject):
         total = len(self.words)
         if not self.allWordTypes and self.translation.source == "English":
             for value in self.words:
+
+                # Return if thread is interrupted
+                if self.thread().isInterruptionRequested():
+                    break
+
                 formattedWord = "{}{}{}{}{}".format(
                     value, self.delimiter, value, self.delimiter, value)
                 card = self.generator.generateCard(
@@ -159,6 +164,11 @@ class Worker(QObject):
                         "{} -> {}".format(value, card.comment))
         else:
             for value in self.words:
+
+                # Return if thread is interrupted
+                if self.thread().isInterruptionRequested():
+                    break
+
                 self.formattedWords = self.generator.getFormattedWords(
                     value, self.translation)
                 total += len(self.formattedWords) - 1

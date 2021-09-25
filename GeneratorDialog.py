@@ -40,6 +40,7 @@ class GeneratorDialog(QDialog):
         # Create Generator GUI
         self.ui = UiGenerator()
         self.ui.setupUi(self, version, iconPath)
+        self.ui.cancelBtn.setDisabled(True)
 
         # Create Importer Instance
         self.importer = ImporterDialog(version, iconPath, addonDir)
@@ -136,20 +137,21 @@ class GeneratorDialog(QDialog):
         self.initializeGenerator(self.translation)
 
         # Step 2: Create a QThread object
-        thread = QThread(self)
+        self.bgThread = QThread(self)
+        self.bgThread.setTerminationEnabled(True)
 
         # Step 3: Create a worker object
         self.worker = Worker(self.generator, self.words, self.translation, self.mediaDir,
                              self.isOnline, self.allWordTypes, self.ankiCsvPath)
 
         # Step 4: Move worker to the thread
-        self.worker.moveToThread(thread)
+        self.worker.moveToThread(self.bgThread)
 
         # Step 5: Connect signals and slots
-        thread.started.connect(self.worker.generateCardsBackground)
+        self.bgThread.started.connect(self.worker.generateCardsBackground)
 
-        self.worker.finished.connect(thread.quit)
-        thread.finished.connect(thread.deleteLater)
+        self.worker.finished.connect(self.bgThread.quit)
+        self.bgThread.finished.connect(self.bgThread.deleteLater)
 
         self.worker.finished.connect(self.worker.deleteLater)
         self.worker.progress.connect(self.reportProgress)
@@ -158,15 +160,36 @@ class GeneratorDialog(QDialog):
         self.worker.failureStr.connect(self.reportFailure)
 
         # Step 6: Start the thread
-        thread.start()
+        self.bgThread.start()
+        self.ui.cancelBtn.setEnabled(True)
+        self.ui.generateBtn.setDisabled(True)
+
+        # Handle cancel background task
+        self.ui.cancelBtn.clicked.connect(self.cancelBackgroundTask)
 
         # Final resets
-        self.ui.generateBtn.setEnabled(False)
-        thread.finished.connect(self.finishedGenerationProgress)
+        self.bgThread.finished.connect(self.finishedGenerationProgress)
+
+    def cancelBackgroundTask(self):
+        logging.info("Canceling background task...")
+        self.bgThread.requestInterruption()
+        self.bgThread.quit()
+        self.ui.outputTxt.setPlainText("")
+        self.isCancelled = True
 
     def finishedGenerationProgress(self):
 
+        self.ui.cancelBtn.setDisabled(True)
         self.ui.generateBtn.setEnabled(True)
+
+        # Return if thread is interrupted
+        if self.isCancelled:
+            AnkiHelper.messageBox("Info",
+                                  "Flashcard generation process stopped!",
+                                  "Restart by clicking Generate button.",
+                                  self.iconPath)
+            return
+
         if self.ui.outputTxt.toPlainText():
             btnSelected = AnkiHelper.messageBoxButtons("Info",
                                                        "Finished generating flashcards.\nThanks for using AnkiFlash!",
@@ -186,25 +209,31 @@ class GeneratorDialog(QDialog):
                                          QMessageBox.Close,
                                          self.iconPath)
 
-    def selectedRadio(self, groupBox: QGroupBox) -> str:
-        # Get all radio buttons
-        radioBtns = [radio for radio in groupBox.children(
-        ) if isinstance(radio, QRadioButton)]
-        # Find choosen radio and return text
-        for radio in radioBtns:
-            if radio.isChecked():
-                return radio.text()
-
     def reportProgress(self, percent):
+
+        # Return if thread is interrupted
+        if self.bgThread.isInterruptionRequested():
+            return
+
         self.ui.generateProgressBar.setValue(percent)
 
     def reportCard(self, cardStr):
+
+        # Return if thread is interrupted
+        if self.bgThread.isInterruptionRequested():
+            return
+
         currentText = self.ui.outputTxt.toPlainText()
         if currentText:
             currentText += "\n"
         self.ui.outputTxt.setPlainText("{}{}".format(currentText, cardStr))
 
     def reportFailure(self, failureStr):
+
+        # Return if thread is interrupted
+        if self.bgThread.isInterruptionRequested():
+            return
+
         currentText = self.ui.failureTxt.toPlainText()
         if currentText:
             currentText += "\n"
@@ -251,3 +280,12 @@ class GeneratorDialog(QDialog):
             radio.setStyleSheet(self.ui.source1.styleSheet())
         else:
             radio.setStyleSheet("color:gray")
+
+    def selectedRadio(self, groupBox: QGroupBox) -> str:
+        # Get all radio buttons
+        radioBtns = [radio for radio in groupBox.children(
+        ) if isinstance(radio, QRadioButton)]
+        # Find choosen radio and return text
+        for radio in radioBtns:
+            if radio.isChecked():
+                return radio.text()
