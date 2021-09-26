@@ -3,10 +3,9 @@
 
 from aqt import mw
 
-from .GeneratorDialog import GeneratorDialog
-
 from os.path import join
 from logging.handlers import RotatingFileHandler
+from .GeneratorDialog import GeneratorDialog
 
 import os
 import logging

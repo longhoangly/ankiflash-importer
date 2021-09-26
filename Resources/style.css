@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;1,100;1,200;1,300;1,400;1,500;1,600&display=swap");
 
-/* @font-face {
+@font-face {
     font-family: "Raleway";
     src: url("/Resources/Raleway-Regular.ttf") format("truetype");
 }
@@ -8,7 +8,7 @@
 @font-face {
     font-family: "Open Sans";
     src: url("/Resources/OpenSans-Regular.ttf") format("truetype");
-} */
+}
 
 body {
     width: 100%;
@@ -83,7 +83,7 @@ body {
 }
 
 .h {
-    font-size: 24px;
+    font-size: 25px;
     font-weight: bold;
     display: inline-block;
     margin-bottom: 0px !important;
@@ -141,10 +141,8 @@ body {
 /* Japanese JDict */
 .japanese_gothic,
 .japan-font {
-    font-family: "HiraKakuPro-W3", "Hiragino Kaku Gothic Pro W3", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3",
-        "メイリオ", Meiryo, "游ゴシック", YuGothic, "ＭＳ Ｐゴシック", "MS PGothic", "ＭＳ ゴシック", "MS Gothic",
-        "Raleway", "Open Sans" !important;
-    font-size: 17px;
+    font-family: "Raleway", "Open Sans" !important;
+    font-size: 25px;
 }
 
 #search-kanji-list {
@@ -203,15 +201,20 @@ body {
     padding: 0 5px;
     line-height: 20px;
     color: #232323;
-    font-size: 13px;
+    font-size: 18px;
     border-radius: 2px;
     background: #eaeaea;
 }
 
 .furigana {
     display: block;
-    font-size: 10px;
+    font-size: 13px;
     min-height: 1.15em;
+    margin-top: 10px;
+}
+
+.unlinked {
+    font-size: 20px;
 }
 
 .japanese li {
@@ -241,4 +244,8 @@ ul.japanese {
 .colloc {
     font-style: italic;
     font-weight: normal;
+}
+
+.sense div {
+    margin-top: 10px;
 }

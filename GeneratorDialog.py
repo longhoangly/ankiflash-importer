@@ -3,7 +3,6 @@
 
 from PyQt5.QtWidgets import QDialog, QGroupBox, QMessageBox, QRadioButton
 from PyQt5.QtCore import QThread
-from PyQt5 import QtGui
 
 from .Ui.UiGenerator import UiGenerator
 from .ImporterDialog import ImporterDialog
@@ -72,12 +71,14 @@ class GeneratorDialog(QDialog):
         logging.shutdown()
 
     def inputTextChanged(self):
+
         words = self.ui.inputTxt.toPlainText().split("\n")
         # Filter words list, only get non-empty words
         self.words = list(filter(None, words))
         self.ui.totalLbl.setText("Total: {}".format(len(self.words)))
 
     def outputTextChanged(self):
+
         cards = self.ui.outputTxt.toPlainText().split("\n")
         # Filter cards list, only get non-empty cards
         self.cards = list(filter(None, cards))
@@ -85,6 +86,7 @@ class GeneratorDialog(QDialog):
         self.ui.completedLbl.setText("Completed: {}".format(len(self.cards)))
 
     def failureTextChanged(self):
+
         failures = self.ui.failureTxt.toPlainText().split("\n")
         # Filter failures list, only get non-empty failures
         self.failures = list(filter(None, failures))
@@ -92,6 +94,7 @@ class GeneratorDialog(QDialog):
         self.ui.failureLbl.setText("Failure: {}".format(len(self.failures)))
 
     def initializeGenerator(self, translation: Translation):
+
         if translation.source == Constant.ENGLISH:
             self.generator = EnglishGenerator()
         elif translation.source == Constant.JAPANESE:
@@ -106,6 +109,7 @@ class GeneratorDialog(QDialog):
             self.generator = ChineseGenerator()
 
     def btnGenerateClicked(self):
+
         # Validate if input text empty?
         inputText = self.ui.inputTxt.toPlainText()
 
@@ -165,29 +169,41 @@ class GeneratorDialog(QDialog):
         self.ui.generateBtn.setDisabled(True)
 
         # Handle cancel background task
+        self.isCancelled = False
+
+        receiversCount = self.ui.cancelBtn.receivers(self.ui.cancelBtn.clicked)
+        if receiversCount > 0:
+            logging.info(
+                "Already connected before...{}".format(receiversCount))
+            self.ui.cancelBtn.clicked.disconnect()
+
         self.ui.cancelBtn.clicked.connect(self.cancelBackgroundTask)
 
         # Final resets
         self.bgThread.finished.connect(self.finishedGenerationProgress)
 
     def cancelBackgroundTask(self):
+
         logging.info("Canceling background task...")
         self.bgThread.requestInterruption()
         self.bgThread.quit()
+
         self.ui.outputTxt.setPlainText("")
         self.isCancelled = True
+
+        AnkiHelper.messageBox("Info",
+                              "Flashcards generation process stopped!",
+                              "Restart by clicking Generate button.",
+                              self.iconPath)
 
     def finishedGenerationProgress(self):
 
         self.ui.cancelBtn.setDisabled(True)
         self.ui.generateBtn.setEnabled(True)
 
-        # Return if thread is interrupted
+        # Return if thread is cancelled
         if self.isCancelled:
-            AnkiHelper.messageBox("Info",
-                                  "Flashcard generation process stopped!",
-                                  "Restart by clicking Generate button.",
-                                  self.iconPath)
+            self.ui.outputTxt.setPlainText("")
             return
 
         if self.ui.outputTxt.toPlainText():

@@ -174,6 +174,11 @@ class Worker(QObject):
                 total += len(self.formattedWords) - 1
                 if len(self.formattedWords) > 0:
                     for formattedWord in self.formattedWords:
+
+                        # Return if thread is interrupted
+                        if self.thread().isInterruptionRequested():
+                            break
+
                         card = self.generator.generateCard(
                             formattedWord, self.mediaDir, self.translation, self.isOnline)
                         proceeded = proceeded + 1
@@ -194,6 +199,11 @@ class Worker(QObject):
 
         cardLines: list[str] = []
         for card in self.cards:
+
+            # Return if thread is interrupted
+            if self.thread().isInterruptionRequested():
+                return
+
             cardContent = "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}".format(
                 card.word if self.translation.equals(
                     Constant.VN_JP) else card.oriWord,
@@ -222,6 +232,10 @@ class Worker(QObject):
             pass
         with open(self.csvFilePath, 'w', encoding='utf-8') as file:
             file.writelines(cardLines)
+
+        # Return if thread is interrupted
+        if self.thread().isInterruptionRequested():
+            return
 
         # Finished
         self.progress.emit(100)
