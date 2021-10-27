@@ -209,14 +209,18 @@ class ImporterDialog(QDialog):
         mw.col.decks.select(did)
 
         # Set note type for deck
-        m = mw.col.models.byName(noteTypeName)
+        m = mw.col.models.by_name(noteTypeName)
         deck = mw.col.decks.get(did)
         deck["mid"] = m["id"]
         mw.col.decks.save(deck)
 
         # Import into the collection
         ti = TextImporter(mw.col, csvPath)
-        ti.model["did"] = did
+        ti.model["id"] = m["id"]
+
+        mw.col.set_aux_notetype_config(
+            ti.model["id"], "lastDeck", did
+        )
         mw.col.models.save(ti.model, updateReqs=False)
 
         # ADD_MODE: import even if first field matches existing note
