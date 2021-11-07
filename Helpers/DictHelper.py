@@ -26,28 +26,24 @@ class DictHelper:
         return link_els[len(link_els) - 1]
 
     @staticmethod
-    def validateUrls(urls: str) -> List[str]:
+    def downloadFiles(urls: str, isOnline: bool, mediaDir: str) -> List[str]:
         validUrls = []
         for link in urls.split(";"):
-            response = requests.head(link)
+            response = requests.get(url=link, headers={
+                "User-Agent": "Mozilla/5.0"}, allow_redirects=True)
             statusCode = response.status_code
             if statusCode == 200:
                 validUrls.append(link)
+                if not isOnline:
+                    fileName = DictHelper.getFileName(link)
+                    filePath = "{}/{}".format(mediaDir, fileName)
+                    logging.info("sound path: {}".format(filePath))
+                    if os.path.isdir(mediaDir) and link:
+                        open(filePath, 'wb').write(response.content)
+                    else:
+                        logging.info("mediaDir={}, dir.exists={}, link={}".format(
+                            mediaDir, os.path.isdir(mediaDir), link))
         return validUrls
-
-    @staticmethod
-    def downloadFiles(mediaDir: str, urls: str) -> List[str]:
-        for link in urls.split(";"):
-            fileName = DictHelper.getFileName(link)
-            filePath = "{}/{}".format(mediaDir, fileName)
-            logging.info("sound path: {}".format(filePath))
-            if os.path.isdir(mediaDir) and link:
-                r = requests.get(url=link, headers={
-                                 "User-Agent": "Mozilla/5.0"}, allow_redirects=True)
-                open(filePath, 'wb').write(r.content)
-            else:
-                logging.info("mediaDir={}, dir.exists={}, link={}".format(
-                    mediaDir, os.path.isdir(mediaDir), link))
 
     @staticmethod
     def getJDictDoc(url: str, body: str):

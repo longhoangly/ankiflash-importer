@@ -92,7 +92,7 @@ class CollinsDictionary(BaseDictionary):
             self.soundLinks = ""
             return self.sounds
 
-        links = DictHelper.validateUrls(self.soundLinks)
+        links = DictHelper.downloadFiles(self.soundLinks, isOnline, ankiDir)
         for soundLink in links:
             soundName = DictHelper.getFileName(soundLink)
             if isOnline:
@@ -102,8 +102,6 @@ class CollinsDictionary(BaseDictionary):
                 self.sounds = "<audio src=\"{}\" type=\"audio/wav\" preload=\"auto\" autobuffer controls>[sound:{}]</audio> {}".format(
                     soundName, soundName, self.sounds if len(self.sounds) > 0 else "")
 
-        if not isOnline:
-            DictHelper.downloadFiles(ankiDir, self.soundLinks)
         return self.sounds
 
     def getMeaning(self) -> str:

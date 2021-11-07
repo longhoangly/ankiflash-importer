@@ -103,7 +103,7 @@ class JDictDictionary(BaseDictionary):
             self.image = "<img src=\"" + self.imageLink + "\"/>"
         else:
             self.image = "<img src=\"" + imageName + "\"/>"
-            DictHelper.downloadFiles(ankiDir, self.imageLink)
+            DictHelper.downloadFiles(self.imageLink, False, ankiDir)
         return self.image
 
     def getSounds(self, ankiDir: str, isOnline: bool) -> List[str]:
@@ -116,7 +116,7 @@ class JDictDictionary(BaseDictionary):
             self.soundLinks = ""
             return self.sounds
 
-        links = DictHelper.validateUrls(self.soundLinks)
+        links = DictHelper.downloadFiles(self.soundLinks, isOnline, ankiDir)
         for soundLink in links:
             soundName = DictHelper.getFileName(soundLink)
             if isOnline:
@@ -126,8 +126,6 @@ class JDictDictionary(BaseDictionary):
                 self.sounds = "<audio src=\"{}\" type=\"audio/wav\" preload=\"auto\" autobuffer controls>[sound:{}]</audio> {}".format(
                     soundName, soundName, self.sounds if len(self.sounds) > 0 else "")
 
-        if not isOnline:
-            DictHelper.downloadFiles(ankiDir, self.soundLinks)
         return self.sounds
 
     def getMeaning(self) -> str:
