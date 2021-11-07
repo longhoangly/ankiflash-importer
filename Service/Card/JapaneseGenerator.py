@@ -18,6 +18,7 @@ from ..Dictionary.JDictDictionary import JDictDictionary
 class JapaneseGenerator(BaseGenerator):
 
     def getFormattedWords(self, word: str, translation: Translation) -> List[str]:
+        word = word.lower().strip()
         foundWords: List[str] = []
         if translation.equals(Constant.JP_EN):
             foundWords += DictHelper.getJishoWords(word)

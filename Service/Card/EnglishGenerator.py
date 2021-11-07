@@ -21,7 +21,7 @@ from ..Dictionary.OxfordDictionary import OxfordDictionary
 class EnglishGenerator(BaseGenerator):
 
     def getFormattedWords(self, word: str, translation: Translation) -> List[str]:
-        word = word.lower()
+        word = word.lower().strip()
         foundWords = []
         if (translation.equals(Constant.EN_EN)):
             foundWords += DictHelper.getOxfordWords(word)

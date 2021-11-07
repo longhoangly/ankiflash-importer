@@ -116,7 +116,7 @@ class OxfordDictionary(BaseDictionary):
         if usSound:
             self.soundLinks = "{};{}".format(usSound, self.soundLinks)
 
-        links = self.soundLinks.split(";")
+        links = DictHelper.validateUrls(self.soundLinks)
         for soundLink in links:
             soundName = DictHelper.getFileName(soundLink)
             if isOnline:

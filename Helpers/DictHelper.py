@@ -26,9 +26,18 @@ class DictHelper:
         return link_els[len(link_els) - 1]
 
     @staticmethod
-    def downloadFiles(mediaDir: str, urls: str):
-        downloadLinks = urls.split(";")
-        for link in downloadLinks:
+    def validateUrls(urls: str) -> List[str]:
+        validUrls = []
+        for link in urls.split(";"):
+            response = requests.head(link)
+            statusCode = response.status_code
+            if statusCode == 200:
+                validUrls.append(link)
+        return validUrls
+
+    @staticmethod
+    def downloadFiles(mediaDir: str, urls: str) -> List[str]:
+        for link in urls.split(";"):
             fileName = DictHelper.getFileName(link)
             filePath = "{}/{}".format(mediaDir, fileName)
             logging.info("sound path: {}".format(filePath))

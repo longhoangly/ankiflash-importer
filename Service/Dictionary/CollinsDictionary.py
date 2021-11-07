@@ -92,7 +92,7 @@ class CollinsDictionary(BaseDictionary):
             self.soundLinks = ""
             return self.sounds
 
-        links = self.soundLinks.split(";")
+        links = DictHelper.validateUrls(self.soundLinks)
         for soundLink in links:
             soundName = DictHelper.getFileName(soundLink)
             if isOnline:

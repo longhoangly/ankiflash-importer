@@ -19,6 +19,7 @@ from ..Dictionary.LacVietDictionary import LacVietDictionary
 class FrenchGenerator(BaseGenerator):
 
     def getFormattedWords(self, word: str, translation: Translation) -> List[str]:
+        word = word.lower().strip()
         foundWords = []
         foundWords.append(word + Constant.SUB_DELIMITER +
                           word + Constant.SUB_DELIMITER + word)

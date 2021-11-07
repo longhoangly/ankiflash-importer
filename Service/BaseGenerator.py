@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import time
 import logging
 from abc import ABC, abstractmethod
 from typing import List
@@ -150,6 +151,7 @@ class Worker(QObject):
                     value, self.delimiter, value, self.delimiter, value)
                 card = self.generator.generateCard(
                     formattedWord, self.mediaDir, self.translation, self.isOnline)
+                time.sleep(0.2)
                 proceeded += 1
                 percent = (proceeded / total) * 100
                 self.progress.emit(percent)
@@ -178,9 +180,11 @@ class Worker(QObject):
                         # Return if thread is interrupted
                         if self.thread().isInterruptionRequested():
                             break
-
+                        
+                        logging.info("formattedWord = '{}'".format(formattedWord))
                         card = self.generator.generateCard(
                             formattedWord, self.mediaDir, self.translation, self.isOnline)
+                        time.sleep(0.2)
                         proceeded = proceeded + 1
                         percent = (proceeded / total) * 100
                         self.progress.emit(percent)

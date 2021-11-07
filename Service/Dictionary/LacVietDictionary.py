@@ -110,7 +110,7 @@ class LacVietDictionary(BaseDictionary):
         self.soundLinks = self.soundLinks.replace(
             "file=", "").replace("&autostart=false", "")
 
-        links = self.soundLinks.split(";")
+        links = DictHelper.validateUrls(self.soundLinks)
         for soundLink in links:
             soundName = DictHelper.getFileName(soundLink)
             if isOnline:

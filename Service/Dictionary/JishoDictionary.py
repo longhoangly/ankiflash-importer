@@ -102,7 +102,8 @@ class JishoDictionary(BaseDictionary):
             return self.sounds
 
         self.soundLinks = "https:" + self.soundLinks
-        links = self.soundLinks.split(";")
+        
+        links = DictHelper.validateUrls(self.soundLinks)
         for soundLink in links:
             soundName = DictHelper.getFileName(soundLink)
             if isOnline:

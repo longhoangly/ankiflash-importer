@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from typing import List
-from array import array
-
 import requests
 import logging
 

@@ -18,6 +18,7 @@ from ..Dictionary.LacVietDictionary import LacVietDictionary
 class VietnameseGenerator(BaseGenerator):
 
     def getFormattedWords(self, word: str, translation: Translation) -> List[str]:
+        word = word.lower().strip()
         foundWords = []
         if translation.equals(Constant.VN_JP):
             foundWords += DictHelper.getJDictWords(word)
