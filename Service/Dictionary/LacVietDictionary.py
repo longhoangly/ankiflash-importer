@@ -31,6 +31,8 @@ class LacVietDictionary(BaseDictionary):
             url = HtmlHelper.lookupUrl(Constant.LACVIET_URL_VN_EN, self.wordId)
         elif (translation.equals(Constant.VN_FR)):
             url = HtmlHelper.lookupUrl(Constant.LACVIET_URL_VN_FR, self.wordId)
+        elif (translation.equals(Constant.VN_VN)):
+            url = HtmlHelper.lookupUrl(Constant.LACVIET_URL_VN_VN, self.wordId)
         elif (translation.equals(Constant.EN_VN)):
             url = HtmlHelper.lookupUrl(Constant.LACVIET_URL_EN_VN, self.wordId)
         elif (translation.equals(Constant.FR_VN)):

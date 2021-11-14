@@ -270,7 +270,7 @@ class GeneratorDialog(QDialog):
     def getSupportedLanguages(self):
         source = self.selectedRadio(self.ui.sourceBox)
         supportTranslations = {Constant.ENGLISH: [Constant.ENGLISH, Constant.VIETNAMESE, Constant.CHINESE_TD, Constant.CHINESE_SP, Constant.FRENCH, Constant.JAPANESE],
-                               Constant.VIETNAMESE: [Constant.ENGLISH, Constant.FRENCH, Constant.JAPANESE],
+                               Constant.VIETNAMESE: [Constant.ENGLISH, Constant.FRENCH, Constant.JAPANESE, Constant.VIETNAMESE],
                                Constant.FRENCH: [Constant.ENGLISH, Constant.VIETNAMESE],
                                Constant.JAPANESE: [Constant.ENGLISH, Constant.VIETNAMESE]}
 

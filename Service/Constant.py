@@ -21,6 +21,7 @@ class Constant:
     LACVIET_SPELLING_WRONG = "Dữ liệu đang được cập nhật"
     LACVIET_URL_VN_EN = "http://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-anh&t=V-A&k={}"
     LACVIET_URL_VN_FR = "http://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-phap&t=V-F&k={}"
+    LACVIET_URL_VN_VN = "http://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-phap&t=V-V&k={}"
     LACVIET_URL_EN_VN = "http://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-anh&t=A-V&k={}"
     LACVIET_URL_FR_VN = "http://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-phap&t=F-V&k={}"
 
@@ -80,6 +81,7 @@ class Constant:
     VN_EN = Translation(VIETNAMESE, ENGLISH)
     VN_FR = Translation(VIETNAMESE, FRENCH)
     VN_JP = Translation(VIETNAMESE, JAPANESE)
+    VN_VN = Translation(VIETNAMESE, VIETNAMESE)
 
     FR_VN = Translation(FRENCH, VIETNAMESE)
     FR_EN = Translation(FRENCH, ENGLISH)
