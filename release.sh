@@ -20,7 +20,7 @@ echo Finished Deployment...
 
 RELEASE="Release"
 
-rm -r ./$RELEASE
+rm -rf ./$RELEASE
 mkdir ./$RELEASE
 
 mkdir -p ./$RELEASE/Helpers
@@ -37,7 +37,8 @@ cp -R ./Ui/*.py ./$RELEASE/Ui
 
 cp *.py ./$RELEASE
 
-cd $RELEASE
-zip -r __init__.zip *
+zip -r __init__.zip ./$RELEASE/*
 
 echo Finished Releasing...
+
+rm -r ./$RELEASE

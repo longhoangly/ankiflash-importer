@@ -10,7 +10,7 @@ from ...Service.BaseGenerator import BaseGenerator
 
 class SpanishGenerator(BaseGenerator):
 
-    def getFormattedWords(self, word: str, translation: Translation) -> List[str]:
+    def getFormattedWords(self, word: str, translation: Translation, allWordTypes: bool) -> List[str]:
         raise NotImplementedError
 
     def generateCard(self, formattedWord: str, ankiDir: str, translation: Translation, isOnline: bool) -> Card:

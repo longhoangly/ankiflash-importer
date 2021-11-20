@@ -17,12 +17,13 @@ from ..Dictionary.JDictDictionary import JDictDictionary
 
 class JapaneseGenerator(BaseGenerator):
 
-    def getFormattedWords(self, word: str, translation: Translation) -> List[str]:
+    def getFormattedWords(self, word: str, translation: Translation, allWordTypes: bool) -> List[str]:
         word = word.lower().strip()
+
         foundWords: List[str] = []
-        if translation.equals(Constant.JP_EN):
+        if translation.equals(Constant.JP_EN) and allWordTypes:
             foundWords += DictHelper.getJishoWords(word)
-        elif translation.equals(Constant.JP_VN):
+        elif translation.equals(Constant.JP_VN) and allWordTypes:
             foundWords += DictHelper.getJDictWords(word)
         else:
             foundWords.append(word + Constant.SUB_DELIMITER +

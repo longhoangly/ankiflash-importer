@@ -48,8 +48,8 @@ class DictHelper:
     @staticmethod
     def getJDictDoc(url: str, body: str):
 
-        logging.info("url={}, body={}".format(url, body))
-        response = requests.post(url=url, data=body, headers={
+        logging.info("url={}, body={}".format(url, body.encode('utf-8')))
+        response = requests.post(url=url, data=body.encode('utf-8'), headers={
             "User-Agent": "Mozilla/5.0",
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"})
 

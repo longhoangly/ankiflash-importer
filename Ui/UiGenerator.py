@@ -12,7 +12,7 @@
 # 2. Set AnkiFlash icon [Dialog.setWindowIcon]
 # icon = QtGui.QIcon(iconPath)
 # 3. Set fixed window size
-# Dialog.setFixedSize(873, 613)
+# Dialog.setFixedSize(682, 623)
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -21,9 +21,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class UiGenerator(object):
     def setupUi(self, Dialog, version, iconPath):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(682, 623)
+        Dialog.setFixedSize(682, 623)
         Dialog.setFocusPolicy(QtCore.Qt.StrongFocus)
-        icon = QtGui.QIcon.fromTheme("anki.png")
+        icon = QtGui.QIcon(iconPath)
         Dialog.setWindowIcon(icon)
         Dialog.setAutoFillBackground(True)
         self.inputBox = QtWidgets.QGroupBox(Dialog)

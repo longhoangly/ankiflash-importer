@@ -22,7 +22,7 @@ csv.field_size_limit(2**30)
 class BaseGenerator(ABC):
 
     @abstractmethod
-    def getFormattedWords(self, word: str, translation: Translation) -> List[str]:
+    def getFormattedWords(self, word: str, translation: Translation, allWordTypes: bool) -> List[str]:
         """Get all part of speech of a specific word"""
         raise NotImplementedError
 
@@ -140,66 +140,42 @@ class Worker(QObject):
         failureCount: int = 0
 
         total = len(self.words)
-        if not self.allWordTypes and self.translation.source == "English":
-            for value in self.words:
+        for value in self.words:
 
-                # Return if thread is interrupted
-                if self.thread().isInterruptionRequested():
-                    break
+            # Return if thread is interrupted
+            if self.thread().isInterruptionRequested():
+                break
 
-                formattedWord = "{}{}{}{}{}".format(
-                    value, self.delimiter, value, self.delimiter, value)
-                card = self.generator.generateCard(
-                    formattedWord, self.mediaDir, self.translation, self.isOnline)
-                time.sleep(0.2)
-                proceeded += 1
-                percent = (proceeded / total) * 100
-                self.progress.emit(percent)
+            self.formattedWords = self.generator.getFormattedWords(
+                value, self.translation, self.allWordTypes)
+            total += len(self.formattedWords) - 1
 
-                if card.status == Status.SUCCESS:
-                    cardCount += 1
-                    self.cards.append(card)
-                    self.cardStr.emit(card.meaning)
-                else:
-                    failureCount += 1
-                    self.failureStr.emit(
-                        "{} -> {}".format(value, card.comment))
-        else:
-            for value in self.words:
+            if len(self.formattedWords) > 0:
+                for formattedWord in self.formattedWords:
 
-                # Return if thread is interrupted
-                if self.thread().isInterruptionRequested():
-                    break
+                    # Return if thread is interrupted
+                    if self.thread().isInterruptionRequested():
+                        break
 
-                self.formattedWords = self.generator.getFormattedWords(
-                    value, self.translation)
-                total += len(self.formattedWords) - 1
-                if len(self.formattedWords) > 0:
-                    for formattedWord in self.formattedWords:
+                    logging.info("formattedWord = '{}'".format(formattedWord))
+                    card = self.generator.generateCard(
+                        formattedWord, self.mediaDir, self.translation, self.isOnline)
+                    time.sleep(0.2)
+                    proceeded = proceeded + 1
+                    percent = (proceeded / total) * 100
+                    self.progress.emit(percent)
 
-                        # Return if thread is interrupted
-                        if self.thread().isInterruptionRequested():
-                            break
-                        
-                        logging.info("formattedWord = '{}'".format(formattedWord))
-                        card = self.generator.generateCard(
-                            formattedWord, self.mediaDir, self.translation, self.isOnline)
-                        time.sleep(0.2)
-                        proceeded = proceeded + 1
-                        percent = (proceeded / total) * 100
-                        self.progress.emit(percent)
-
-                        if card.status == Status.SUCCESS:
-                            cardCount += 1
-                            self.cards.append(card)
-                            self.cardStr.emit(card.meaning)
-                        else:
-                            failureCount += 1
-                            self.failureStr.emit(
-                                "{} -> {}".format(formattedWord.split(self.delimiter)[0], card.comment))
-                else:
-                    failureCount += 1
-                    self.failureStr.emit(Constant.WORD_NOT_FOUND.format(value))
+                    if card.status == Status.SUCCESS:
+                        cardCount += 1
+                        self.cards.append(card)
+                        self.cardStr.emit(card.meaning)
+                    else:
+                        failureCount += 1
+                        self.failureStr.emit(
+                            "{} -> {}".format(formattedWord.split(self.delimiter)[0], card.comment))
+            else:
+                failureCount += 1
+                self.failureStr.emit(Constant.WORD_NOT_FOUND)
 
         cardLines: list[str] = []
         for card in self.cards:

@@ -20,10 +20,10 @@ from ..Dictionary.OxfordDictionary import OxfordDictionary
 
 class EnglishGenerator(BaseGenerator):
 
-    def getFormattedWords(self, word: str, translation: Translation) -> List[str]:
+    def getFormattedWords(self, word: str, translation: Translation, allWordTypes: bool) -> List[str]:
         word = word.lower().strip()
         foundWords = []
-        if (translation.equals(Constant.EN_EN)):
+        if translation.equals(Constant.EN_EN) and allWordTypes:
             foundWords += DictHelper.getOxfordWords(word)
         else:
             foundWords.append(word + Constant.SUB_DELIMITER +
