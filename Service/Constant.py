@@ -1,15 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from .Enum.Translation import Translation
+from . enum.translation import Translation
 
 
 class Constant:
     """Store all constant values for AnkiFlash"""
 
     # ANKI
-    ANKI_DECK = "AnkiDeck.csv"
-    ANKI_FAILURE = "Failures.csv"
+    ANKI_DECK = "anki_deck.csv"
 
     # OXFORD
     OXFORD_SPELLING_WRONG = "Did you spell it correctly?"
@@ -36,8 +35,8 @@ class Constant:
     COLLINS_SPELLING_WRONG = "Sorry, no results for"
     COLLINS_URL_FR_EN = "https://www.collinsdictionary.com/search/?dictCode=french-english&q={}"
 
-    # JDICT
-    JDICT_URL_VN_JP_OR_JP_VN = "https://kantan.vn/postrequest.ashx"
+    # KANTAN
+    KANTAN_URL_VN_JP_OR_JP_VN = "https://kantan.vn/postrequest.ashx"
 
     # JISHO
     JISHO_WORD_NOT_FOUND = "Sorry, couldn't find anything matching"

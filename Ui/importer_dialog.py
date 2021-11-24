@@ -8,8 +8,9 @@ from anki.importing.csvfile import TextImporter
 from PyQt5.QtWidgets import QDialog
 from PyQt5 import QtCore
 
-from .Ui.UiImporter import UiImporter
-from .Helpers.AnkiHelper import AnkiHelper
+from . ui_importer import UiImporter
+from .. helpers.anki_helper import AnkiHelper
+from .. service.constant import Constant
 
 from os.path import join
 
@@ -30,7 +31,7 @@ class ImporterDialog(QDialog):
         self.iconPath = iconPath
 
         # Paths
-        self.ankiCsvPath = join(self.addonDir, r'AnkiDeck.csv')
+        self.ankiCsvPath = join(self.addonDir, Constant.ANKI_DECK)
         self.frontFile = join(self.addonDir, r'Resources/front.html')
         self.backFile = join(self.addonDir, r'Resources/back.html')
         self.cssFile = join(self.addonDir, r'Resources/style.css')
@@ -40,29 +41,29 @@ class ImporterDialog(QDialog):
         self.ui.setupUi(self, version, iconPath)
 
         # Check if Import button should be enabled or disabled
-        self.ui.deckNameTxt.textChanged.connect(self.enableImportBtn)
+        self.ui.deckNameTxt.textChanged.connect(self.enable_import_btn)
 
         # Handle Import button clicked
         self.ui.importBtn.clicked.connect(
-            lambda: self.btnImportClicked(version))
+            lambda: self.btn_import_clicked(version))
 
-    def keyPressEvent(self, event):
-        super().keyPressEvent(event)
+    def key_press_event(self, event):
+        super().key_press_event(event)
         self.keyPressed.emit(event.key())
 
-    def onKey(self, key):
+    def on_key(self, key):
         if key == QtCore.Qt.Key_Return and self.ui.deckNameTxt.text():
-            self.btnImportClicked(self.version)
+            self.btn_import_clicked(self.version)
         else:
             logging.info('key pressed: {}'.format(key))
 
-    def enableImportBtn(self):
+    def enable_import_btn(self):
         if self.ui.deckNameTxt.text():
             self.ui.importBtn.setEnabled(True)
         else:
             self.ui.importBtn.setEnabled(False)
 
-    def btnImportClicked(self, version):
+    def btn_import_clicked(self, version):
         self.ui.importProgressBar.setValue(20)
 
         with open(self.frontFile, 'r', encoding='utf-8') as file:
@@ -77,27 +78,27 @@ class ImporterDialog(QDialog):
         updateExistingNote = self.ui.checkBox.isChecked()
         # Create note type if needs
         noteTypeName = u'AnkiFlashTemplate.{}'.format(version)
-        isNoteTypeDiff = self.isNoteTypeDiff(
+        is_note_type_diff = self.is_note_type_diff(
             noteTypeName, self.front, self.back, self.css)
 
         # Create new note type if not exist or existent but won't to update existing!
-        if (isNoteTypeDiff == None) or (isNoteTypeDiff != None and not updateExistingNote):
+        if (is_note_type_diff == None) or (is_note_type_diff != None and not updateExistingNote):
             # If note type already existed, and we don't want to udpate existing! We need a new name!
-            if isNoteTypeDiff != None:
+            if is_note_type_diff != None:
                 noteTypeName = u'AnkiFlashTemplate.{}.{}'.format(
-                    version, AnkiHelper.idGenerator())
+                    version, AnkiHelper.id_generator())
                 noteTypeId = mw.col.models.id_for_name(noteTypeName)
                 while (noteTypeId != None):
                     noteTypeName = u'AnkiFlashTemplate.{}.{}'.format(
-                        version, AnkiHelper.idGenerator())
+                        version, AnkiHelper.id_generator())
                     noteTypeId = mw.col.models.id_for_name(noteTypeName)
 
-            self.createNoteType(
+            self.create_note_type(
                 noteTypeName, self.front, self.back, self.css)
             logging.info("{} Note type created.".format(noteTypeName))
 
-        elif isNoteTypeDiff and updateExistingNote:
-            self.updateNoteType(
+        elif is_note_type_diff and updateExistingNote:
+            self.update_note_type(
                 noteTypeName, self.front, self.back, self.css)
             logging.info(
                 "{} Note type is existent, override it.".format(noteTypeName))
@@ -107,18 +108,18 @@ class ImporterDialog(QDialog):
         self.ui.importProgressBar.setValue(50)
 
         # Import csv text file into Anki
-        self.importTextFile(self.ui.deckNameTxt.text(),
-                            noteTypeName, self.ankiCsvPath)
+        self.import_text_file(self.ui.deckNameTxt.text(),
+                              noteTypeName, self.ankiCsvPath)
         self.ui.importProgressBar.setValue(100)
         logging.info("Imported csv file: {}".format(self.ankiCsvPath))
 
-        AnkiHelper.messageBox("Info",
-                              "Finished importing flashcards.",
-                              "Let's enjoy learning curve.",
-                              self.iconPath)
+        AnkiHelper.message_box("Info",
+                               "Finished importing flashcards.",
+                               "Let's enjoy learning curve.",
+                               self.iconPath)
         self.close()
 
-    def isNoteTypeDiff(self, noteTypeName, front, back, css):
+    def is_note_type_diff(self, noteTypeName, front, back, css):
         # Get note type
         noteType = mw.col.models.byName(noteTypeName)
         if noteType == None:
@@ -131,26 +132,26 @@ class ImporterDialog(QDialog):
                 template = temp
 
         # Compare question
-        asIsFrontMd5 = AnkiHelper.md5Utf8(template["qfmt"])
-        toBeFrontMd5 = AnkiHelper.md5Utf8(front)
+        asIsFrontMd5 = AnkiHelper.md5_utf8(template["qfmt"])
+        toBeFrontMd5 = AnkiHelper.md5_utf8(front)
         if(asIsFrontMd5 != toBeFrontMd5):
             return True
 
         # Compare answers
-        asIsBackMd5 = AnkiHelper.md5Utf8(template["afmt"])
-        toBeBackMd5 = AnkiHelper.md5Utf8(back)
+        asIsBackMd5 = AnkiHelper.md5_utf8(template["afmt"])
+        toBeBackMd5 = AnkiHelper.md5_utf8(back)
         if(asIsBackMd5 != toBeBackMd5):
             return True
 
         # Compate css
-        asIsCssMd5 = AnkiHelper.md5Utf8(noteType["css"])
-        toBeCssMd5 = AnkiHelper.md5Utf8(css)
+        asIsCssMd5 = AnkiHelper.md5_utf8(noteType["css"])
+        toBeCssMd5 = AnkiHelper.md5_utf8(css)
         if(asIsCssMd5 != toBeCssMd5):
             return True
 
         return False
 
-    def createNoteType(self, noteTypeName, front, back, css):
+    def create_note_type(self, noteTypeName, front, back, css):
         # Create empty note type
         mm = ModelManager(mw.col)
         nt = mm.new(noteTypeName)
@@ -178,7 +179,7 @@ class ImporterDialog(QDialog):
         # Update UI
         mw.reset()
 
-    def updateNoteType(self, noteTypeName, front, back, css):
+    def update_note_type(self, noteTypeName, front, back, css):
 
         noteType = mw.col.models.byName(noteTypeName)
         if noteType == None:
@@ -203,7 +204,7 @@ class ImporterDialog(QDialog):
         # Update UI
         mw.reset()
 
-    def importTextFile(self, deckName, noteTypeName, csvPath):
+    def import_text_file(self, deckName, noteTypeName, csvPath):
         # Select deck
         did = mw.col.decks.id(deckName)
         mw.col.decks.select(did)

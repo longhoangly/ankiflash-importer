@@ -5,14 +5,13 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from bs4 import BeautifulSoup
-from .Enum.Translation import Translation
+from . enum.translation import Translation
 
 
 class BaseDictionary(ABC):
 
-
     def __init__(self):
-        
+
         self.delimiter: str = "==="
         self.doc: BeautifulSoup = None
 
@@ -33,37 +32,37 @@ class BaseDictionary(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def isInvalidWord(self) -> bool:
+    def is_invalid_word(self) -> bool:
         """Check if the input word exists in dictionary?"""
         raise NotImplementedError
 
     @abstractmethod
-    def getWordType(self) -> str:
+    def get_word_type(self) -> str:
         raise NotImplementedError
 
     @abstractmethod
-    def getExample(self) -> str:
+    def get_example(self) -> str:
         raise NotImplementedError
 
     @abstractmethod
-    def getPhonetic(self) -> str:
+    def get_phonetic(self) -> str:
         raise NotImplementedError
 
     @abstractmethod
-    def getImage(self, ankiDir: str, isOnline: bool) -> str:
+    def get_image(self, ankiDir: str, isOnline: bool) -> str:
         raise NotImplementedError
 
     @abstractmethod
-    def getSounds(self, ankiDir: str, isOnline: bool) -> List[str]:
+    def get_sounds(self, ankiDir: str, isOnline: bool) -> List[str]:
         raise NotImplementedError
 
     @abstractmethod
-    def getMeaning(self) -> str:
+    def get_meaning(self) -> str:
         raise NotImplementedError
 
-    def getTag(self) -> str:
+    def get_tag(self) -> str:
         return self.word[0]
 
     @abstractmethod
-    def getDictionaryName(self) -> str:
+    def get_dictionary_name(self) -> str:
         raise NotImplementedError

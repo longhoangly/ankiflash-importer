@@ -2,53 +2,52 @@
 # -*- coding: utf-8 -*-
 
 from typing import List
-import logging
 
-from ..Enum.Translation import Translation
-from ..Enum.Card import Card
-from ..Enum.Status import Status
-from ..BaseGenerator import BaseGenerator
-from ..Constant import Constant
-from ...Helpers.DictHelper import DictHelper
+from .. enum.translation import Translation
+from .. enum.card import Card
+from .. enum.status import Status
+from .. constant import Constant
+from .. base_generator import BaseGenerator
+from ... helpers.dict_helper import DictHelper
 
-from ..Dictionary.JishoDictionary import JishoDictionary
-from ..Dictionary.JDictDictionary import JDictDictionary
+from .. dictionary.jisho import JishoDictionary
+from .. dictionary.kantan import KantanDictionary
 
 
 class JapaneseGenerator(BaseGenerator):
 
-    def getFormattedWords(self, word: str, translation: Translation, allWordTypes: bool) -> List[str]:
+    def get_formatted_words(self, word: str, translation: Translation, allWordTypes: bool) -> List[str]:
         word = word.lower().strip()
 
         foundWords: List[str] = []
         if translation.equals(Constant.JP_EN) and allWordTypes:
-            foundWords += DictHelper.getJishoWords(word)
+            foundWords += DictHelper.get_jisho_words(word)
         elif translation.equals(Constant.JP_VN) and allWordTypes:
-            foundWords += DictHelper.getJDictWords(word)
+            foundWords += DictHelper.get_kantan_words(word)
         else:
             foundWords.append(word + Constant.SUB_DELIMITER +
                               word + Constant.SUB_DELIMITER + word)
         return foundWords
 
-    def generateCard(self, formattedWord: str, ankiDir: str, translation: Translation, isOnline: bool) -> Card:
+    def generate_card(self, formattedWord: str, ankiDir: str, translation: Translation, isOnline: bool) -> Card:
 
-        card: Card = self.initializeCard(formattedWord, translation)
+        card: Card = self.initialize_card(formattedWord, translation)
         card.status = Status.SUCCESS
         card.comment = Constant.SUCCESS
 
-        jDict = JDictDictionary()
+        kantan = KantanDictionary()
         jishoDict = JishoDictionary()
 
         # Japanese to Vietnamese
         if translation.equals(Constant.JP_VN):
 
-            card = self.singleDictionaryCard(
-                formattedWord, translation, ankiDir, isOnline, card, jDict)
+            card = self.single_dictionary_card(
+                formattedWord, translation, ankiDir, isOnline, card, kantan)
 
         # Japanese to English
         elif translation.equals(Constant.JP_EN):
 
-            card = self.singleDictionaryCard(
+            card = self.single_dictionary_card(
                 formattedWord, translation, ankiDir, isOnline, card, jishoDict)
 
         else:

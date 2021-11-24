@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from dataclasses import dataclass
-from ..Enum.Translation import Translation
+from .. enum.translation import Translation
 
 
 @dataclass

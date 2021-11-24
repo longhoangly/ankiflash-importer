@@ -3,13 +3,13 @@
 
 from typing import List
 
-from ..Enum.Meaning import Meaning
-from ..Enum.Translation import Translation
+from .. enum.meaning import Meaning
+from .. enum.translation import Translation
 
-from ..Constant import Constant
-from ..BaseDictionary import BaseDictionary
-from ...Helpers.HtmlHelper import HtmlHelper
-from ...Helpers.AnkiHelper import AnkiHelper
+from .. constant import Constant
+from .. base_dictionary import BaseDictionary
+from ... helpers.html_helper import HtmlHelper
+from ... helpers.anki_helper import AnkiHelper
 
 
 class CambridgeDictionary(BaseDictionary):
@@ -28,56 +28,56 @@ class CambridgeDictionary(BaseDictionary):
 
         url = ""
         if translation.equals(Constant.EN_CN_TD):
-            url = HtmlHelper.lookupUrl(
+            url = HtmlHelper.lookup_url(
                 Constant.CAMBRIDGE_URL_EN_CN_TD, self.wordId)
         elif (translation.equals(Constant.EN_CN_SP)):
-            url = HtmlHelper.lookupUrl(
+            url = HtmlHelper.lookup_url(
                 Constant.CAMBRIDGE_URL_EN_CN_SP, self.wordId)
         elif (translation.equals(Constant.EN_FR)):
-            url = HtmlHelper.lookupUrl(
+            url = HtmlHelper.lookup_url(
                 Constant.CAMBRIDGE_URL_EN_FR, self.wordId)
         elif (translation.equals(Constant.EN_JP)):
-            url = HtmlHelper.lookupUrl(
+            url = HtmlHelper.lookup_url(
                 Constant.CAMBRIDGE_URL_EN_JP, self.wordId)
 
-        self.doc = HtmlHelper.getDocument(url)
+        self.doc = HtmlHelper.get_document(url)
 
         return True if not self.doc else False
 
-    def isInvalidWord(self) -> bool:
+    def is_invalid_word(self) -> bool:
         """Check if the input word exists in dictionary?"""
 
-        title = HtmlHelper.getText(self.doc, "title", 0)
+        title = HtmlHelper.get_text(self.doc, "title", 0)
         if Constant.CAMBRIDGE_SPELLING_WRONG in title:
             return True
 
-        self.word = HtmlHelper.getText(self.doc, ".dhw", 0)
+        self.word = HtmlHelper.get_text(self.doc, ".dhw", 0)
         return not self.word
 
-    def getWordType(self) -> str:
+    def get_word_type(self) -> str:
         if not self.wordType:
-            wordTypes = HtmlHelper.getTexts(self.doc, "span.pos.dpos", True)
+            wordTypes = HtmlHelper.get_texts(self.doc, "span.pos.dpos", True)
             self.wordType = " | ".join(wordTypes) if len(wordTypes) > 0 else ""
             self.wordType = "({})".format(self.wordType)
         return self.wordType
 
-    def getExample(self) -> str:
+    def get_example(self) -> str:
         raise NotImplementedError
 
-    def getPhonetic(self) -> str:
+    def get_phonetic(self) -> str:
         if not self.phonetic:
-            self.phonetic = HtmlHelper.getText(self.doc, "span.pron.dpron", 0)
+            self.phonetic = HtmlHelper.get_text(self.doc, "span.pron.dpron", 0)
         return self.phonetic
 
-    def getImage(self, ankiDir: str, isOnline: bool) -> str:
+    def get_image(self, ankiDir: str, isOnline: bool) -> str:
         raise NotImplementedError
 
-    def getSounds(self, ankiDir: str, isOnline: bool) -> List[str]:
+    def get_sounds(self, ankiDir: str, isOnline: bool) -> List[str]:
         raise NotImplementedError
 
-    def getMeaning(self) -> str:
-        self.getWordType()
-        self.getPhonetic()
+    def get_meaning(self) -> str:
+        self.get_word_type()
+        self.get_phonetic()
 
         allMeaningTexts: List[str] = []
         meanings: List[Meaning] = []
@@ -128,7 +128,7 @@ class CambridgeDictionary(BaseDictionary):
                     # Don't add duplicated meaning!
                     allMeaningTexts.append(meaning.meaning)
 
-        return HtmlHelper.buildMeaning(self.word, self.wordType, self.phonetic, meanings, True)
+        return HtmlHelper.build_meaning(self.word, self.wordType, self.phonetic, meanings, True)
 
-    def getDictionaryName(self) -> str:
+    def get_dictionary_name(self) -> str:
         return "Cambridge Dictionary"

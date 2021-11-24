@@ -3,37 +3,35 @@
 
 
 from typing import List
-import logging
 
-from ..Enum.Translation import Translation
-from ..Enum.Status import Status
-from ..Enum.Card import Card
+from .. enum.translation import Translation
+from .. enum.card import Card
+from .. enum.status import Status
+from .. constant import Constant
+from .. base_generator import BaseGenerator
+from ... helpers.dict_helper import DictHelper
 
-from ..Constant import Constant
-from ..BaseGenerator import BaseGenerator
-from ...Helpers.DictHelper import DictHelper
-
-from ..Dictionary.LacVietDictionary import LacVietDictionary
-from ..Dictionary.CambridgeDictionary import CambridgeDictionary
-from ..Dictionary.OxfordDictionary import OxfordDictionary
+from .. dictionary.lacviet import LacVietDictionary
+from .. dictionary.cambridge import CambridgeDictionary
+from .. dictionary.oxford import OxfordDictionary
 
 
 class EnglishGenerator(BaseGenerator):
 
-    def getFormattedWords(self, word: str, translation: Translation, allWordTypes: bool) -> List[str]:
+    def get_formatted_words(self, word: str, translation: Translation, allWordTypes: bool) -> List[str]:
         word = word.lower().strip()
         foundWords = []
         if translation.equals(Constant.EN_EN) and allWordTypes:
-            foundWords += DictHelper.getOxfordWords(word)
+            foundWords += DictHelper.get_oxford_words(word)
         else:
             foundWords.append(word + Constant.SUB_DELIMITER +
                               word + Constant.SUB_DELIMITER + word)
         return foundWords
 
-    def generateCard(self, formattedWord: str, ankiDir: str, translation: Translation, isOnline: bool) -> Card:
+    def generate_card(self, formattedWord: str, ankiDir: str, translation: Translation, isOnline: bool) -> Card:
 
         formattedWord = formattedWord.lower()
-        card: Card = self.initializeCard(formattedWord, translation)
+        card: Card = self.initialize_card(formattedWord, translation)
         card.status = Status.SUCCESS
         card.comment = Constant.SUCCESS
 
@@ -44,19 +42,19 @@ class EnglishGenerator(BaseGenerator):
         # English to English
         if (translation.equals(Constant.EN_EN)):
 
-            card = self.singleDictionaryCard(
+            card = self.single_dictionary_card(
                 formattedWord, translation, ankiDir, isOnline, card, oxfordDict)
 
         # English to Chinese/French/Japanese
         elif translation.equals(Constant.EN_CN_TD) or translation.equals(Constant.EN_CN_SP) or translation.equals(Constant.EN_JP) or translation.equals(Constant.EN_FR):
 
-            card = self.multipleDictionariesCard(
+            card = self.multiple_dictionaries_card(
                 formattedWord, translation, ankiDir, isOnline, card, oxfordDict, cambridgeDict)
 
         # English to Vietnamese
         elif translation.equals(Constant.EN_VN):
 
-            card = self.multipleDictionariesCard(
+            card = self.multiple_dictionaries_card(
                 formattedWord, translation, ankiDir, isOnline, card, oxfordDict, lacVietDict)
 
         else:

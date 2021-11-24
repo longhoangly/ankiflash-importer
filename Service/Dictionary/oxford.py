@@ -4,13 +4,13 @@
 import logging
 from typing import List
 
-from ..Enum.Meaning import Meaning
-from ..Enum.Translation import Translation
+from .. enum.meaning import Meaning
+from .. enum.translation import Translation
 
-from ..Constant import Constant
-from ..BaseDictionary import BaseDictionary
-from ...Helpers.HtmlHelper import HtmlHelper
-from ...Helpers.DictHelper import DictHelper
+from .. constant import Constant
+from .. base_dictionary import BaseDictionary
+from ... helpers.html_helper import HtmlHelper
+from ... helpers.dict_helper import DictHelper
 
 
 class OxfordDictionary(BaseDictionary):
@@ -30,31 +30,31 @@ class OxfordDictionary(BaseDictionary):
             raise RuntimeError(
                 "Incorrect word format: {}".format(formattedWord))
 
-        url = HtmlHelper.lookupUrl(Constant.OXFORD_URL_EN_EN, self.wordId)
-        self.doc = HtmlHelper.getDocument(url)
+        url = HtmlHelper.lookup_url(Constant.OXFORD_URL_EN_EN, self.wordId)
+        self.doc = HtmlHelper.get_document(url)
 
         return True if not self.doc else False
 
-    def isInvalidWord(self) -> bool:
+    def is_invalid_word(self) -> bool:
         """Check if the input word exists in dictionary?"""
 
-        title = HtmlHelper.getText(self.doc, "title", 0)
+        title = HtmlHelper.get_text(self.doc, "title", 0)
         if Constant.OXFORD_SPELLING_WRONG in title or Constant.OXFORD_WORD_NOT_FOUND in title:
             return True
 
-        word = HtmlHelper.getText(self.doc, ".headword", 0)
+        word = HtmlHelper.get_text(self.doc, ".headword", 0)
         return False if word else True
 
-    def getWordType(self) -> str:
+    def get_word_type(self) -> str:
         if not self.wordType:
-            self.wordType = HtmlHelper.getText(self.doc, "span.pos", 0)
+            self.wordType = HtmlHelper.get_text(self.doc, "span.pos", 0)
             self.wordType = "(" + self.wordType + ")" if self.wordType else ""
         return self.wordType
 
-    def getExample(self) -> str:
+    def get_example(self) -> str:
         examples: list[str] = []
         for i in range(4):
-            example: str = HtmlHelper.getText(self.doc, "span.x", i)
+            example: str = HtmlHelper.get_text(self.doc, "span.x", i)
             if not example and i == 0:
                 return Constant.NO_EXAMPLE
             elif not example or example is None:
@@ -71,39 +71,39 @@ class OxfordDictionary(BaseDictionary):
                 examples.append(example)
 
         logging.info("examples: {}".format(examples))
-        return HtmlHelper.buildExample(examples)
+        return HtmlHelper.build_example(examples)
 
-    def getPhonetic(self) -> str:
+    def get_phonetic(self) -> str:
         if not self.phonetic:
-            phoneticBrE = HtmlHelper.getText(self.doc, "span.phon", 0)
-            phoneticNAmE = HtmlHelper.getText(self.doc, "span.phon", 1)
+            phoneticBrE = HtmlHelper.get_text(self.doc, "span.phon", 0)
+            phoneticNAmE = HtmlHelper.get_text(self.doc, "span.phon", 1)
             self.phonetic = "{} {}".format(
                 phoneticBrE, phoneticNAmE).replace("//", " / ")
         return self.phonetic
 
-    def getImage(self, ankiDir: str, isOnline: bool) -> str:
+    def get_image(self, ankiDir: str, isOnline: bool) -> str:
         self.ankiDir = ankiDir
         googleImage = "<a href=\"https://www.google.com/search?biw=1280&bih=661&tbm=isch&sa=1&q={}\" style=\"font-size: 15px; color: blue\">Search images by the word</a>".format(
             self.oriWord)
 
-        self.imageLink = HtmlHelper.getAttribute(
+        self.imageLink = HtmlHelper.get_attribute(
             self.doc, "a.topic", 0, "href")
 
         if not self.imageLink:
             self.image = googleImage
             return self.image
 
-        imageName = DictHelper.getFileName(self.imageLink)
+        imageName = DictHelper.get_file_name(self.imageLink)
         if isOnline:
             self.image = "<img src=\"" + self.imageLink + "\"/>"
         else:
             self.image = "<img src=\"" + imageName + "\"/>"
-            DictHelper.downloadFiles(self.imageLink, False, ankiDir)
+            DictHelper.download_files(self.imageLink, False, ankiDir)
         return self.image
 
-    def getSounds(self, ankiDir: str, isOnline: bool) -> List[str]:
+    def get_sounds(self, ankiDir: str, isOnline: bool) -> List[str]:
         self.ankiDir = ankiDir
-        self.soundLinks = HtmlHelper.getAttribute(
+        self.soundLinks = HtmlHelper.get_attribute(
             self.doc, "div.pron-uk", 0, "data-src-mp3")
 
         if not self.soundLinks:
@@ -111,14 +111,14 @@ class OxfordDictionary(BaseDictionary):
             self.soundLinks = ""
             return self.sounds
 
-        usSound = HtmlHelper.getAttribute(
+        usSound = HtmlHelper.get_attribute(
             self.doc, "div.pron-us", 0, "data-src-mp3")
         if usSound:
             self.soundLinks = "{};{}".format(usSound, self.soundLinks)
 
-        links = DictHelper.downloadFiles(self.soundLinks, isOnline, ankiDir)
+        links = DictHelper.download_files(self.soundLinks, isOnline, ankiDir)
         for soundLink in links:
-            soundName = DictHelper.getFileName(soundLink)
+            soundName = DictHelper.get_file_name(soundLink)
             if isOnline:
                 self.sounds = "<audio src=\"{}\" type=\"audio/wav\" preload=\"auto\" autobuffer controls>[sound:{}]</audio> {}".format(
                     soundLink, soundLink, self.sounds if len(self.sounds) > 0 else "")
@@ -128,9 +128,9 @@ class OxfordDictionary(BaseDictionary):
 
         return self.sounds
 
-    def getMeaning(self) -> str:
-        self.getWordType()
-        self.getPhonetic()
+    def get_meaning(self) -> str:
+        self.get_word_type()
+        self.get_phonetic()
 
         meanings: list[Meaning] = []
 
@@ -168,7 +168,7 @@ class OxfordDictionary(BaseDictionary):
                 Meaning(defElm.get_text().strip() if defElm else "", examples))
 
             # Extra Examples
-            extraExample = HtmlHelper.getChildElement(
+            extraExample = HtmlHelper.get_child_element(
                 meanElem, "span.unbox[unbox=\"extra_examples\"]", 0)
             if extraExample:
                 exampleElms = extraExample.select(".unx")
@@ -193,7 +193,7 @@ class OxfordDictionary(BaseDictionary):
             meaning.wordType = "Word family"
             meanings.append(meaning)
 
-        return HtmlHelper.buildMeaning(self.oriWord, self.wordType, self.phonetic, meanings)
+        return HtmlHelper.build_meaning(self.oriWord, self.wordType, self.phonetic, meanings)
 
-    def getDictionaryName(self) -> str:
+    def get_dictionary_name(self) -> str:
         return "Oxford Advanced Learner's Dictionary"

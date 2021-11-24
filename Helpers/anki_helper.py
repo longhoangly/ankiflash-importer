@@ -14,7 +14,7 @@ class AnkiHelper:
     """All Dictionary related utilities methods"""
 
     @staticmethod
-    def md5Utf8(string: str):
+    def md5_utf8(string: str):
         return hashlib.md5(string.encode("utf-8")).hexdigest()
 
     @staticmethod
@@ -24,11 +24,11 @@ class AnkiHelper:
         return output
 
     @staticmethod
-    def idGenerator(size=6, chars=string.ascii_uppercase + string.digits):
+    def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
         return ''.join(random.choice(chars) for _ in range(size))
 
     @staticmethod
-    def messageBox(title, text, infoText, iconPath=None, width=None):
+    def message_box(title, text, infoText, iconPath=None, width=None):
 
         font = QtGui.QFont()
         font.setBold(False)
@@ -53,7 +53,7 @@ class AnkiHelper:
         msgBox.exec_()
 
     @staticmethod
-    def messageBoxButtons(title, text, infoText, standardButtons, defaultButton, iconPath=None, width=None):
+    def message_box_buttons(title, text, infoText, standardButtons, defaultButton, iconPath=None, width=None):
 
         font = QtGui.QFont()
         font.setBold(False)

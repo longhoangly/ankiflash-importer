@@ -8,19 +8,20 @@ import logging
 from urllib.parse import unquote
 from bs4 import BeautifulSoup
 from bs4.element import Tag
-from ..Service.Enum.Meaning import Meaning
+
+from .. service.enum.meaning import Meaning
 
 
 class HtmlHelper:
     """All HTML related utilities methods"""
 
     @staticmethod
-    def lookupUrl(dictUrl: str, word: str):
+    def lookup_url(dictUrl: str, word: str):
         word = word.replace(" ", "%20")
         return dictUrl.format(word)
 
     @staticmethod
-    def urlDecode(url: str):
+    def url_decode(url: str):
         try:
             return unquote(url)
         except:
@@ -29,29 +30,29 @@ class HtmlHelper:
         return ""
 
     @staticmethod
-    def getDocument(url: str) -> BeautifulSoup:
+    def get_document(url: str) -> BeautifulSoup:
         logging.info("url {}".format(url))
         html_text = requests.get(
             url, headers={"User-Agent": "Mozilla/5.0"}).text
         return BeautifulSoup(html_text, 'html.parser')
 
     @staticmethod
-    def getDocElement(doc: BeautifulSoup, selector: str, index: int) -> Tag:
+    def get_doc_element(doc: BeautifulSoup, selector: str, index: int) -> Tag:
         elements = doc.select(selector)
         return elements[index] if len(elements) - index > 0 else None
 
     @staticmethod
-    def getChildElement(element: Tag, selector: str, index: int) -> Tag:
+    def get_child_element(element: Tag, selector: str, index: int) -> Tag:
         elements = element.select(selector)
         return elements[index] if len(elements) - index > 0 else None
 
     @staticmethod
-    def getText(doc: BeautifulSoup, selector: str, index: int) -> str:
-        element = HtmlHelper.getDocElement(doc, selector, index)
+    def get_text(doc: BeautifulSoup, selector: str, index: int) -> str:
+        element = HtmlHelper.get_doc_element(doc, selector, index)
         return element.get_text().strip() if element else ""
 
     @staticmethod
-    def getTexts(doc: BeautifulSoup, selector: str, isUnique: bool = False) -> List[str]:
+    def get_texts(doc: BeautifulSoup, selector: str, isUnique: bool = False) -> List[str]:
         elements = doc.select(selector)
         texts = []
         for element in elements:
@@ -62,32 +63,32 @@ class HtmlHelper:
         return texts
 
     @staticmethod
-    def getElementInnerHtml(doc: BeautifulSoup, selector: str, index: int) -> str:
-        element = HtmlHelper.getDocElement(doc, selector, index)
+    def get_element_inner_html(doc: BeautifulSoup, selector: str, index: int) -> str:
+        element = HtmlHelper.get_doc_element(doc, selector, index)
         return element.decode_contents() if element else ""
 
     @staticmethod
-    def getChildInnerHtml(element: Tag, selector: str, index: int) -> str:
-        element = HtmlHelper.getChildElement(element, selector, index)
+    def get_child_inner_html(element: Tag, selector: str, index: int) -> str:
+        element = HtmlHelper.get_child_element(element, selector, index)
         return element.decode_contents() if element else ""
 
     @staticmethod
-    def getElementOuterHtml(doc: BeautifulSoup, selector: str, index: int) -> str:
-        element = HtmlHelper.getDocElement(doc, selector, index)
+    def get_element_outer_html(doc: BeautifulSoup, selector: str, index: int) -> str:
+        element = HtmlHelper.get_doc_element(doc, selector, index)
         return str(element) if element else ""
 
     @staticmethod
-    def getChildOuterHtml(element: Tag, selector: str, index: str) -> str:
-        element = HtmlHelper.getChildElement(element, selector, index)
+    def get_child_outer_html(element: Tag, selector: str, index: str) -> str:
+        element = HtmlHelper.get_child_element(element, selector, index)
         return str(element) if element else ""
 
     @staticmethod
-    def getAttribute(doc: BeautifulSoup, selector: str, index: int, attr: str) -> str:
-        element = HtmlHelper.getDocElement(doc, selector, index)
+    def get_attribute(doc: BeautifulSoup, selector: str, index: int, attr: str) -> str:
+        element = HtmlHelper.get_doc_element(doc, selector, index)
         return element.get(attr) if element else ""
 
     @staticmethod
-    def buildExample(examples: List[str], isJapanese: bool = False) -> str:
+    def build_example(examples: List[str], isJapanese: bool = False) -> str:
         str_list = []
 
         if (isJapanese):
@@ -118,7 +119,7 @@ class HtmlHelper:
         return "".join(str_list)
 
     @staticmethod
-    def buildMeaning(word: str, wordType: str, phonetic: str, meanings: List[Meaning], isJapanese: bool = False) -> str:
+    def build_meaning(word: str, wordType: str, phonetic: str, meanings: List[Meaning], isJapanese: bool = False) -> str:
 
         str_list = []
 

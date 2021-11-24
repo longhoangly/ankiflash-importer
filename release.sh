@@ -1,44 +1,36 @@
 #!/bin/zsh
 
-DEST="Library/Application Support/Anki2/addons21/1129289384"
+SRC="."
+RELEASE="./Release"
 
-mkdir -p ~/$DEST/Helpers
-cp -R ./Helpers/* ~/$DEST/Helpers
+echo Starting Release...
+rm -f __init__.zip
 
-mkdir -p ~/$DEST/Resources
-cp -R ./Resources/* ~/$DEST/Resources
+rm -rf $RELEASE
+mkdir -p $RELEASE
 
-mkdir -p ~/$DEST/Service
-cp -R ./Service/* ~/$DEST/Service
+echo Copying python files...
+cp *.py $RELEASE
 
-mkdir -p ~/$DEST/Ui
-cp -R ./Ui/*.py ~/$DEST/Ui
+copy_folder() {
 
-cp *.py ~/$DEST
+    echo Copying $1...
+    mkdir -p $RELEASE/$1
 
-echo Finished Deployment...
+    if [ "$2" != "" ]; then
+        cp -R $SRC/$1/*.py $RELEASE/$1
+    else
+        cp -R $SRC/$1/* $RELEASE/$1
+    fi
+}
 
-RELEASE="Release"
+copy_folder "helpers"
+copy_folder "resources"
+copy_folder "service"
+copy_folder "ui" "py"
 
-rm -rf ./$RELEASE
-mkdir ./$RELEASE
+echo Compressing release files...
+zip -r __init__.zip $RELEASE/*
 
-mkdir -p ./$RELEASE/Helpers
-cp -R ./Helpers/* ./$RELEASE/Helpers
-
-mkdir -p ./$RELEASE/Resources
-cp -R ./Resources/* ./$RELEASE/Resources
-
-mkdir -p ./$RELEASE/Service
-cp -R ./Service/* ./$RELEASE/Service
-
-mkdir -p ./$RELEASE/Ui
-cp -R ./Ui/*.py ./$RELEASE/Ui
-
-cp *.py ./$RELEASE
-
-zip -r __init__.zip ./$RELEASE/*
-
-echo Finished Releasing...
-
-rm -r ./$RELEASE
+echo Finished Release...
+rm -rf $RELEASE

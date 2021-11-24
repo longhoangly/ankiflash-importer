@@ -3,13 +3,13 @@
 
 from typing import List
 
-from ..Enum.Meaning import Meaning
-from ..Enum.Translation import Translation
+from .. enum.meaning import Meaning
+from .. enum.translation import Translation
 
-from ..Constant import Constant
-from ..BaseDictionary import BaseDictionary
-from ...Helpers.HtmlHelper import HtmlHelper
-from ...Helpers.DictHelper import DictHelper
+from .. constant import Constant
+from .. base_dictionary import BaseDictionary
+from ... helpers.html_helper import HtmlHelper
+from ... helpers.dict_helper import DictHelper
 
 
 class LacVietDictionary(BaseDictionary):
@@ -28,49 +28,54 @@ class LacVietDictionary(BaseDictionary):
 
         url = ""
         if translation.equals(Constant.VN_EN):
-            url = HtmlHelper.lookupUrl(Constant.LACVIET_URL_VN_EN, self.wordId)
+            url = HtmlHelper.lookup_url(
+                Constant.LACVIET_URL_VN_EN, self.wordId)
         elif (translation.equals(Constant.VN_FR)):
-            url = HtmlHelper.lookupUrl(Constant.LACVIET_URL_VN_FR, self.wordId)
+            url = HtmlHelper.lookup_url(
+                Constant.LACVIET_URL_VN_FR, self.wordId)
         elif (translation.equals(Constant.VN_VN)):
-            url = HtmlHelper.lookupUrl(Constant.LACVIET_URL_VN_VN, self.wordId)
+            url = HtmlHelper.lookup_url(
+                Constant.LACVIET_URL_VN_VN, self.wordId)
         elif (translation.equals(Constant.EN_VN)):
-            url = HtmlHelper.lookupUrl(Constant.LACVIET_URL_EN_VN, self.wordId)
+            url = HtmlHelper.lookup_url(
+                Constant.LACVIET_URL_EN_VN, self.wordId)
         elif (translation.equals(Constant.FR_VN)):
-            url = HtmlHelper.lookupUrl(Constant.LACVIET_URL_FR_VN, self.wordId)
+            url = HtmlHelper.lookup_url(
+                Constant.LACVIET_URL_FR_VN, self.wordId)
 
-        self.doc = HtmlHelper.getDocument(url)
+        self.doc = HtmlHelper.get_document(url)
 
         return True if not self.doc else False
 
-    def isInvalidWord(self) -> bool:
+    def is_invalid_word(self) -> bool:
         """Check if the input word exists in dictionary?"""
 
         words = self.doc.select("div.w.fl")
         if not words:
             return True
 
-        warning = HtmlHelper.getText(self.doc, "div.i.p10", 0)
+        warning = HtmlHelper.get_text(self.doc, "div.i.p10", 0)
         return Constant.LACVIET_SPELLING_WRONG in warning
 
-    def getWordType(self) -> str:
+    def get_word_type(self) -> str:
         if not self.wordType:
-            element = HtmlHelper.getDocElement(self.doc, "div.m5t.p10lr", 0)
+            element = HtmlHelper.get_doc_element(self.doc, "div.m5t.p10lr", 0)
             self.wordType = element.text.replace("|Tất cả", "").replace(
                 "|Từ liên quan", "") if element else ""
             self.wordType = " | ".join(self.wordType.split("|"))
 
             if not self.wordType:
-                elements = HtmlHelper.getTexts(self.doc, "div.m5t.p10lr")
+                elements = HtmlHelper.get_texts(self.doc, "div.m5t.p10lr")
                 self.wordType = " | ".join(elements) if len(
                     elements) > 0 else ""
 
             self.wordType = "(" + self.wordType + ")" if self.wordType else ""
         return self.wordType
 
-    def getExample(self) -> str:
+    def get_example(self) -> str:
         examples = []
         for i in range(4):
-            example: str = HtmlHelper.getText(self.doc, "div.e", i)
+            example: str = HtmlHelper.get_text(self.doc, "div.e", i)
             if not example and i == 0:
                 return Constant.NO_EXAMPLE
             elif not example:
@@ -85,23 +90,23 @@ class LacVietDictionary(BaseDictionary):
                     example = "{} {}".format(example, "{{c1::...}}")
                 examples.append(example)
 
-        return HtmlHelper.buildExample(examples)
+        return HtmlHelper.build_example(examples)
 
-    def getPhonetic(self) -> str:
+    def get_phonetic(self) -> str:
         if not self.phonetic:
-            self.phonetic = HtmlHelper.getText(self.doc, "div.p5l.fl.cB", 0)
+            self.phonetic = HtmlHelper.get_text(self.doc, "div.p5l.fl.cB", 0)
         return self.phonetic
 
-    def getImage(self, ankiDir: str, isOnline: bool) -> str:
+    def get_image(self, ankiDir: str, isOnline: bool) -> str:
         self.ankiDir = ankiDir
         self.imageLink = ""
         self.image = "<a href=\"https://www.google.com/search?biw=1280&bih=661&tbm=isch&sa=1&q={}\" style=\"font-size: 15px; color: blue\">Search images by the word</a>".format(
             self.oriWord)
         return self.image
 
-    def getSounds(self, ankiDir: str, isOnline: bool) -> List[str]:
+    def get_sounds(self, ankiDir: str, isOnline: bool) -> List[str]:
         self.ankiDir = ankiDir
-        self.soundLinks = HtmlHelper.getAttribute(
+        self.soundLinks = HtmlHelper.get_attribute(
             self.doc, "embed", 0, "flashvars")
 
         if not self.soundLinks:
@@ -112,9 +117,9 @@ class LacVietDictionary(BaseDictionary):
         self.soundLinks = self.soundLinks.replace(
             "file=", "").replace("&autostart=false", "")
 
-        links = DictHelper.downloadFiles(self.soundLinks, isOnline, ankiDir)
+        links = DictHelper.download_files(self.soundLinks, isOnline, ankiDir)
         for soundLink in links:
-            soundName = DictHelper.getFileName(soundLink)
+            soundName = DictHelper.get_file_name(soundLink)
             if isOnline:
                 self.sounds = "<audio src=\"{}\" type=\"audio/wav\" preload=\"auto\" autobuffer controls>[sound:{}]</audio> {}".format(
                     soundLink, soundLink, self.sounds if len(self.sounds) > 0 else "")
@@ -124,9 +129,9 @@ class LacVietDictionary(BaseDictionary):
 
         return self.sounds
 
-    def getMeaning(self) -> str:
-        self.getWordType()
-        self.getPhonetic()
+    def get_meaning(self) -> str:
+        self.get_word_type()
+        self.get_phonetic()
 
         meanings: list[Meaning] = []
         meanGroups = self.doc.select("div[id*=partofspeech]")
@@ -175,7 +180,7 @@ class LacVietDictionary(BaseDictionary):
                 meaning.examples = examples
                 meanings.append(meaning)
 
-        return HtmlHelper.buildMeaning(self.oriWord, self.wordType, self.phonetic, meanings)
+        return HtmlHelper.build_meaning(self.oriWord, self.wordType, self.phonetic, meanings)
 
-    def getDictionaryName(self) -> str:
+    def get_dictionary_name(self) -> str:
         return "Lac Viet Dictionary"

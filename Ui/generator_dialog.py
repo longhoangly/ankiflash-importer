@@ -4,24 +4,15 @@
 from PyQt5.QtWidgets import QDialog, QGroupBox, QMessageBox, QRadioButton
 from PyQt5.QtCore import QThread
 
-from .Ui.UiGenerator import UiGenerator
-from .ImporterDialog import ImporterDialog
-from .Service.Enum.Translation import Translation
-from .Service.BaseGenerator import Worker
-
-from .Service.Card.ChineseGenerator import ChineseGenerator
-from .Service.Card.VietnameseGenerator import VietnameseGenerator
-from .Service.Card.SpanishGenerator import SpanishGenerator
-from .Service.Card.JapaneseGenerator import JapaneseGenerator
-from .Service.Card.FrenchGenerator import FrenchGenerator
-from .Service.Card.EnglishGenerator import EnglishGenerator
-from .Service.Constant import Constant
-from .Helpers.AnkiHelper import AnkiHelper
+from . ui_generator import UiGenerator
+from . importer_dialog import ImporterDialog
+from .. service.enum.translation import Translation
+from .. service.worker import Worker
+from .. service.constant import Constant
+from .. helpers.anki_helper import AnkiHelper
 
 from os.path import join
 import logging
-import csv
-csv.field_size_limit(2**30)
 
 
 class GeneratorDialog(QDialog):
@@ -34,7 +25,7 @@ class GeneratorDialog(QDialog):
         self.iconPath = iconPath
 
         # Paths
-        self.ankiCsvPath = join(addonDir, r'AnkiDeck.csv')
+        self.ankiCsvPath = join(addonDir, Constant.ANKI_DECK)
 
         # Create Generator GUI
         self.ui = UiGenerator()
@@ -43,41 +34,41 @@ class GeneratorDialog(QDialog):
 
         # Create Importer Instance
         self.importer = ImporterDialog(version, iconPath, addonDir)
-        self.importer.keyPressed.connect(self.importer.onKey)
+        self.importer.keyPressed.connect(self.importer.on_key)
 
         # Set Total Input Word count
-        self.ui.inputTxt.textChanged.connect(self.inputTextChanged)
+        self.ui.inputTxt.textChanged.connect(self.input_text_changed)
 
         # Set Completed Output Card count
-        self.ui.outputTxt.textChanged.connect(self.outputTextChanged)
+        self.ui.outputTxt.textChanged.connect(self.output_text_changed)
 
         # Set Failures Word count
-        self.ui.failureTxt.textChanged.connect(self.failureTextChanged)
+        self.ui.failureTxt.textChanged.connect(self.failure_text_changed)
 
         # Handle clicks on Generate button
-        self.ui.generateBtn.clicked.connect(self.btnGenerateClicked)
+        self.ui.generateBtn.clicked.connect(self.btn_generate_clicked)
 
         # Handle clicks on Progress bar
-        self.ui.importBtn.clicked.connect(self.btnImporterClicked)
+        self.ui.importBtn.clicked.connect(self.btn_importer_clicked)
 
-        self.getSupportedLanguages()
+        self.get_supported_languages()
         # Handle user clicks on translation
-        self.ui.source1.clicked.connect(self.getSupportedLanguages)
-        self.ui.source2.clicked.connect(self.getSupportedLanguages)
-        self.ui.source3.clicked.connect(self.getSupportedLanguages)
-        self.ui.source4.clicked.connect(self.getSupportedLanguages)
+        self.ui.source1.clicked.connect(self.get_supported_languages)
+        self.ui.source2.clicked.connect(self.get_supported_languages)
+        self.ui.source3.clicked.connect(self.get_supported_languages)
+        self.ui.source4.clicked.connect(self.get_supported_languages)
 
-    def closeEvent(self, event):
+    def close_event(self, event):
         logging.shutdown()
 
-    def inputTextChanged(self):
+    def input_text_changed(self):
 
         words = self.ui.inputTxt.toPlainText().split("\n")
         # Filter words list, only get non-empty words
         self.words = list(filter(None, words))
         self.ui.totalLbl.setText("Total: {}".format(len(self.words)))
 
-    def outputTextChanged(self):
+    def output_text_changed(self):
 
         cards = self.ui.outputTxt.toPlainText().split("\n")
         # Filter cards list, only get non-empty cards
@@ -85,7 +76,7 @@ class GeneratorDialog(QDialog):
         self.cardCount = len(self.cards)
         self.ui.completedLbl.setText("Completed: {}".format(len(self.cards)))
 
-    def failureTextChanged(self):
+    def failure_text_changed(self):
 
         failures = self.ui.failureTxt.toPlainText().split("\n")
         # Filter failures list, only get non-empty failures
@@ -93,31 +84,16 @@ class GeneratorDialog(QDialog):
         self.failureCount = len(self.failures)
         self.ui.failureLbl.setText("Failure: {}".format(len(self.failures)))
 
-    def initializeGenerator(self, translation: Translation):
-
-        if translation.source == Constant.ENGLISH:
-            self.generator = EnglishGenerator()
-        elif translation.source == Constant.JAPANESE:
-            self.generator = JapaneseGenerator()
-        elif translation.source == Constant.VIETNAMESE:
-            self.generator = VietnameseGenerator()
-        elif translation.source == Constant.FRENCH:
-            self.generator = FrenchGenerator()
-        elif translation.source == Constant.SPANISH:
-            self.generator = SpanishGenerator()
-        elif Constant.CHINESE in translation.source:
-            self.generator = ChineseGenerator()
-
-    def btnGenerateClicked(self):
+    def btn_generate_clicked(self):
 
         # Validate if input text empty?
         inputText = self.ui.inputTxt.toPlainText()
 
         if not inputText:
-            AnkiHelper.messageBox("Info",
-                                  "No input words available for generating.",
-                                  "Please check your input words!",
-                                  self.iconPath)
+            AnkiHelper.message_box("Info",
+                                   "No input words available for generating.",
+                                   "Please check your input words!",
+                                   self.iconPath)
             return
 
         # Increase to 2% as a processing signal to user
@@ -129,8 +105,8 @@ class GeneratorDialog(QDialog):
         self.ui.failureTxt.setPlainText("")
 
         # Get translation options
-        source = self.selectedRadio(self.ui.sourceBox)
-        target = self.selectedRadio(self.ui.translatedToBox)
+        source = self.selected_radio(self.ui.sourceBox)
+        target = self.selected_radio(self.ui.translatedToBox)
         self.translation = Translation(source, target)
 
         # Get generating options
@@ -138,7 +114,7 @@ class GeneratorDialog(QDialog):
         self.isOnline = self.ui.isOnline.isChecked()
 
         # Initialize Generator based on translation
-        self.initializeGenerator(self.translation)
+        self.generator = Worker.initialize_generator(self.translation)
 
         # Step 2: Create a QThread object
         self.bgThread = QThread(self)
@@ -152,16 +128,16 @@ class GeneratorDialog(QDialog):
         self.worker.moveToThread(self.bgThread)
 
         # Step 5: Connect signals and slots
-        self.bgThread.started.connect(self.worker.generateCardsBackground)
+        self.bgThread.started.connect(self.worker.generate_cards_background)
 
         self.worker.finished.connect(self.bgThread.quit)
         self.bgThread.finished.connect(self.bgThread.deleteLater)
 
         self.worker.finished.connect(self.worker.deleteLater)
-        self.worker.progress.connect(self.reportProgress)
+        self.worker.progress.connect(self.report_progress)
 
-        self.worker.cardStr.connect(self.reportCard)
-        self.worker.failureStr.connect(self.reportFailure)
+        self.worker.cardStr.connect(self.report_card)
+        self.worker.failureStr.connect(self.report_failure)
 
         # Step 6: Start the thread
         self.bgThread.start()
@@ -177,12 +153,12 @@ class GeneratorDialog(QDialog):
                 "Already connected before...{}".format(receiversCount))
             self.ui.cancelBtn.clicked.disconnect()
 
-        self.ui.cancelBtn.clicked.connect(self.cancelBackgroundTask)
+        self.ui.cancelBtn.clicked.connect(self.cancel_background_task)
 
         # Final resets
-        self.bgThread.finished.connect(self.finishedGenerationProgress)
+        self.bgThread.finished.connect(self.finished_generation_progress)
 
-    def cancelBackgroundTask(self):
+    def cancel_background_task(self):
 
         logging.info("Canceling background task...")
         self.bgThread.requestInterruption()
@@ -191,12 +167,12 @@ class GeneratorDialog(QDialog):
         self.ui.outputTxt.setPlainText("")
         self.isCancelled = True
 
-        AnkiHelper.messageBox("Info",
-                              "Flashcards generation process stopped!",
-                              "Restart by clicking Generate button.",
-                              self.iconPath)
+        AnkiHelper.message_box("Info",
+                               "Flashcards generation process stopped!",
+                               "Restart by clicking Generate button.",
+                               self.iconPath)
 
-    def finishedGenerationProgress(self):
+    def finished_generation_progress(self):
 
         self.ui.cancelBtn.setDisabled(True)
         self.ui.generateBtn.setEnabled(True)
@@ -207,25 +183,25 @@ class GeneratorDialog(QDialog):
             return
 
         if self.ui.outputTxt.toPlainText():
-            btnSelected = AnkiHelper.messageBoxButtons("Info",
-                                                       "Finished generating flashcards.\nThanks for using AnkiFlash!",
-                                                       "Do you want to import generated flashcards now?\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
-                                                           len(self.words), self.cardCount, self.failureCount),
-                                                       QMessageBox.No | QMessageBox.Yes,
-                                                       QMessageBox.Yes,
-                                                       self.iconPath)
+            btnSelected = AnkiHelper.message_box_buttons("Info",
+                                                         "Finished generating flashcards.\nThanks for using AnkiFlash!",
+                                                         "Do you want to import generated flashcards now?\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
+                                                             len(self.words), self.cardCount, self.failureCount),
+                                                         QMessageBox.No | QMessageBox.Yes,
+                                                         QMessageBox.Yes,
+                                                         self.iconPath)
             if btnSelected == QMessageBox.Yes:
-                self.btnImporterClicked()
+                self.btn_importer_clicked()
         else:
-            AnkiHelper.messageBoxButtons("Info",
-                                         "Finished generating flashcards.\nThanks for using AnkiFlash!",
-                                         "No output flashcards available for importing.\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
-                                             len(self.words), self.cardCount, self.failureCount),
-                                         QMessageBox.Close,
-                                         QMessageBox.Close,
-                                         self.iconPath)
+            AnkiHelper.message_box_buttons("Info",
+                                           "Finished generating flashcards.\nThanks for using AnkiFlash!",
+                                           "No output flashcards available for importing.\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
+                                               len(self.words), self.cardCount, self.failureCount),
+                                           QMessageBox.Close,
+                                           QMessageBox.Close,
+                                           self.iconPath)
 
-    def reportProgress(self, percent):
+    def report_progress(self, percent):
 
         # Return if thread is interrupted
         if self.bgThread.isInterruptionRequested():
@@ -233,7 +209,7 @@ class GeneratorDialog(QDialog):
 
         self.ui.generateProgressBar.setValue(percent)
 
-    def reportCard(self, cardStr):
+    def report_card(self, cardStr):
 
         # Return if thread is interrupted
         if self.bgThread.isInterruptionRequested():
@@ -244,7 +220,7 @@ class GeneratorDialog(QDialog):
             currentText += "\n"
         self.ui.outputTxt.setPlainText("{}{}".format(currentText, cardStr))
 
-    def reportFailure(self, failureStr):
+    def report_failure(self, failureStr):
 
         # Return if thread is interrupted
         if self.bgThread.isInterruptionRequested():
@@ -256,19 +232,19 @@ class GeneratorDialog(QDialog):
         self.ui.failureTxt.setPlainText(
             "{}{}".format(currentText, failureStr))
 
-    def btnImporterClicked(self):
+    def btn_importer_clicked(self):
         if self.ui.outputTxt.toPlainText():
             self.importer.ui.importProgressBar.setValue(0)
             self.importer.show()
         else:
-            AnkiHelper.messageBox(
+            AnkiHelper.message_box(
                 "Info",
                 "No output flashcards available for importing.",
                 "Please check your input words!",
                 self.iconPath)
 
-    def getSupportedLanguages(self):
-        source = self.selectedRadio(self.ui.sourceBox)
+    def get_supported_languages(self):
+        source = self.selected_radio(self.ui.sourceBox)
         supportTranslations = {Constant.ENGLISH: [Constant.ENGLISH, Constant.VIETNAMESE, Constant.CHINESE_TD, Constant.CHINESE_SP, Constant.FRENCH, Constant.JAPANESE],
                                Constant.VIETNAMESE: [Constant.ENGLISH, Constant.FRENCH, Constant.JAPANESE, Constant.VIETNAMESE],
                                Constant.FRENCH: [Constant.ENGLISH, Constant.VIETNAMESE],
@@ -286,18 +262,18 @@ class GeneratorDialog(QDialog):
 
             if radio.text() in targetLanguages:
                 radio.setEnabled(True)
-                self.changeRadioColor(radio, True)
+                self.change_radio_color(radio, True)
             else:
                 radio.setEnabled(False)
-                self.changeRadioColor(radio, False)
+                self.change_radio_color(radio, False)
 
-    def changeRadioColor(self, radio: QRadioButton, isEnabled: bool):
+    def change_radio_color(self, radio: QRadioButton, isEnabled: bool):
         if isEnabled:
             radio.setStyleSheet(self.ui.source1.styleSheet())
         else:
             radio.setStyleSheet("color:gray")
 
-    def selectedRadio(self, groupBox: QGroupBox) -> str:
+    def selected_radio(self, groupBox: QGroupBox) -> str:
         # Get all radio buttons
         radioBtns = [radio for radio in groupBox.children(
         ) if isinstance(radio, QRadioButton)]
