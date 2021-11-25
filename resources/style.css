@@ -2,12 +2,12 @@
 
 @font-face {
     font-family: "Raleway";
-    src: url("/Resources/Raleway-Regular.ttf") format("truetype");
+    src: url("resources/Raleway-Regular.ttf") format("truetype");
 }
 
 @font-face {
     font-family: "Open Sans";
-    src: url("/Resources/OpenSans-Regular.ttf") format("truetype");
+    src: url("resources/OpenSans-Regular.ttf") format("truetype");
 }
 
 body {

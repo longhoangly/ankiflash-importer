@@ -9,7 +9,7 @@ from urllib.parse import unquote
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from .. service.enum.meaning import Meaning
+from .. enum.meaning import Meaning
 
 
 class HtmlHelper:

@@ -12,8 +12,8 @@ from .. enum.translation import Translation
 
 from .. constant import Constant
 from .. base_dictionary import BaseDictionary
-from ... helpers.html_helper import HtmlHelper
-from ... helpers.dict_helper import DictHelper
+from .. helpers.html_helper import HtmlHelper
+from .. helpers.dict_helper import DictHelper
 
 
 class KantanDictionary(BaseDictionary):

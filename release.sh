@@ -24,7 +24,6 @@ copy_folder() {
     fi
 }
 
-copy_folder "helpers"
 copy_folder "resources"
 copy_folder "service"
 copy_folder "ui" "py"

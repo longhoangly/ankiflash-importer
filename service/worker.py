@@ -9,11 +9,12 @@ from typing import List
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from . base_generator import BaseGenerator
 from . enum.translation import Translation
 from . enum.status import Status
-from . constant import Constant
 from . enum.card import Card
+
+from . base_generator import BaseGenerator
+from . constant import Constant
 
 from . card.chinese import ChineseGenerator
 from . card.vietnamese import VietnameseGenerator
@@ -125,6 +126,7 @@ class Worker(QObject):
         except OSError:
             logging.info("{} does not exist!".format(self.csvFilePath))
             pass
+
         with open(self.csvFilePath, 'w', encoding='utf-8') as file:
             file.writelines(cardLines)
 

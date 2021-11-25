@@ -12,7 +12,7 @@ from typing import List
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from .. service.constant import Constant
+from .. constant import Constant
 from . anki_helper import AnkiHelper
 from . html_helper import HtmlHelper
 

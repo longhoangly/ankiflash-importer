@@ -7,7 +7,7 @@ from shared import CommonTest
 from service.constant import Constant
 
 
-class EnglishCardTests(unittest.TestCase):
+class FrenchCardTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
@@ -25,28 +25,12 @@ class EnglishCardTests(unittest.TestCase):
         self.commontest.mediaDir = self.mediaDir
         self.commontest.ankiCsvPath = self.ankiCsvPath
 
-    def test_english_english_card(self):
-        translation = Constant.EN_EN
+    def test_french_english_card(self):
+        translation = Constant.FR_EN
         self.commontest.create_flashcards(translation, self.words)
 
-    def test_english_vietnamese_card(self):
-        translation = Constant.EN_VN
-        self.commontest.create_flashcards(translation, self.words)
-
-    def test_english_french_card(self):
-        translation = Constant.EN_FR
-        self.commontest.create_flashcards(translation, self.words)
-
-    def test_english_japanese_card(self):
-        translation = Constant.EN_JP
-        self.commontest.create_flashcards(translation, self.words)
-
-    def test_english_chinese_traditional_card(self):
-        translation = Constant.EN_CN_TD
-        self.commontest.create_flashcards(translation, self.words)
-
-    def test_english_chinese_simplified_card(self):
-        translation = Constant.EN_CN_SP
+    def test_french_vietnamese_card(self):
+        translation = Constant.FR_VN
         self.commontest.create_flashcards(translation, self.words)
 
     @classmethod

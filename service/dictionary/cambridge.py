@@ -8,8 +8,8 @@ from .. enum.translation import Translation
 
 from .. constant import Constant
 from .. base_dictionary import BaseDictionary
-from ... helpers.html_helper import HtmlHelper
-from ... helpers.anki_helper import AnkiHelper
+from .. helpers.html_helper import HtmlHelper
+from .. helpers.anki_helper import AnkiHelper
 
 
 class CambridgeDictionary(BaseDictionary):

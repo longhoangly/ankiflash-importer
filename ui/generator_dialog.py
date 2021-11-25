@@ -9,7 +9,7 @@ from . importer_dialog import ImporterDialog
 from .. service.enum.translation import Translation
 from .. service.worker import Worker
 from .. service.constant import Constant
-from .. helpers.anki_helper import AnkiHelper
+from .. service.helpers.anki_helper import AnkiHelper
 
 from os.path import join
 import logging
@@ -33,7 +33,7 @@ class GeneratorDialog(QDialog):
         self.ui.cancelBtn.setDisabled(True)
 
         # Create Importer Instance
-        self.importer = ImporterDialog(version, iconPath, addonDir)
+        self.importer = ImporterDialog(version, iconPath, addonDir, mediaDir)
         self.importer.keyPressed.connect(self.importer.on_key)
 
         # Set Total Input Word count

@@ -23,7 +23,6 @@ deploy_folder() {
     fi
 }
 
-deploy_folder "helpers"
 deploy_folder "resources"
 deploy_folder "service"
 deploy_folder "ui" "py"

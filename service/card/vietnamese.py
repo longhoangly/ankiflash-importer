@@ -8,7 +8,7 @@ from .. enum.card import Card
 from .. enum.status import Status
 from .. constant import Constant
 from .. base_generator import BaseGenerator
-from ... helpers.dict_helper import DictHelper
+from .. helpers.dict_helper import DictHelper
 
 from .. dictionary.kantan import KantanDictionary
 from .. dictionary.lacviet import LacVietDictionary

@@ -1,16 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import os
 from aqt import mw
 from anki.models import ModelManager
 from anki.importing.csvfile import TextImporter
 
 from PyQt5.QtWidgets import QDialog
 from PyQt5 import QtCore
+from shutil import copyfile
 
 from . ui_importer import UiImporter
-from .. helpers.anki_helper import AnkiHelper
 from .. service.constant import Constant
+from .. service.helpers.anki_helper import AnkiHelper
 
 from os.path import join
 
@@ -23,18 +25,19 @@ class ImporterDialog(QDialog):
 
     keyPressed = QtCore.pyqtSignal(int)
 
-    def __init__(self, version, iconPath, addonDir):
+    def __init__(self, version, iconPath, addonDir, mediaDir):
 
         super().__init__()
         self.version = version
         self.addonDir = addonDir
+        self.mediaDir = mediaDir
         self.iconPath = iconPath
 
         # Paths
         self.ankiCsvPath = join(self.addonDir, Constant.ANKI_DECK)
-        self.frontFile = join(self.addonDir, r'Resources/front.html')
-        self.backFile = join(self.addonDir, r'Resources/back.html')
-        self.cssFile = join(self.addonDir, r'Resources/style.css')
+        self.frontFile = join(self.addonDir, r'resources/front.html')
+        self.backFile = join(self.addonDir, r'resources/back.html')
+        self.cssFile = join(self.addonDir, r'resources/style.css')
 
         # Importer GUI
         self.ui = UiImporter()
@@ -117,6 +120,13 @@ class ImporterDialog(QDialog):
                                "Finished importing flashcards.",
                                "Let's enjoy learning curve.",
                                self.iconPath)
+
+        os.makedirs(join(self.mediaDir, r'resources'), exist_ok=True)
+        copyfile(join(self.addonDir, r'resources/Raleway-Regular.ttf'),
+                 join(self.mediaDir, r'resources/Raleway-Regular.ttf'))
+        copyfile(join(self.addonDir, r'resources/OpenSans-Regular.ttf'),
+                 join(self.mediaDir, r'resources/OpenSans-Regular.ttf'))
+
         self.close()
 
     def is_note_type_diff(self, noteTypeName, front, back, css):

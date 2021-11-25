@@ -7,7 +7,7 @@ from shared import CommonTest
 from service.constant import Constant
 
 
-class EnglishCardTests(unittest.TestCase):
+class VietnameseCardTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
@@ -17,36 +17,30 @@ class EnglishCardTests(unittest.TestCase):
         self.ankiCsvPath = join(self.addonDir, Constant.ANKI_DECK)
 
         self.words = []
-        self.words.append("long")
-        self.words.append("loan")
-        self.words.append("love")
+        self.words.append("mỗi khi")
+        self.words.append("tôi")
+        self.words.append("chúng ta")
+        self.words.append("yêu")
+        self.words.append("dài")
 
         self.commontest = CommonTest()
         self.commontest.mediaDir = self.mediaDir
         self.commontest.ankiCsvPath = self.ankiCsvPath
 
-    def test_english_english_card(self):
-        translation = Constant.EN_EN
+    def test_vietnamese_english_card(self):
+        translation = Constant.VN_EN
         self.commontest.create_flashcards(translation, self.words)
 
-    def test_english_vietnamese_card(self):
-        translation = Constant.EN_VN
+    def test_vietnamese_vietnamese_card(self):
+        translation = Constant.VN_VN
         self.commontest.create_flashcards(translation, self.words)
 
-    def test_english_french_card(self):
-        translation = Constant.EN_FR
+    def test_vietnamese_french_card(self):
+        translation = Constant.VN_FR
         self.commontest.create_flashcards(translation, self.words)
 
-    def test_english_japanese_card(self):
-        translation = Constant.EN_JP
-        self.commontest.create_flashcards(translation, self.words)
-
-    def test_english_chinese_traditional_card(self):
-        translation = Constant.EN_CN_TD
-        self.commontest.create_flashcards(translation, self.words)
-
-    def test_english_chinese_simplified_card(self):
-        translation = Constant.EN_CN_SP
+    def test_vietnamese_japanese_card(self):
+        translation = Constant.VN_JP
         self.commontest.create_flashcards(translation, self.words)
 
     @classmethod

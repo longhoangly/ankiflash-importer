@@ -6,11 +6,12 @@ import logging
 from abc import ABC, abstractmethod
 from typing import List
 
-from . base_dictionary import BaseDictionary
 from . enum.translation import Translation
 from . enum.status import Status
-from . constant import Constant
 from . enum.card import Card
+
+from . base_dictionary import BaseDictionary
+from . constant import Constant
 
 
 class BaseGenerator(ABC):

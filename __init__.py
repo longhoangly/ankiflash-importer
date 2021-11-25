@@ -42,7 +42,7 @@ class AnkiFlash():
         os.makedirs(self.mediaDir, exist_ok=True)
 
         # Paths
-        self.iconPath = join(self.addonDir, r'Resources/anki.png')
+        self.iconPath = join(self.addonDir, r'resources/anki.png')
         self.ankiCsvPath = join(self.addonDir, Constant.ANKI_DECK)
 
         # Config Logging (Rotate Every 10MB)
