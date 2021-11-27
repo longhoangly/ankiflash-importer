@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 SRC="."
-RELEASE="./Release"
+RELEASE="./release"
 
 echo Starting Release...
 rm -f __init__.zip
@@ -29,7 +29,10 @@ copy_folder "service"
 copy_folder "ui" "py"
 
 echo Compressing release files...
-zip -r __init__.zip $RELEASE/*
+cd $RELEASE
+zip -r __init__.zip *
 
 echo Finished Release...
+cp __init__.zip ..
+cd ..
 rm -rf $RELEASE
