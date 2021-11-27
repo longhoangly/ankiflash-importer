@@ -12,8 +12,8 @@ class JapaneseCardTests(unittest.TestCase):
     @classmethod
     def setUpClass(self):
 
-        self.addonDir = "."
-        self.mediaDir = "./media"
+        self.addonDir = "./tests"
+        self.mediaDir = "./tests/media"
         self.ankiCsvPath = join(self.addonDir, Constant.ANKI_DECK)
 
         self.words = []
@@ -22,17 +22,32 @@ class JapaneseCardTests(unittest.TestCase):
         self.words.append("ゆかげん")
         self.words.append("長く")
 
-        self.commontest = CommonTest()
-        self.commontest.mediaDir = self.mediaDir
-        self.commontest.ankiCsvPath = self.ankiCsvPath
+        self.commontest = CommonTest(
+            self.addonDir, self.mediaDir, self.ankiCsvPath)
 
-    def test_japanese_english_card(self):
+    def test_japanese_english_card_all_word_types(self):
+        allWordTypes = True
         translation = Constant.JP_EN
-        self.commontest.create_flashcards(translation, self.words)
+        self.commontest.create_flashcards(
+            translation, self.words, allWordTypes)
 
-    def test_japanese_vietnamese_card(self):
+    def test_japanese_english_card_first_word_type(self):
+        allWordTypes = False
+        translation = Constant.JP_EN
+        self.commontest.create_flashcards(
+            translation, self.words, allWordTypes)
+
+    def test_japanese_vietnamese_card_all_word_types(self):
+        allWordTypes = True
         translation = Constant.JP_VN
-        self.commontest.create_flashcards(translation, self.words)
+        self.commontest.create_flashcards(
+            translation, self.words, allWordTypes)
+
+    def test_japanese_vietnamese_card_first_word_type(self):
+        allWordTypes = False
+        translation = Constant.JP_VN
+        self.commontest.create_flashcards(
+            translation, self.words, allWordTypes)
 
     @classmethod
     def tearDownClass(self):

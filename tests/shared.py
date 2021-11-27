@@ -1,20 +1,40 @@
 import os
-import shutil
 import unittest
+import logging
 
+from os.path import join
 from service.worker import Worker
-from service.constant import Constant
 from service.enum.status import Status
+from logging.handlers import RotatingFileHandler
 
 
 class CommonTest(unittest.TestCase):
 
-    def create_flashcards(self, translation, words):
+    def __init__(self, addonDir, mediaDir, csvPath):
+        super().__init__()
+
+        self.mediaDir = mediaDir
+        self.ankiCsvPath = csvPath
+
+        # Config Logging (Rotate Every 10MB)
+        os.makedirs(join(addonDir, r'logs'), exist_ok=True)
+        self.ankiFlashLog = join(addonDir, r'logs/ankiflash.log')
+
+        rfh = RotatingFileHandler(
+            filename=self.ankiFlashLog, maxBytes=50000000, backupCount=10, encoding='utf-8')
+        should_roll_over = os.path.isfile(self.ankiFlashLog)
+        if should_roll_over:
+            rfh.doRollover()
+        logging.basicConfig(level=logging.INFO,
+                            format=u"%(asctime)s - %(threadName)s [%(thread)d] - %(message)s",
+                            datefmt="%d-%b-%y %H:%M:%S",
+                            handlers=[rfh])
+
+    def create_flashcards(self, translation, words, allWordTypes):
 
         generator = Worker.initialize_generator(translation)
 
         isOnline = False
-        allWordTypes = True
         os.makedirs(self.mediaDir, exist_ok=True)
 
         worker = Worker(generator, words, translation, self.mediaDir,
@@ -22,6 +42,7 @@ class CommonTest(unittest.TestCase):
 
         cards = worker.generate_cards_background()
 
+        self.assertGreater(len(cards), 0)
         for card in cards:
             self.assertEqual(card.status, Status.SUCCESS)
             self.assertTrue(os.path.exists(self.ankiCsvPath))

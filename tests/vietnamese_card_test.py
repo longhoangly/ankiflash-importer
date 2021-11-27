@@ -12,8 +12,8 @@ class VietnameseCardTests(unittest.TestCase):
     @classmethod
     def setUpClass(self):
 
-        self.addonDir = "."
-        self.mediaDir = "./media"
+        self.addonDir = "./tests"
+        self.mediaDir = "./tests/media"
         self.ankiCsvPath = join(self.addonDir, Constant.ANKI_DECK)
 
         self.words = []
@@ -23,25 +23,56 @@ class VietnameseCardTests(unittest.TestCase):
         self.words.append("yêu")
         self.words.append("dài")
 
-        self.commontest = CommonTest()
-        self.commontest.mediaDir = self.mediaDir
-        self.commontest.ankiCsvPath = self.ankiCsvPath
+        self.commontest = CommonTest(
+            self.addonDir, self.mediaDir, self.ankiCsvPath)
 
-    def test_vietnamese_english_card(self):
+    def test_vietnamese_english_card_all_word_types(self):
+        allWordTypes = True
         translation = Constant.VN_EN
-        self.commontest.create_flashcards(translation, self.words)
+        self.commontest.create_flashcards(
+            translation, self.words, allWordTypes)
 
-    def test_vietnamese_vietnamese_card(self):
+    def test_vietnamese_english_first_word_type(self):
+        allWordTypes = False
+        translation = Constant.VN_EN
+        self.commontest.create_flashcards(
+            translation, self.words, allWordTypes)
+
+    def test_vietnamese_vietnamese_card_all_word_types(self):
+        allWordTypes = True
         translation = Constant.VN_VN
-        self.commontest.create_flashcards(translation, self.words)
+        self.commontest.create_flashcards(
+            translation, self.words, allWordTypes)
 
-    def test_vietnamese_french_card(self):
+    def test_vietnamese_vietnamese_first_word_type(self):
+        allWordTypes = False
+        translation = Constant.VN_VN
+        self.commontest.create_flashcards(
+            translation, self.words, allWordTypes)
+
+    def test_vietnamese_french_card_all_word_types(self):
+        allWordTypes = True
         translation = Constant.VN_FR
-        self.commontest.create_flashcards(translation, self.words)
+        self.commontest.create_flashcards(
+            translation, self.words, allWordTypes)
 
-    def test_vietnamese_japanese_card(self):
+    def test_vietnamese_french_card_first_word_type(self):
+        allWordTypes = False
+        translation = Constant.VN_FR
+        self.commontest.create_flashcards(
+            translation, self.words, allWordTypes)
+
+    def test_vietnamese_japanese_card_all_word_types(self):
+        allWordTypes = True
         translation = Constant.VN_JP
-        self.commontest.create_flashcards(translation, self.words)
+        self.commontest.create_flashcards(
+            translation, self.words, allWordTypes)
+
+    def test_vietnamese_japanese_card_first_word_type(self):
+        allWordTypes = False
+        translation = Constant.VN_JP
+        self.commontest.create_flashcards(
+            translation, self.words, allWordTypes)
 
     @classmethod
     def tearDownClass(self):
