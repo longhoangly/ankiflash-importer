@@ -17,8 +17,8 @@ class LacVietDictionary(BaseDictionary):
     def search(self, formattedWord: str, translation: Translation) -> bool:
         """Find input word from dictionary data"""
 
-        wordParts = formattedWord.split(self.delimiter)
-        if self.delimiter in formattedWord and len(wordParts) == 3:
+        wordParts = formattedWord.split(Constant.SUB_DELIMITER)
+        if Constant.SUB_DELIMITER in formattedWord and len(wordParts) == 3:
             self.word = wordParts[0]
             self.wordId = wordParts[1]
             self.oriWord = wordParts[2]
@@ -53,6 +53,8 @@ class LacVietDictionary(BaseDictionary):
         words = self.doc.select("div.w.fl")
         if not words:
             return True
+
+        self.word = words[0].get_text()
 
         warning = HtmlHelper.get_text(self.doc, "div.i.p10", 0)
         return Constant.LACVIET_SPELLING_WRONG in warning
@@ -119,7 +121,7 @@ class LacVietDictionary(BaseDictionary):
 
         links = DictHelper.download_files(self.soundLinks, isOnline, ankiDir)
         for soundLink in links:
-            soundName = DictHelper.get_file_name(soundLink)
+            soundName = DictHelper.get_last_url_segment(soundLink)
             if isOnline:
                 self.sounds = "<audio src=\"{}\" type=\"audio/wav\" preload=\"auto\" autobuffer controls>[sound:{}]</audio> {}".format(
                     soundLink, soundLink, self.sounds if len(self.sounds) > 0 else "")
@@ -180,7 +182,7 @@ class LacVietDictionary(BaseDictionary):
                 meaning.examples = examples
                 meanings.append(meaning)
 
-        return HtmlHelper.build_meaning(self.oriWord, self.wordType, self.phonetic, meanings)
+        return HtmlHelper.build_meaning(self.word, self.wordType, self.phonetic, meanings)
 
     def get_dictionary_name(self) -> str:
         return "Lac Viet Dictionary"

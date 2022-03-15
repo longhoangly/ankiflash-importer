@@ -2,17 +2,19 @@
 # -*- coding: utf-8 -*-
 
 from abc import ABC, abstractmethod
+import logging
 from typing import List
 
 from bs4 import BeautifulSoup
+
 from . enum.translation import Translation
+from . enum.card import Card
 
 
 class BaseDictionary(ABC):
 
     def __init__(self):
 
-        self.delimiter: str = "==="
         self.doc: BeautifulSoup = None
 
         self.word: str = ""
@@ -62,6 +64,17 @@ class BaseDictionary(ABC):
 
     def get_tag(self) -> str:
         return self.word[0]
+
+    def set_card_word(self, card: Card) -> Card:
+        card.word = self.word
+        card.wordId = self.wordId
+        card.oriWord = self.oriWord
+
+        logging.info("card.word = {}".format(card.word))
+        logging.info("card.wordId = {}".format(card.wordId))
+        logging.info("card.oriWord = {}".format(card.oriWord))
+
+        return card
 
     @abstractmethod
     def get_dictionary_name(self) -> str:

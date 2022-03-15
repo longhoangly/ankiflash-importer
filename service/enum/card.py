@@ -8,11 +8,14 @@ from .. enum.translation import Translation
 @dataclass
 class Card:
 
-    def __init__(self, word=None, wordId=None, oriWord=None, translation=None):
+    def __init__(self, translation=None):
 
-        self.word: str = word
-        self.wordId: str = wordId
-        self.oriWord: str = oriWord
+        # word in html meaning
+        self.word: str = ""
+        # word id for getting html
+        self.wordId: str = ""
+        # original word from user's input
+        self.oriWord: str = ""
 
         self.wordType: str = ""
         self.phonetic: str = ""

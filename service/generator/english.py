@@ -30,32 +30,30 @@ class EnglishGenerator(BaseGenerator):
 
     def generate_card(self, formattedWord: str, ankiDir: str, translation: Translation, isOnline: bool) -> Card:
 
-        formattedWord = formattedWord.lower()
-        card: Card = self.initialize_card(formattedWord, translation)
-        card.status = Status.SUCCESS
-        card.comment = Constant.SUCCESS
-
         oxfordDict = OxfordDictionary()
-        cambridgeDict = CambridgeDictionary()
-        lacVietDict = LacVietDictionary()
+
+        formattedWord = formattedWord.lower()
+        card: Card = Card()
 
         # English to English
         if (translation.equals(Constant.EN_EN)):
 
             card = self.single_dictionary_card(
-                formattedWord, translation, ankiDir, isOnline, card, oxfordDict)
+                formattedWord, translation, ankiDir, isOnline, oxfordDict)
 
         # English to Chinese/French/Japanese
         elif translation.equals(Constant.EN_CN_TD) or translation.equals(Constant.EN_CN_SP) or translation.equals(Constant.EN_JP) or translation.equals(Constant.EN_FR):
 
+            cambridgeDict = CambridgeDictionary()
             card = self.multiple_dictionaries_card(
-                formattedWord, translation, ankiDir, isOnline, card, oxfordDict, cambridgeDict)
+                formattedWord, translation, ankiDir, isOnline, oxfordDict, cambridgeDict)
 
         # English to Vietnamese
         elif translation.equals(Constant.EN_VN):
 
+            lacVietDict = LacVietDictionary()
             card = self.multiple_dictionaries_card(
-                formattedWord, translation, ankiDir, isOnline, card, oxfordDict, lacVietDict)
+                formattedWord, translation, ankiDir, isOnline, oxfordDict, lacVietDict)
 
         else:
             card.status = Status.NOT_SUPPORTED_TRANSLATION

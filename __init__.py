@@ -16,14 +16,14 @@ Modified: Jun 24, 2021
 from aqt import mw
 from PyQt5.QtWidgets import QAction
 
+import os
+import logging
+
 from os.path import join
 from logging.handlers import RotatingFileHandler
 
 from . service.constant import Constant
 from . ui.generator_dialog import GeneratorDialog
-
-import os
-import logging
 
 version = '1.1.0'
 

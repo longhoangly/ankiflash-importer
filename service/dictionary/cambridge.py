@@ -17,8 +17,8 @@ class CambridgeDictionary(BaseDictionary):
     def search(self, formattedWord: str, translation: Translation) -> bool:
         """Find input word from dictionary data"""
 
-        wordParts = formattedWord.split(self.delimiter)
-        if self.delimiter in formattedWord and len(wordParts) == 3:
+        wordParts = formattedWord.split(Constant.SUB_DELIMITER)
+        if Constant.SUB_DELIMITER in formattedWord and len(wordParts) == 3:
             self.word = wordParts[0]
             self.wordId = wordParts[1]
             self.oriWord = wordParts[2]

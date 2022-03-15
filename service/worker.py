@@ -16,12 +16,12 @@ from . enum.card import Card
 from . base_generator import BaseGenerator
 from . constant import Constant
 
-from . card.chinese import ChineseGenerator
-from . card.vietnamese import VietnameseGenerator
-from . card.spanish import SpanishGenerator
-from . card.japanese import JapaneseGenerator
-from . card.french import FrenchGenerator
-from . card.english import EnglishGenerator
+from . generator.chinese import ChineseGenerator
+from . generator.vietnamese import VietnameseGenerator
+from . generator.spanish import SpanishGenerator
+from . generator.japanese import JapaneseGenerator
+from . generator.french import FrenchGenerator
+from . generator.english import EnglishGenerator
 
 
 class Worker(QObject):
@@ -35,13 +35,11 @@ class Worker(QObject):
     def __init__(self, generator, words, translation, mediaDir, isOnline, allWordTypes, ankiCsvPath):
         super().__init__()
 
-        self.delimiter: str = "==="
         self.formattedWords: List[str] = []
-        self.cards: List[Card] = []
-
-        self.generator: BaseGenerator = generator
         self.words: List[str] = words
+        self.cards: List[Card] = []
         self.translation: Translation = translation
+        self.generator: BaseGenerator = generator
         self.mediaDir: str = mediaDir
         self.isOnline: bool = isOnline
         self.allWordTypes: bool = allWordTypes
@@ -56,30 +54,32 @@ class Worker(QObject):
         failureCount: int = 0
 
         total = len(self.words)
-        for value in self.words:
+        for word in self.words:
 
             # Return if thread is interrupted
             if self.thread().isInterruptionRequested():
                 break
 
             self.formattedWords = self.generator.get_formatted_words(
-                value, self.translation, self.allWordTypes)
+                word, self.translation, self.allWordTypes)
             total += len(self.formattedWords) - 1
 
             if len(self.formattedWords) > 0:
                 for formattedWord in self.formattedWords:
+                    logging.info("formattedWord = '{}'".format(formattedWord))
 
                     # Return if thread is interrupted
                     if self.thread().isInterruptionRequested():
                         break
 
-                    logging.info("formattedWord = '{}'".format(formattedWord))
                     card = self.generator.generate_card(
                         formattedWord, self.mediaDir, self.translation, self.isOnline)
                     time.sleep(0.2)
                     proceeded = proceeded + 1
                     percent = (proceeded / total) * 100
                     self.progress.emit(int(percent))
+
+                    logging.info("card.status = {}".format(card.status))
 
                     if card.status == Status.SUCCESS:
                         cardCount += 1
@@ -88,7 +88,7 @@ class Worker(QObject):
                     else:
                         failureCount += 1
                         self.failureStr.emit(
-                            "{} -> {}".format(formattedWord.split(self.delimiter)[0], card.comment))
+                            "{} -> {}".format(formattedWord.split(Constant.SUB_DELIMITER)[0], card.comment))
             else:
                 failureCount += 1
                 self.failureStr.emit(Constant.WORD_NOT_FOUND)
@@ -101,8 +101,7 @@ class Worker(QObject):
                 return
 
             cardContent = "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}".format(
-                card.word if self.translation.equals(
-                    Constant.VN_JP) else card.oriWord,
+                card.word,
                 Constant.TAB,
                 card.wordType,
                 Constant.TAB,
@@ -124,7 +123,8 @@ class Worker(QObject):
         try:
             os.remove(self.csvFilePath)
         except OSError:
-            logging.info("{} does not exist!".format(self.csvFilePath))
+            logging.info(
+                "{} does not exist! no need to remove! no error!".format(self.csvFilePath))
             pass
 
         with open(self.csvFilePath, 'w', encoding='utf-8') as file:

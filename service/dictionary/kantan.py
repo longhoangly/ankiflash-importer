@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import re
 import urllib.parse
 
 from typing import List
@@ -21,8 +22,8 @@ class KantanDictionary(BaseDictionary):
     def search(self, formattedWord: str, translation: Translation) -> bool:
         """Find input word from dictionary data"""
 
-        wordParts = formattedWord.split(self.delimiter)
-        if self.delimiter in formattedWord and len(wordParts) == 3:
+        wordParts = formattedWord.split(Constant.SUB_DELIMITER)
+        if Constant.SUB_DELIMITER in formattedWord and len(wordParts) == 3:
             self.word = wordParts[0]
             self.wordId = wordParts[1]
             self.oriWord = wordParts[2]
@@ -40,10 +41,11 @@ class KantanDictionary(BaseDictionary):
     def is_invalid_word(self) -> bool:
         """Check if the input word exists in dictionary?"""
 
-        mainWord = self.doc.select_one("#txtKanji")
+        self.word = self.doc.select_one("#txtKanji").get_text()
         wordDetail = self.doc.select_one("#word-detail-info")
+        logging.info("self.word {}".format(self.word))
 
-        return not mainWord and not wordDetail
+        return not self.word and not wordDetail
 
     def get_word_type(self) -> str:
         if not self.wordType:
@@ -97,8 +99,8 @@ class KantanDictionary(BaseDictionary):
 
         if "https" not in self.imageLink:
             self.imageLink = "https://kantan.vn" + self.imageLink
-        self.imageLink = self.imageLink.replace("\\?w=.*$", "", 1)
-        imageName = DictHelper.get_file_name(self.imageLink)
+        self.imageLink = re.sub('\?w=.*$', ' ', self.imageLink)
+        imageName = DictHelper.get_last_url_segment(self.imageLink)
         if isOnline:
             self.image = "<img src=\"" + self.imageLink + "\"/>"
         else:
@@ -118,7 +120,7 @@ class KantanDictionary(BaseDictionary):
 
         links = DictHelper.download_files(self.soundLinks, isOnline, ankiDir)
         for soundLink in links:
-            soundName = DictHelper.get_file_name(soundLink)
+            soundName = DictHelper.get_last_url_segment(soundLink)
             if isOnline:
                 self.sounds = "<audio src=\"{}\" type=\"audio/wav\" preload=\"auto\" autobuffer controls>[sound:{}]</audio> {}".format(
                     soundLink, soundLink, self.sounds if len(self.sounds) > 0 else "")
