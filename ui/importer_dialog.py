@@ -244,9 +244,9 @@ class ImporterDialog(QDialog):
         )
         mw.col.models.save(ti.model, updateReqs=False)
 
-        if "1." in self.ui.importMode.currentText():
+        if "1." in self.ui.importMode:
             ti.importMode = ADD_MODE
-        elif "2." in self.ui.importMode.currentText():
+        elif "2." in self.ui.importMode:
             ti.importMode = UPDATE_MODE
         else:
             ti.importMode = IGNORE_MODE
