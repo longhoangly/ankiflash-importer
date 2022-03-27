@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import logging
 from typing import List
 
 from .. enum.meaning import Meaning
@@ -14,11 +15,14 @@ from .. helpers.dict_helper import DictHelper
 
 class CollinsDictionary(BaseDictionary):
 
+    def __init__(self):
+        super().__init__()
+
     def search(self, formattedWord: str, translation: Translation) -> bool:
         """Find input word from dictionary data"""
 
-        wordParts = formattedWord.split(self.delimiter)
-        if self.delimiter in formattedWord and len(wordParts) == 3:
+        wordParts = formattedWord.split(Constant.SUB_DELIMITER)
+        if Constant.SUB_DELIMITER in formattedWord and len(wordParts) == 3:
             self.word = wordParts[0]
             self.wordId = wordParts[1]
             self.oriWord = wordParts[2]
@@ -27,7 +31,7 @@ class CollinsDictionary(BaseDictionary):
                 "Incorrect word format: {}".format(formattedWord))
 
         url = HtmlHelper.lookup_url(Constant.COLLINS_URL_FR_EN, self.wordId)
-        self.doc = HtmlHelper.get_document(url)
+        self.doc = HtmlHelper.get_collins_document(url)
 
         return True if not self.doc else False
 
@@ -39,6 +43,8 @@ class CollinsDictionary(BaseDictionary):
             return True
 
         self.word = HtmlHelper.get_text(self.doc, "h2.h2_entry>span", 0)
+        logging.info("dict.word = {}".format(self.word))
+
         return not self.word
 
     def get_word_type(self) -> str:
@@ -93,7 +99,7 @@ class CollinsDictionary(BaseDictionary):
 
         links = DictHelper.download_files(self.soundLinks, isOnline, ankiDir)
         for soundLink in links:
-            soundName = DictHelper.get_file_name(soundLink)
+            soundName = DictHelper.get_last_url_segment(soundLink)
             if isOnline:
                 self.sounds = "<audio src=\"{}\" type=\"audio/wav\" preload=\"auto\" autobuffer controls>[sound:{}]</audio> {}".format(
                     soundLink, soundLink, self.sounds if len(self.sounds) > 0 else "")

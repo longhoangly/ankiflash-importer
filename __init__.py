@@ -13,14 +13,13 @@ Website: https://www.facebook.com/ankiflashcom
 Modified: Jun 24, 2021
 """
 
-import aqt
-from aqt import mw, gui_hooks
-
 import os
 import logging
 from os.path import join
 from logging.handlers import RotatingFileHandler
 
+import aqt
+from aqt import mw, gui_hooks
 from PyQt5.QtWidgets import QAction, QMenu
 
 from . service.constant import Constant
@@ -28,7 +27,6 @@ from . service.helpers.anki_helper import AnkiHelper
 from . ui.generator_dialog import GeneratorDialog
 
 version = '1.1.0'
-
 # Update field content for existing cards
 mw.selectedNoteIds = []
 mw.selectedNotes = []

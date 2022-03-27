@@ -1,8 +1,10 @@
 import os
+import sys
+import time
 import shutil
 import unittest
+import logging
 
-from os.path import join
 from shared import CommonTest
 from service.constant import Constant
 
@@ -14,7 +16,8 @@ class JapaneseCardTests(unittest.TestCase):
 
         self.addonDir = "./tests"
         self.mediaDir = "./tests/media"
-        self.ankiCsvPath = join(self.addonDir, Constant.ANKI_DECK)
+        self.commontest = CommonTest(self.addonDir, self.mediaDir)
+        logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
         self.words = []
         self.words.append("夕日")
@@ -22,36 +25,37 @@ class JapaneseCardTests(unittest.TestCase):
         self.words.append("ゆかげん")
         self.words.append("長く")
 
-        self.commontest = CommonTest(
-            self.addonDir, self.mediaDir, self.ankiCsvPath)
-
     def test_japanese_english_card_all_word_types(self):
         allWordTypes = True
         translation = Constant.JP_EN
         self.commontest.create_flashcards(
             translation, self.words, allWordTypes)
+        time.sleep(1)
 
     def test_japanese_english_card_first_word_type(self):
         allWordTypes = False
         translation = Constant.JP_EN
         self.commontest.create_flashcards(
             translation, self.words, allWordTypes)
+        time.sleep(1)
 
     def test_japanese_vietnamese_card_all_word_types(self):
         allWordTypes = True
         translation = Constant.JP_VN
         self.commontest.create_flashcards(
             translation, self.words, allWordTypes)
+        time.sleep(1)
 
     def test_japanese_vietnamese_card_first_word_type(self):
         allWordTypes = False
         translation = Constant.JP_VN
         self.commontest.create_flashcards(
             translation, self.words, allWordTypes)
+        time.sleep(1)
 
     @classmethod
     def tearDownClass(self):
-        os.remove(self.ankiCsvPath)
+        os.remove(self.commontest.ankiCsvPath)
         shutil.rmtree(self.mediaDir, ignore_errors=True)
 
 

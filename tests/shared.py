@@ -3,6 +3,7 @@ import unittest
 import logging
 
 from os.path import join
+from service.constant import Constant
 from service.worker import Worker
 from service.enum.status import Status
 from logging.handlers import RotatingFileHandler
@@ -10,18 +11,21 @@ from logging.handlers import RotatingFileHandler
 
 class CommonTest(unittest.TestCase):
 
-    def __init__(self, addonDir, mediaDir, csvPath):
+    def __init__(self, addonDir, mediaDir):
         super().__init__()
 
+        # disable old log process
+        logging.shutdown()
+
         self.mediaDir = mediaDir
-        self.ankiCsvPath = csvPath
+        self.ankiCsvPath = join(addonDir, Constant.ANKI_DECK)
 
         # Config Logging (Rotate Every 10MB)
         os.makedirs(join(addonDir, r'logs'), exist_ok=True)
         self.ankiFlashLog = join(addonDir, r'logs/ankiflash.log')
 
         rfh = RotatingFileHandler(
-            filename=self.ankiFlashLog, maxBytes=50000000, backupCount=10, encoding='utf-8')
+            filename=self.ankiFlashLog, maxBytes=50000000, backupCount=5, encoding='utf-8')
         should_roll_over = os.path.isfile(self.ankiFlashLog)
         if should_roll_over:
             rfh.doRollover()

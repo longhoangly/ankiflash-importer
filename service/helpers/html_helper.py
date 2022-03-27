@@ -1,15 +1,24 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from typing import List
+import time
 import requests
 import logging
 
-from urllib.parse import unquote
+import webbrowser
+from typing import List
+
 from bs4 import BeautifulSoup
 from bs4.element import Tag
+from urllib.parse import unquote
 
 from .. enum.meaning import Meaning
+from . simple_server import start_server
+
+PORT = 8081
+HOST = "localhost"
+BASE_URL = "http://{}:{}".format(HOST, PORT)
+AGENT_STRING = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36"
 
 
 class HtmlHelper:
@@ -32,9 +41,52 @@ class HtmlHelper:
     @staticmethod
     def get_document(url: str) -> BeautifulSoup:
         logging.info("url {}".format(url))
+
         html_text = requests.get(
-            url, headers={"User-Agent": "Mozilla/5.0"}).text
-        return BeautifulSoup(html_text, 'html.parser')
+            url,
+            headers={
+                "User-Agent": AGENT_STRING
+            }).text
+
+        return BeautifulSoup(html_text, "html.parser")
+
+    @staticmethod
+    def get_collins_document(url: str) -> BeautifulSoup:
+        logging.info("url={}".format(url))
+
+        start_server()
+
+        logging.info("Open web browser to get word content")
+        webbrowser.open(url)
+
+        html_text = None
+        for count in range(20):
+            logging.info("count={}".format(count))
+
+            html_text = requests.get(
+                "{}/api/v1/getrecord/word_content".format(BASE_URL),
+                headers={
+                    "User-Agent": AGENT_STRING
+                }).text
+
+            if html_text:
+                logging.info("html_text={}".format(html_text[0:100]))
+                html_text = unquote(html_text)
+                break
+
+            count += 1
+            time.sleep(1)
+
+        logging.info("html_text={}".format(html_text[0:100]))
+        html_text = unquote(html_text)
+
+        requests.get(
+            "{}/api/v1/shutdown".format(BASE_URL),
+            headers={
+                "User-Agent": AGENT_STRING
+            })
+
+        return BeautifulSoup(html_text, "html.parser")
 
     @staticmethod
     def get_doc_element(doc: BeautifulSoup, selector: str, index: int) -> Tag:

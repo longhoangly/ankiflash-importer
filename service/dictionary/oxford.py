@@ -21,8 +21,8 @@ class OxfordDictionary(BaseDictionary):
     def search(self, formattedWord: str, translation: Translation) -> bool:
         """Find input word from dictionary data"""
 
-        wordParts = formattedWord.split(self.delimiter)
-        if self.delimiter in formattedWord and len(wordParts) == 3:
+        wordParts = formattedWord.split(Constant.SUB_DELIMITER)
+        if Constant.SUB_DELIMITER in formattedWord and len(wordParts) == 3:
             self.word = wordParts[0]
             self.wordId = wordParts[1]
             self.oriWord = wordParts[2]
@@ -42,8 +42,8 @@ class OxfordDictionary(BaseDictionary):
         if Constant.OXFORD_SPELLING_WRONG in title or Constant.OXFORD_WORD_NOT_FOUND in title:
             return True
 
-        word = HtmlHelper.get_text(self.doc, ".headword", 0)
-        return False if word else True
+        self.word = HtmlHelper.get_text(self.doc, ".headword", 0)
+        return False if self.word else True
 
     def get_word_type(self) -> str:
         if not self.wordType:
@@ -93,7 +93,7 @@ class OxfordDictionary(BaseDictionary):
             self.image = googleImage
             return self.image
 
-        imageName = DictHelper.get_file_name(self.imageLink)
+        imageName = DictHelper.get_last_url_segment(self.imageLink)
         if isOnline:
             self.image = "<img src=\"" + self.imageLink + "\"/>"
         else:
@@ -118,7 +118,7 @@ class OxfordDictionary(BaseDictionary):
 
         links = DictHelper.download_files(self.soundLinks, isOnline, ankiDir)
         for soundLink in links:
-            soundName = DictHelper.get_file_name(soundLink)
+            soundName = DictHelper.get_last_url_segment(soundLink)
             if isOnline:
                 self.sounds = "<audio src=\"{}\" type=\"audio/wav\" preload=\"auto\" autobuffer controls>[sound:{}]</audio> {}".format(
                     soundLink, soundLink, self.sounds if len(self.sounds) > 0 else "")
@@ -193,7 +193,7 @@ class OxfordDictionary(BaseDictionary):
             meaning.wordType = "Word family"
             meanings.append(meaning)
 
-        return HtmlHelper.build_meaning(self.oriWord, self.wordType, self.phonetic, meanings)
+        return HtmlHelper.build_meaning(self.word, self.wordType, self.phonetic, meanings)
 
     def get_dictionary_name(self) -> str:
         return "Oxford Advanced Learner's Dictionary"

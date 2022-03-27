@@ -10,17 +10,21 @@ from .. constant import Constant
 from .. base_generator import BaseGenerator
 from .. helpers.dict_helper import DictHelper
 
+from .. dictionary.jisho import JishoDictionary
 from .. dictionary.kantan import KantanDictionary
-from .. dictionary.lacviet import LacVietDictionary
 
 
-class VietnameseGenerator(BaseGenerator):
+class JapaneseGenerator(BaseGenerator):
 
     def get_formatted_words(self, word: str, translation: Translation, allWordTypes: bool) -> List[str]:
         word = word.lower().strip()
-        foundWords = []
-        if translation.equals(Constant.VN_JP) and allWordTypes:
-            foundWords += DictHelper.get_kantan_words(word)
+
+        foundWords: List[str] = []
+        if translation.equals(Constant.JP_EN) and allWordTypes:
+            foundWords += DictHelper.get_jisho_words(word)
+
+        elif translation.equals(Constant.JP_VN):
+            foundWords += DictHelper.get_kantan_words(word, allWordTypes)
         else:
             foundWords.append(word + Constant.SUB_DELIMITER +
                               word + Constant.SUB_DELIMITER + word)
@@ -28,28 +32,25 @@ class VietnameseGenerator(BaseGenerator):
 
     def generate_card(self, formattedWord: str, ankiDir: str, translation: Translation, isOnline: bool) -> Card:
 
-        card: Card = self.initialize_card(formattedWord, translation)
-        card.status = Status.SUCCESS
-        card.comment = Constant.SUCCESS
+        card: Card = Card()
 
-        lacVietDict = LacVietDictionary()
-        kantan = KantanDictionary()
+        # Japanese to Vietnamese
+        if translation.equals(Constant.JP_VN):
 
-        # Vietnamese to English/French/Vietnamese
-        if translation.equals(Constant.VN_EN) or translation.equals(Constant.VN_FR) or translation.equals(Constant.VN_VN):
-
+            kantan = KantanDictionary()
             card = self.single_dictionary_card(
-                formattedWord, translation, ankiDir, isOnline, card, lacVietDict)
+                formattedWord, translation, ankiDir, isOnline, kantan)
 
-        # Vietnamese to Japanese
-        elif translation.equals(Constant.VN_JP):
+        # Japanese to English
+        elif translation.equals(Constant.JP_EN):
 
+            jishoDict = JishoDictionary()
             card = self.single_dictionary_card(
-                formattedWord, translation, ankiDir, isOnline, card, kantan)
+                formattedWord, translation, ankiDir, isOnline, jishoDict)
 
         else:
             card.status = Status.NOT_SUPPORTED_TRANSLATION
             card.comment = Constant.NOT_SUPPORTED_TRANSLATION.format(
-                translation.source, translation.target)
+                translation.source, translation.target())
 
         return card

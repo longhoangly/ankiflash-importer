@@ -18,8 +18,8 @@ class JishoDictionary(BaseDictionary):
     def search(self, formattedWord: str, translation: Translation) -> bool:
         """Find input word from dictionary data"""
 
-        wordParts = formattedWord.split(self.delimiter)
-        if self.delimiter in formattedWord and len(wordParts) == 3:
+        wordParts = formattedWord.split(Constant.SUB_DELIMITER)
+        if Constant.SUB_DELIMITER in formattedWord and len(wordParts) == 3:
             self.word = wordParts[0]
             self.wordId = wordParts[1]
             self.oriWord = wordParts[2]
@@ -38,9 +38,9 @@ class JishoDictionary(BaseDictionary):
         if Constant.JISHO_WORD_NOT_FOUND in self.doc.get_text():
             return True
 
-        word = HtmlHelper.get_text(
+        self.word = HtmlHelper.get_text(
             self.doc, ".concept_light-representation", 0)
-        return not word
+        return not self.word
 
     def get_word_type(self) -> str:
         if not self.wordType:
@@ -105,7 +105,7 @@ class JishoDictionary(BaseDictionary):
 
         links = DictHelper.download_files(self.soundLinks, isOnline, ankiDir)
         for soundLink in links:
-            soundName = DictHelper.get_file_name(soundLink)
+            soundName = DictHelper.get_last_url_segment(soundLink)
             if isOnline:
                 self.sounds = "<audio src=\"{}\" type=\"audio/wav\" preload=\"auto\" autobuffer controls>[sound:{}]</audio> {}".format(
                     soundLink, soundLink, self.sounds if len(self.sounds) > 0 else "")

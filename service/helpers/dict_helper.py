@@ -21,7 +21,7 @@ class DictHelper:
     """All Dictionary related utilities methods"""
 
     @staticmethod
-    def get_file_name(link: str) -> str:
+    def get_last_url_segment(link: str) -> str:
         link_els = link.split("/")
         return link_els[len(link_els) - 1]
 
@@ -35,9 +35,9 @@ class DictHelper:
             if statusCode == 200:
                 validUrls.append(link)
                 if not isOnline:
-                    fileName = DictHelper.get_file_name(link)
+                    fileName = DictHelper.get_last_url_segment(link)
                     filePath = "{}/{}".format(mediaDir, fileName)
-                    logging.info("sound path: {}".format(filePath))
+                    logging.info("file path: {}".format(filePath))
                     if os.path.isdir(mediaDir) and link:
                         tw = open(filePath, 'wb')
                         tw.write(response.content)
@@ -62,7 +62,7 @@ class DictHelper:
         return BeautifulSoup(content, 'html.parser')
 
     @staticmethod
-    def get_kantan_words(word: str) -> List[str]:
+    def get_kantan_words(word: str, allWordTypes: bool) -> List[str]:
 
         search_word = urllib.parse.quote(word)
         urlParameters = "m=dictionary&fn=search_word&keyword={}&allowSentenceAnalyze=true".format(
@@ -78,11 +78,15 @@ class DictHelper:
             dataId = wordElm.get("data-id")
 
             if word.lower() in wordElm.get("title").lower() and dataId:
-                kantanWords.append(wordElm.get("title") + Constant.SUB_DELIMITER +
-                                   dataId + Constant.SUB_DELIMITER + word)
+                kantanWords.append(wordElm.get("title")
+                                   + Constant.SUB_DELIMITER
+                                   + dataId
+                                   + Constant.SUB_DELIMITER
+                                   + word)
 
         logging.info("JP kantanWords {}".format(kantanWords))
-        return kantanWords
+
+        return kantanWords if allWordTypes else [kantanWords[0]]
 
     @staticmethod
     def get_jisho_words(word: str) -> List[str]:
@@ -113,6 +117,7 @@ class DictHelper:
 
     @staticmethod
     def get_oxford_words(word: str):
+
         foundWords: list[str] = []
         url = HtmlHelper.lookup_url(Constant.OXFORD_SEARCH_URL_EN_EN, word)
         doc: BeautifulSoup = HtmlHelper.get_document(url)
@@ -125,7 +130,7 @@ class DictHelper:
                     foundWords.append(
                         matchedWord
                         + Constant.SUB_DELIMITER
-                        + DictHelper.get_file_name(firstLink)
+                        + DictHelper.get_last_url_segment(firstLink)
                         + Constant.SUB_DELIMITER
                         + word)
 
@@ -135,13 +140,17 @@ class DictHelper:
                 for li in lis:
                     poss = li.find_all("pos")
                     for pos in poss:
+                        # remove the whole pos tag
                         pos.decompose()
                     for span in li.select("span"):
                         if span.get_text().strip().lower() == word.lower():
-                            wordId = DictHelper.get_file_name(
+                            wordId = DictHelper.get_last_url_segment(
                                 li.select_one("a").get("href"))
                             foundWords.append(
-                                wordId + Constant.SUB_DELIMITER + wordId + Constant.SUB_DELIMITER + word)
+                                wordId
+                                + Constant.SUB_DELIMITER
+                                + wordId
+                                + Constant.SUB_DELIMITER + word)
         else:
             logging.info("Words not found: {}".format(word))
 
