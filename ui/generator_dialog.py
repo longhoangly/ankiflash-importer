@@ -4,15 +4,19 @@
 from PyQt5.QtWidgets import QDialog, QGroupBox, QMessageBox, QRadioButton
 from PyQt5.QtCore import QThread
 
+from aqt import mw
+from os.path import join
+from typing import List
+import logging
+
 from . ui_generator import UiGenerator
 from . importer_dialog import ImporterDialog
+from . fields_updater_dialog import FieldsUpdaterDialog
+
 from .. service.enum.translation import Translation
 from .. service.worker import Worker
 from .. service.constant import Constant
 from .. service.helpers.anki_helper import AnkiHelper
-
-from os.path import join
-import logging
 
 
 class GeneratorDialog(QDialog):
@@ -22,43 +26,55 @@ class GeneratorDialog(QDialog):
 
         super().__init__()
         self.mediaDir = mediaDir
+        self.addonDir = addonDir
         self.iconPath = iconPath
+        self.version = version
 
-        # Paths
         self.ankiCsvPath = join(addonDir, Constant.ANKI_DECK)
 
-        # Create Generator GUI
         self.ui = UiGenerator()
-        self.ui.setupUi(self, version, iconPath)
+        self.ui.setupUi(self)
         self.ui.cancelBtn.setDisabled(True)
 
-        # Create Importer Instance
-        self.importer = ImporterDialog(version, iconPath, addonDir, mediaDir)
-        self.importer.keyPressed.connect(self.importer.on_key)
+        if len(mw.selectedNoteIds):
+            self.ui.allWordTypes.setDisabled(True)
+            self.ui.allWordTypes.setChecked(False)
 
-        # Set Total Input Word count
+        self.fieldsUpdater = FieldsUpdaterDialog(
+            self.iconPath, self.addonDir, self.mediaDir)
+
+        self.importer = ImporterDialog(
+            self.version, self.iconPath, self.addonDir, self.mediaDir)
+
         self.ui.inputTxt.textChanged.connect(self.input_text_changed)
-
-        # Set Completed Output Card count
         self.ui.outputTxt.textChanged.connect(self.output_text_changed)
-
-        # Set Failures Word count
         self.ui.failureTxt.textChanged.connect(self.failure_text_changed)
 
-        # Handle clicks on Generate button
         self.ui.generateBtn.clicked.connect(self.btn_generate_clicked)
-
-        # Handle clicks on Progress bar
         self.ui.importBtn.clicked.connect(self.btn_importer_clicked)
+        self.ui.mappingBtn.clicked.connect(self.btn_mapping_clicked)
 
         self.get_supported_languages()
-        # Handle user clicks on translation
         self.ui.source1.clicked.connect(self.get_supported_languages)
         self.ui.source2.clicked.connect(self.get_supported_languages)
         self.ui.source3.clicked.connect(self.get_supported_languages)
         self.ui.source4.clicked.connect(self.get_supported_languages)
 
+    def enable_mapping(self, isMappingEnable):
+
+        if isMappingEnable:
+            self.ui.mappingBtn.setEnabled(True)
+            self.ui.importBtn.setDisabled(True)
+        else:
+            self.ui.mappingBtn.setDisabled(True)
+            self.ui.importBtn.setEnabled(True)
+
+    def set_input_words(self, words: List[str]):
+
+        self.ui.inputTxt.setPlainText("\n".join(words))
+
     def close_event(self, event):
+
         logging.shutdown()
 
     def input_text_changed(self):
@@ -183,19 +199,24 @@ class GeneratorDialog(QDialog):
             return
 
         if self.ui.outputTxt.toPlainText():
+
+            mode = "map" if len(mw.selectedNoteIds) > 0 else "import"
             btnSelected = AnkiHelper.message_box_buttons("Info",
                                                          "Finished generating flashcards.\nThanks for using AnkiFlash!",
-                                                         "Do you want to import generated flashcards now?\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
-                                                             len(self.words), self.cardCount, self.failureCount),
+                                                         "Do you want to {} generated flashcards now?\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
+                                                             mode, len(self.words), self.cardCount, self.failureCount),
                                                          QMessageBox.No | QMessageBox.Yes,
                                                          QMessageBox.Yes,
                                                          self.iconPath)
             if btnSelected == QMessageBox.Yes:
-                self.btn_importer_clicked()
+                if len(mw.selectedNoteIds) > 0:
+                    self.btn_mapping_clicked()
+                else:
+                    self.btn_importer_clicked()
         else:
             AnkiHelper.message_box_buttons("Info",
                                            "Finished generating flashcards.\nThanks for using AnkiFlash!",
-                                           "No output flashcards available for importing.\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
+                                           "No output flashcards available for importing or mapping.\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
                                                len(self.words), self.cardCount, self.failureCount),
                                            QMessageBox.Close,
                                            QMessageBox.Close,
@@ -233,13 +254,26 @@ class GeneratorDialog(QDialog):
             "{}{}".format(currentText, failureStr))
 
     def btn_importer_clicked(self):
+
         if self.ui.outputTxt.toPlainText():
             self.importer.ui.importProgressBar.setValue(0)
             self.importer.show()
         else:
             AnkiHelper.message_box(
                 "Info",
-                "No output flashcards available for importing.",
+                "No output flashcards available for importing notes.",
+                "Please check your input words!",
+                self.iconPath)
+
+    def btn_mapping_clicked(self):
+
+        if self.ui.outputTxt.toPlainText():
+            self.fieldsUpdater.ui.importProgressBar.setValue(0)
+            self.fieldsUpdater.show()
+        else:
+            AnkiHelper.message_box(
+                "Info",
+                "No output flashcards available for updating notes.",
                 "Please check your input words!",
                 self.iconPath)
 

@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import time
 import logging
 from abc import ABC, abstractmethod
 from typing import List

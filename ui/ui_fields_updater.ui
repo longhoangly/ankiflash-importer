@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>570</width>
+    <height>352</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>AnkiFlash Fields Updater</string>
+  </property>
+  <widget class="QProgressBar" name="importProgressBar">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>310</y>
+     <width>451</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="value">
+    <number>0</number>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="updateBtn">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>310</y>
+     <width>75</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::NoFocus</enum>
+   </property>
+   <property name="toolTip">
+    <string>Import generated flashcards into Anki</string>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Update</string>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="default">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="mappingGroup">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>10</y>
+     <width>531</width>
+     <height>291</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="title">
+    <string>Field Mapping [Your fields mapped to AnkiFlash's fields]</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QScrollArea" name="mappingArea">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>400</width>
+          <height>150</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>499</width>
+           <height>240</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

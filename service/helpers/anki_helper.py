@@ -76,3 +76,11 @@ class AnkiHelper:
             msgBox.setStyleSheet('width: {}px;'.format(width))
 
         return msgBox.exec_()
+
+    @staticmethod
+    def unique(_list):
+        # insert the list to the set
+        list_set = set(_list)
+        # convert the set to the list
+        unique_list = (list(list_set))
+        return unique_list

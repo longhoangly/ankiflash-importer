@@ -13,19 +13,25 @@ Website: https://www.facebook.com/ankiflashcom
 Modified: Jun 24, 2021
 """
 
-from aqt import mw
-from PyQt5.QtWidgets import QAction
-
-from os.path import join
-from logging.handlers import RotatingFileHandler
-
-from . service.constant import Constant
-from . ui.generator_dialog import GeneratorDialog
+import aqt
+from aqt import mw, gui_hooks
 
 import os
 import logging
+from os.path import join
+from logging.handlers import RotatingFileHandler
+
+from PyQt5.QtWidgets import QAction, QMenu
+
+from . service.constant import Constant
+from . service.helpers.anki_helper import AnkiHelper
+from . ui.generator_dialog import GeneratorDialog
 
 version = '1.1.0'
+
+# Update field content for existing cards
+mw.selectedNoteIds = []
+mw.selectedNotes = []
 
 
 class AnkiFlash():
@@ -59,16 +65,44 @@ class AnkiFlash():
                             datefmt="%d-%b-%y %H:%M:%S",
                             handlers=[rfh])
 
-        # Create Generator Dialog
-        self.generator = GeneratorDialog(
-            version, self.iconPath, self.addonDir, self.mediaDir)
+    def show_generator(self):
         self.generator.show()
 
 
-def ankiFlash():
+def init_anki_flash():
+
     mw.ankiFlash = AnkiFlash(version)
+    mw.ankiFlash.generator = GeneratorDialog(
+        version, mw.ankiFlash.iconPath, mw.ankiFlash.addonDir, mw.ankiFlash.mediaDir)
+    mw.ankiFlash.generator.enable_mapping(False)
+
+    input_words = []
+    if len(mw.selectedNoteIds) > 0:
+        mw.ankiFlash.generator.enable_mapping(True)
+
+        for noteId in mw.selectedNoteIds:
+            note = mw.col.get_note(noteId)
+            mw.selectedNotes.append(note)
+            first_note_field = note.__getitem__(note.keys()[0])
+            input_words.append(first_note_field)
+        mw.ankiFlash.generator.set_input_words(AnkiHelper.unique(input_words))
+
+    mw.ankiFlash.show_generator()
 
 
+# Create
 ankiFlashAct = QAction("AnkiFlash {}".format(version), mw)
-ankiFlashAct.triggered.connect(ankiFlash)
+ankiFlashAct.triggered.connect(init_anki_flash)
 mw.form.menuTools.addAction(ankiFlashAct)
+
+
+def add_context_menu_item(browser: aqt.browser.Browser, menu: QMenu) -> None:
+
+    browserAct = QAction("Update notes with AnkiFlash", mw)
+    browserAct.triggered.connect(init_anki_flash)
+    menu.addAction(browserAct)
+    # Getting selected notes
+    mw.selectedNoteIds = browser.selected_notes()
+
+
+gui_hooks.browser_will_show_context_menu.append(add_context_menu_item)

@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>422</width>
-    <height>122</height>
+    <height>181</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string notr="true">Importer</string>
+   <string>AnkiFlash Importer</string>
   </property>
   <widget class="QLineEdit" name="deckNameTxt">
    <property name="geometry">
@@ -30,7 +30,7 @@
    <property name="geometry">
     <rect>
      <x>100</x>
-     <y>50</y>
+     <y>133</y>
      <width>301</width>
      <height>31</height>
     </rect>
@@ -71,7 +71,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>50</y>
+     <y>133</y>
      <width>75</width>
      <height>31</height>
     </rect>
@@ -105,8 +105,8 @@
    <property name="geometry">
     <rect>
      <x>21</x>
-     <y>95</y>
-     <width>220</width>
+     <y>103</y>
+     <width>381</width>
      <height>17</height>
     </rect>
    </property>
@@ -116,6 +116,31 @@
    <property name="checked">
     <bool>true</bool>
    </property>
+  </widget>
+  <widget class="QComboBox" name="importMode">
+   <property name="geometry">
+    <rect>
+     <x>16</x>
+     <y>60</y>
+     <width>391</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>1. Import even if existing note has same first field</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>2. Update existing notes when first field matches</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>3. Ignore if first field match existing note</string>
+    </property>
+   </item>
   </widget>
  </widget>
  <resources/>

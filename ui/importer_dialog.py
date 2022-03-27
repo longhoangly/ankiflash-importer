@@ -15,10 +15,17 @@ from .. service.constant import Constant
 from .. service.helpers.anki_helper import AnkiHelper
 
 from os.path import join
-
 import logging
 import csv
 csv.field_size_limit(2**30)
+
+# The import mode is one of:
+# UPDATE_MODE: update if first field matches existing note
+# IGNORE_MODE: ignore if first field matches existing note
+# ADD_MODE: import even if first field matches existing note
+UPDATE_MODE = 0
+IGNORE_MODE = 1
+ADD_MODE = 2
 
 
 class ImporterDialog(QDialog):
@@ -33,22 +40,25 @@ class ImporterDialog(QDialog):
         self.mediaDir = mediaDir
         self.iconPath = iconPath
 
-        # Paths
         self.ankiCsvPath = join(self.addonDir, Constant.ANKI_DECK)
         self.frontFile = join(self.addonDir, r'resources/front.html')
         self.backFile = join(self.addonDir, r'resources/back.html')
         self.cssFile = join(self.addonDir, r'resources/style.css')
 
-        # Importer GUI
         self.ui = UiImporter()
-        self.ui.setupUi(self, version, iconPath)
+        self.ui.setupUi(self)
 
-        # Check if Import button should be enabled or disabled
+        self.keyPressed.connect(self.on_key)
+        # Update IMPORT_MODE on selection
+        self.ui.importMode.activated[str].connect(self.onSelected)
+
         self.ui.deckNameTxt.textChanged.connect(self.enable_import_btn)
-
-        # Handle Import button clicked
         self.ui.importBtn.clicked.connect(
             lambda: self.btn_import_clicked(version))
+
+    def onSelected(self, option):
+        logging.info("IMPORT_MODE is {}".format(option))
+        self.ui.importMode = option
 
     def key_press_event(self, event):
         super().key_press_event(event)
@@ -84,7 +94,7 @@ class ImporterDialog(QDialog):
         is_note_type_diff = self.is_note_type_diff(
             noteTypeName, self.front, self.back, self.css)
 
-        # Create new note type if not exist or existent but won't to update existing!
+        # Create new note type if not exist or existent but won't update existing!
         if (is_note_type_diff == None) or (is_note_type_diff != None and not updateExistingNote):
             # If note type already existed, and we don't want to udpate existing! We need a new name!
             if is_note_type_diff != None:
@@ -234,8 +244,13 @@ class ImporterDialog(QDialog):
         )
         mw.col.models.save(ti.model, updateReqs=False)
 
-        # ADD_MODE: import even if first field matches existing note
-        ti.importMode = 2
+        if "1." in self.ui.importMode.currentText():
+            ti.importMode = ADD_MODE
+        elif "2." in self.ui.importMode.currentText():
+            ti.importMode = UPDATE_MODE
+        else:
+            ti.importMode = IGNORE_MODE
+
         ti.delimiter = "\t"
         ti.allowHTML = True
         ti.open()
