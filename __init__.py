@@ -26,10 +26,7 @@ from . service.constant import Constant
 from . service.helpers.anki_helper import AnkiHelper
 from . ui.generator_dialog import GeneratorDialog
 
-version = '1.1.0'
-# Update field content for existing cards
-mw.selectedNoteIds = []
-mw.selectedNotes = []
+version = '1.2.0'
 
 
 class AnkiFlash():
@@ -67,40 +64,43 @@ class AnkiFlash():
         self.generator.show()
 
 
-def init_anki_flash():
+def init_anki_flash(browser: aqt.browser.Browser):
+
+    input_words = []
+    mw.selectedNotes = []
+    if browser is not None:
+        selectedNoteIds = browser.selected_notes()
+        if len(selectedNoteIds) > 0:
+            for noteId in selectedNoteIds:
+                note = mw.col.get_note(noteId)
+                mw.selectedNotes.append(note)
+                first_note_field = note.__getitem__(note.keys()[0])
+                input_words.append(first_note_field)
 
     mw.ankiFlash = AnkiFlash(version)
     mw.ankiFlash.generator = GeneratorDialog(
         version, mw.ankiFlash.iconPath, mw.ankiFlash.addonDir, mw.ankiFlash.mediaDir)
-    mw.ankiFlash.generator.enable_mapping(False)
 
-    input_words = []
-    if len(mw.selectedNoteIds) > 0:
+    if browser is not None:
         mw.ankiFlash.generator.enable_mapping(True)
-
-        for noteId in mw.selectedNoteIds:
-            note = mw.col.get_note(noteId)
-            mw.selectedNotes.append(note)
-            first_note_field = note.__getitem__(note.keys()[0])
-            input_words.append(first_note_field)
         mw.ankiFlash.generator.set_input_words(AnkiHelper.unique(input_words))
+    else:
+        mw.ankiFlash.generator.enable_mapping(False)
 
     mw.ankiFlash.show_generator()
 
 
 # Create
 ankiFlashAct = QAction("AnkiFlash {}".format(version), mw)
-ankiFlashAct.triggered.connect(init_anki_flash)
+ankiFlashAct.triggered.connect(lambda: init_anki_flash(None))
 mw.form.menuTools.addAction(ankiFlashAct)
 
 
 def add_context_menu_item(browser: aqt.browser.Browser, menu: QMenu) -> None:
 
     browserAct = QAction("Update notes with AnkiFlash", mw)
-    browserAct.triggered.connect(init_anki_flash)
+    browserAct.triggered.connect(lambda: init_anki_flash(browser))
     menu.addAction(browserAct)
-    # Getting selected notes
-    mw.selectedNoteIds = browser.selected_notes()
 
 
 gui_hooks.browser_will_show_context_menu.append(add_context_menu_item)

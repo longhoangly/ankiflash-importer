@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/long.lyhoang/repositories/ankiflash-importer/ui/ui_importer.ui'
+# Form implementation generated from reading ui file '/ankiflash-importer/ui/ui_importer.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #
@@ -49,12 +49,12 @@ class UiImporter(object):
         self.checkBox.setGeometry(QtCore.QRect(21, 103, 381, 17))
         self.checkBox.setChecked(True)
         self.checkBox.setObjectName("checkBox")
-        self.importMode = QtWidgets.QComboBox(Dialog)
-        self.importMode.setGeometry(QtCore.QRect(16, 60, 391, 32))
-        self.importMode.setObjectName("importMode")
-        self.importMode.addItem("")
-        self.importMode.addItem("")
-        self.importMode.addItem("")
+        self.importModeBox = QtWidgets.QComboBox(Dialog)
+        self.importModeBox.setGeometry(QtCore.QRect(16, 60, 391, 32))
+        self.importModeBox.setObjectName("importModeBox")
+        self.importModeBox.addItem("")
+        self.importModeBox.addItem("")
+        self.importModeBox.addItem("")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -70,9 +70,9 @@ class UiImporter(object):
         self.importBtn.setText(_translate("Dialog", "Import"))
         self.checkBox.setText(_translate(
             "Dialog", "Overwite if the note type already exists?"))
-        self.importMode.setItemText(0, _translate(
+        self.importModeBox.setItemText(0, _translate(
             "Dialog", "1. Import even if existing note has same first field"))
-        self.importMode.setItemText(1, _translate(
+        self.importModeBox.setItemText(1, _translate(
             "Dialog", "2. Update existing notes when first field matches"))
-        self.importMode.setItemText(2, _translate(
+        self.importModeBox.setItemText(2, _translate(
             "Dialog", "3. Ignore if first field match existing note"))

@@ -117,7 +117,7 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QComboBox" name="importMode">
+  <widget class="QComboBox" name="importModeBox">
    <property name="geometry">
     <rect>
      <x>16</x>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/long.lyhoang/repositories/ankiflash-importer/ui/ui_fields_updater.ui'
+# Form implementation generated from reading ui file '/ankiflash-importer/ui/ui_fields_updater.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #

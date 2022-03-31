@@ -36,9 +36,10 @@ class GeneratorDialog(QDialog):
         self.ui.setupUi(self)
         self.ui.cancelBtn.setDisabled(True)
 
-        if len(mw.selectedNoteIds):
+        if len(mw.selectedNotes) > 0:
             self.ui.allWordTypes.setDisabled(True)
             self.ui.allWordTypes.setChecked(False)
+            self.ui.allWordTypes.setStyleSheet("color:gray")
 
         self.fieldsUpdater = FieldsUpdaterDialog(
             self.iconPath, self.addonDir, self.mediaDir)
@@ -200,7 +201,7 @@ class GeneratorDialog(QDialog):
 
         if self.ui.outputTxt.toPlainText():
 
-            mode = "map" if len(mw.selectedNoteIds) > 0 else "import"
+            mode = "map" if len(mw.selectedNotes) > 0 else "import"
             btnSelected = AnkiHelper.message_box_buttons("Info",
                                                          "Finished generating flashcards.\nThanks for using AnkiFlash!",
                                                          "Do you want to {} generated flashcards now?\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
@@ -209,7 +210,7 @@ class GeneratorDialog(QDialog):
                                                          QMessageBox.Yes,
                                                          self.iconPath)
             if btnSelected == QMessageBox.Yes:
-                if len(mw.selectedNoteIds) > 0:
+                if len(mw.selectedNotes) > 0:
                     self.btn_mapping_clicked()
                 else:
                     self.btn_importer_clicked()

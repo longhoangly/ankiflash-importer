@@ -45,20 +45,14 @@ class ImporterDialog(QDialog):
         self.backFile = join(self.addonDir, r'resources/back.html')
         self.cssFile = join(self.addonDir, r'resources/style.css')
 
+        self.keyPressed.connect(self.on_key)
+
         self.ui = UiImporter()
         self.ui.setupUi(self)
-
-        self.keyPressed.connect(self.on_key)
-        # Update IMPORT_MODE on selection
-        self.ui.importMode.activated[str].connect(self.onSelected)
 
         self.ui.deckNameTxt.textChanged.connect(self.enable_import_btn)
         self.ui.importBtn.clicked.connect(
             lambda: self.btn_import_clicked(version))
-
-    def onSelected(self, option):
-        logging.info("IMPORT_MODE is {}".format(option))
-        self.ui.importMode = option
 
     def key_press_event(self, event):
         super().key_press_event(event)
@@ -183,7 +177,7 @@ class ImporterDialog(QDialog):
         mm.add_field(nt, mm.new_field("Example"))
         mm.add_field(nt, mm.new_field("Sound"))
         mm.add_field(nt, mm.new_field("Image"))
-        mm.add_field(nt, mm.new_field("Content"))
+        mm.add_field(nt, mm.new_field("Meaning"))
         mm.add_field(nt, mm.new_field("Copyright"))
 
         # Add template into note type
@@ -244,9 +238,10 @@ class ImporterDialog(QDialog):
         )
         mw.col.models.save(ti.model, updateReqs=False)
 
-        if "1." in self.ui.importMode:
+        mode = self.ui.importModeBox.currentText()
+        if "1." in mode:
             ti.importMode = ADD_MODE
-        elif "2." in self.ui.importMode:
+        elif "2." in mode:
             ti.importMode = UPDATE_MODE
         else:
             ti.importMode = IGNORE_MODE

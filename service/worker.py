@@ -94,6 +94,7 @@ class Worker(QObject):
                 self.failureStr.emit(Constant.WORD_NOT_FOUND)
 
         cardLines: list[str] = []
+        mappingLines: list[str] = []
         for card in self.cards:
 
             # Return if thread is interrupted
@@ -120,6 +121,24 @@ class Worker(QObject):
                 card.tag + "\n")
             cardLines.append(cardContent)
 
+            mappingContent = "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}".format(
+                card.oriWord,
+                Constant.TAB,
+                card.wordType,
+                Constant.TAB,
+                card.phonetic,
+                Constant.TAB,
+                card.example,
+                Constant.TAB,
+                card.sounds,
+                Constant.TAB,
+                card.image,
+                Constant.TAB,
+                card.meaning,
+                Constant.TAB,
+                card.copyright + "\n")
+            mappingLines.append(mappingContent)
+
         try:
             os.remove(self.csvFilePath)
         except OSError:
@@ -129,6 +148,12 @@ class Worker(QObject):
 
         with open(self.csvFilePath, 'w', encoding='utf-8') as file:
             file.writelines(cardLines)
+
+        self.csvMappingPath = self.csvFilePath.replace(
+            Constant.ANKI_DECK, Constant.MAPPING_CSV)
+
+        with open(self.csvMappingPath, 'w', encoding='utf-8') as file:
+            file.writelines(mappingLines)
 
         # Return if thread is interrupted
         if self.thread().isInterruptionRequested():

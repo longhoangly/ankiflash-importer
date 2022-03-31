@@ -9,6 +9,7 @@ class Constant:
 
     # ANKI
     ANKI_DECK = "anki_deck.csv"
+    MAPPING_CSV = "mapping.csv"
 
     # OXFORD
     OXFORD_SPELLING_WRONG = "Did you spell it correctly?"

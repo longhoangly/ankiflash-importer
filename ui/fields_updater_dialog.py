@@ -28,8 +28,6 @@ class FieldsUpdaterDialog(QtWidgets.QDialog):
         self.mediaDir = mediaDir
         self.iconPath = iconPath
 
-        self.ankiCsvPath = join(self.addonDir, Constant.ANKI_DECK)
-
         self.ui = UiFieldsUpdater()
         self.ui.setupUi(self)
 
@@ -77,14 +75,15 @@ class FieldsUpdaterDialog(QtWidgets.QDialog):
 
         def get_flashcards_fields():
             fields = []
-            for noteId in mw.selectedNoteIds:
-                note = mw.col.get_note(noteId)
+            for note in mw.selectedNotes:
                 noteType = note.note_type()
                 fields += mw.col.models.field_names(noteType)
-            return AnkiHelper.unique(fields)
+            fields = AnkiHelper.unique(fields)
+            fields.sort()
+
+            return fields
 
         self.mapper = QtCore.QSignalMapper(self)
-
         self.cardFields = get_flashcards_fields()
         for num in range(len(self.cardFields)):
 
@@ -128,13 +127,13 @@ class FieldsUpdaterDialog(QtWidgets.QDialog):
         self.ui.importProgressBar.setValue(5)
         logging.info(self.mapping)
 
-        self.ankiCsvPath = join(self.addonDir, Constant.ANKI_DECK)
-        with open(self.ankiCsvPath, 'r', encoding='utf-8') as file:
-            self.ankiCsv = file.read()
-        self.ankiCsvLines = self.ankiCsv.splitlines()
+        self.csvMappingPath = join(self.addonDir, Constant.MAPPING_CSV)
+        with open(self.csvMappingPath, 'r', encoding='utf-8') as file:
+            self.ankiCsvLines = file.readlines()
 
         def convertLinesToCardsMap(ankiCsvLines):
             cards = {}
+
             for cardLine in ankiCsvLines:
                 cardValues = cardLine.split("\t")
 
@@ -145,30 +144,38 @@ class FieldsUpdaterDialog(QtWidgets.QDialog):
                 card["Example"] = cardValues[3]
                 card["Sound"] = cardValues[4]
                 card["Image"] = cardValues[5]
-                card["Content"] = cardValues[6]
+                card["Meaning"] = cardValues[6]
                 card["Copyright"] = cardValues[7]
-
                 cards[card["Word"]] = card
-                return cards
 
-        self.cardsMap = convertLinesToCardsMap(self.ankiCsvLines)
-        self.ui.importProgressBar.setValue(10)
+            return cards
 
-        for note in mw.selectedNotes:
+        self.csvCardsMap = convertLinesToCardsMap(self.ankiCsvLines)
+        self.ui.importProgressBar.setValue(5)
+
+        logging.info(self.csvCardsMap)
+
+        percentage = 5
+        for idx, note in enumerate(mw.selectedNotes):
             first_note_field = note.__getitem__(note.keys()[0])
             logging.info("first_note_field {}".format(first_note_field))
 
-            if first_note_field in self.cardsMap:
-                generatedCard = self.cardsMap[first_note_field]
+            if ((idx + 1) / len(mw.selectedNotes)) * 100 > 5:
+                percentage = ((idx + 1) / len(mw.selectedNotes)) * 100
+
+            if first_note_field in self.csvCardsMap:
+                generatedCard = self.csvCardsMap[first_note_field]
 
                 for cardField in self.cardFields:
                     if cardField in self.mapping and cardField in generatedCard and self.mapping[cardField] != "<ignored>":
 
                         updatedContent = generatedCard[self.mapping[cardField]]
                         note.__setitem__(cardField, updatedContent)
-                        logging.info("Update field {} with value {}".format(
+                        logging.info("Update field '{}' with value '{}'".format(
                             cardField, updatedContent))
                         note.flush()
+
+            self.ui.importProgressBar.setValue(int(percentage))
 
         AnkiHelper.message_box("Info",
                                "Finished updating flashcards.",

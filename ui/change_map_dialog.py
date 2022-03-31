@@ -10,7 +10,7 @@ from PyQt5 import QtWidgets
 from . ui_change_map import UiChangeMap
 
 ANKI_FLASH_FIELDS = ["Word", "WordType", "Phonetic",
-                     "Example", "Sound", "Image", "Content", "Copyright"]
+                     "Example", "Sound", "Image", "Meaning", "Copyright"]
 
 
 class ChangeMapDialog(QtWidgets.QDialog):
