@@ -25,15 +25,20 @@ deploy_folder() {
 
 deploy_folder "resources"
 deploy_folder "service"
-deploy_folder "ui" "py"
+deploy_folder "ui/importer" "py"
+deploy_folder "ui/generator" "py"
+deploy_folder "ui/mapper" "py"
 
 echo Finished Deployment...
 
 echo Open Anki to run test...
 
-pid=$(ps -ef | grep AnkiMac | grep Anki.app | awk '{print $2;}')
-if [ "$pid" != "" ]; then
-    kill -9 $pid
-fi
+echo
+for pid in $(ps -ef | grep Anki.app | awk '{print $2;}' | sed '$d')
+do
+    echo Killing process $pid
+	kill -9 $pid
+done
 
+sleep .3
 open /Applications/Anki.app

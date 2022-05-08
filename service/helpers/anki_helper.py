@@ -6,8 +6,8 @@ import string
 import random
 import hashlib
 
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QMessageBox
+from PyQt6 import QtGui
+from PyQt6.QtWidgets import QMessageBox
 
 
 class AnkiHelper:

@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QDialog, QGroupBox, QMessageBox, QRadioButton
-from PyQt5.QtCore import QThread
+from PyQt6.QtWidgets import QDialog, QGroupBox, QMessageBox, QRadioButton
+from PyQt6.QtCore import QThread
 
 from aqt import mw
 from os.path import join
@@ -10,13 +10,13 @@ from typing import List
 import logging
 
 from . ui_generator import UiGenerator
-from . importer_dialog import ImporterDialog
-from . fields_updater_dialog import FieldsUpdaterDialog
+from .. importer.importer_dialog import ImporterDialog
+from .. mapper.fields_updater_dialog import FieldsUpdaterDialog
 
-from .. service.enum.translation import Translation
-from .. service.worker import Worker
-from .. service.constant import Constant
-from .. service.helpers.anki_helper import AnkiHelper
+from ... service.enum.translation import Translation
+from ... service.worker import Worker
+from ... service.constant import Constant
+from ... service.helpers.anki_helper import AnkiHelper
 
 
 class GeneratorDialog(QDialog):

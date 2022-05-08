@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+export PYTHONPATH="${PYTHONPATH}:${pwd}"
+
 echo
 echo Running unit tests...
 

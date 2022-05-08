@@ -7,7 +7,7 @@ import logging
 
 from typing import List
 
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSignal
 
 from . enum.translation import Translation
 from . enum.status import Status

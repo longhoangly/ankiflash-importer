@@ -20,11 +20,11 @@ from logging.handlers import RotatingFileHandler
 
 import aqt
 from aqt import mw, gui_hooks
-from PyQt5.QtWidgets import QAction, QMenu
+from PyQt6.QtWidgets import QAction, QMenu
 
 from . service.constant import Constant
 from . service.helpers.anki_helper import AnkiHelper
-from . ui.generator_dialog import GeneratorDialog
+from . ui.generator.generator_dialog import GeneratorDialog
 
 version = '1.2.0'
 

@@ -4,14 +4,14 @@
 from typing import Optional
 from aqt import mw, qconnect
 
-from PyQt5 import QtCore
-from PyQt5 import QtWidgets
+from PyQt6 import QtCore
+from PyQt6 import QtWidgets
 
 from . ui_fields_updater import UiFieldsUpdater
 from . change_map_dialog import ChangeMapDialog
 
-from .. service.constant import Constant
-from .. service.helpers.anki_helper import AnkiHelper
+from ... service.constant import Constant
+from ... service.helpers.anki_helper import AnkiHelper
 
 import logging
 from os.path import join
@@ -99,7 +99,7 @@ class FieldsUpdaterDialog(QtWidgets.QDialog):
             self.grid.addWidget(button, num, 2)
             button.clicked.connect(self.mapper.map)
 
-        self.mapper.mapped['int'].connect(self.trigger_change_map_dialog)
+        self.mapper.mappedInt['int'].connect(self.trigger_change_map_dialog)
 
     def trigger_change_map_dialog(self, indentifier):
 

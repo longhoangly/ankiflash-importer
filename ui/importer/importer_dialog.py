@@ -6,13 +6,13 @@ from aqt import mw
 from anki.models import ModelManager
 from anki.importing.csvfile import TextImporter
 
-from PyQt5.QtWidgets import QDialog
-from PyQt5 import QtCore
+from PyQt6.QtWidgets import QDialog
+from PyQt6 import QtCore
 from shutil import copyfile
 
 from . ui_importer import UiImporter
-from .. service.constant import Constant
-from .. service.helpers.anki_helper import AnkiHelper
+from ... service.constant import Constant
+from ... service.helpers.anki_helper import AnkiHelper
 
 from os.path import join
 import logging
