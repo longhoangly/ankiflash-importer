@@ -1,19 +1,16 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 from typing import List
 
-from .. enum.meaning import Meaning
-from .. enum.translation import Translation
-
-from .. constant import Constant
-from .. base_dictionary import BaseDictionary
-from .. helpers.html_helper import HtmlHelper
-from .. helpers.anki_helper import AnkiHelper
+from ..constant import Constant
+from ..enum.meaning import Meaning
+from ..enum.translation import Translation
+from ..helpers.html import HtmlHelper
+from ..helpers.ankiflash import AnkiHelper
+from ..base_dictionary import BaseDictionary
 
 
 class CambridgeDictionary(BaseDictionary):
-
     def search(self, formattedWord: str, translation: Translation) -> bool:
         """Find input word from dictionary data"""
 
@@ -23,22 +20,17 @@ class CambridgeDictionary(BaseDictionary):
             self.wordId = wordParts[1]
             self.oriWord = wordParts[2]
         else:
-            raise RuntimeError(
-                "Incorrect word format: {}".format(formattedWord))
+            raise RuntimeError("Incorrect word format: {}".format(formattedWord))
 
         url = ""
         if translation.equals(Constant.EN_CN_TD):
-            url = HtmlHelper.lookup_url(
-                Constant.CAMBRIDGE_URL_EN_CN_TD, self.wordId)
-        elif (translation.equals(Constant.EN_CN_SP)):
-            url = HtmlHelper.lookup_url(
-                Constant.CAMBRIDGE_URL_EN_CN_SP, self.wordId)
-        elif (translation.equals(Constant.EN_FR)):
-            url = HtmlHelper.lookup_url(
-                Constant.CAMBRIDGE_URL_EN_FR, self.wordId)
-        elif (translation.equals(Constant.EN_JP)):
-            url = HtmlHelper.lookup_url(
-                Constant.CAMBRIDGE_URL_EN_JP, self.wordId)
+            url = HtmlHelper.lookup_url(Constant.CAMBRIDGE_URL_EN_CN_TD, self.wordId)
+        elif translation.equals(Constant.EN_CN_SP):
+            url = HtmlHelper.lookup_url(Constant.CAMBRIDGE_URL_EN_CN_SP, self.wordId)
+        elif translation.equals(Constant.EN_FR):
+            url = HtmlHelper.lookup_url(Constant.CAMBRIDGE_URL_EN_FR, self.wordId)
+        elif translation.equals(Constant.EN_JP):
+            url = HtmlHelper.lookup_url(Constant.CAMBRIDGE_URL_EN_JP, self.wordId)
 
         self.doc = HtmlHelper.get_document(url)
 
@@ -81,18 +73,17 @@ class CambridgeDictionary(BaseDictionary):
 
         allMeaningTexts: List[str] = []
         meanings: List[Meaning] = []
-        headerGroups = self.doc.select(
-            "div[class*=kdic],div[class*=entry-body__el]")
+        headerGroups = self.doc.select("div[class*=kdic],div[class*=entry-body__el]")
         for headerGroup in headerGroups:
             # Word Type
             typeMeaning = Meaning()
             elements = headerGroup.select(".pos.dpos,.pron.dpron,.guideword")
             headerTexts = []
             for element in elements:
-                headerTexts.append(
-                    element.get_text().replace("\n", " ").capitalize())
-            typeMeaning.wordType = AnkiHelper.stringify(
-                " ".join(headerTexts)).replace(") (", " | ")
+                headerTexts.append(element.get_text().replace("\n", " ").capitalize())
+            typeMeaning.wordType = AnkiHelper.stringify(" ".join(headerTexts)).replace(
+                ") (", " | "
+            )
 
             indexMeaning = 0
             meaningElms = headerGroup.select("div[class*=def-block]")
@@ -109,8 +100,9 @@ class CambridgeDictionary(BaseDictionary):
                 definitionTexts = []
                 for definition in definitions:
                     definitionTexts.append(definition.get_text())
-                meaning.subMeaning = " ".join(definitionTexts) if len(
-                    definitionTexts) > 0 else ""
+                meaning.subMeaning = (
+                    " ".join(definitionTexts) if len(definitionTexts) > 0 else ""
+                )
 
                 # Examples
                 examples = []
@@ -121,14 +113,16 @@ class CambridgeDictionary(BaseDictionary):
                 # Only add wordtype if there is a meaning
                 if meaning.meaning not in allMeaningTexts:
                     # Only add after the first meaning
-                    if(indexMeaning == 0):
+                    if indexMeaning == 0:
                         meanings.append(typeMeaning)
                     meanings.append(meaning)
                     indexMeaning += 1
                     # Don't add duplicated meaning!
                     allMeaningTexts.append(meaning.meaning)
 
-        return HtmlHelper.build_meaning(self.word, self.wordType, self.phonetic, meanings, True)
+        return HtmlHelper.build_meaning(
+            self.word, self.wordType, self.phonetic, meanings, True
+        )
 
     def get_dictionary_name(self) -> str:
         return "Cambridge Dictionary"

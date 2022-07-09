@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 import re
 import string
@@ -11,7 +10,7 @@ from PyQt6.QtWidgets import QMessageBox
 
 
 class AnkiHelper:
-    """All Dictionary related utilities methods"""
+    """All AnkiFlash related utilities methods"""
 
     @staticmethod
     def md5_utf8(string: str):
@@ -19,13 +18,13 @@ class AnkiHelper:
 
     @staticmethod
     def stringify(string: str):
-        output = re.sub('\t+', ' ', string)
-        output = re.sub('\s+', ' ', output)
+        output = re.sub("\t+", " ", string)
+        output = re.sub("\s+", " ", output)
         return output
 
     @staticmethod
     def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
-        return ''.join(random.choice(chars) for _ in range(size))
+        return "".join(random.choice(chars) for _ in range(size))
 
     @staticmethod
     def message_box(title, text, infoText, iconPath=None, width=None):
@@ -48,12 +47,14 @@ class AnkiHelper:
         msgBox.setDefaultButton(QMessageBox.Close)
 
         if width is not None:
-            msgBox.setStyleSheet('width: {}px;'.format(width))
+            msgBox.setStyleSheet("width: {}px;".format(width))
 
         msgBox.exec_()
 
     @staticmethod
-    def message_box_buttons(title, text, infoText, standardButtons, defaultButton, iconPath=None, width=None):
+    def message_box_buttons(
+        title, text, infoText, standardButtons, defaultButton, iconPath=None, width=None
+    ):
 
         font = QtGui.QFont()
         font.setBold(False)
@@ -73,7 +74,7 @@ class AnkiHelper:
         msgBox.setDefaultButton(defaultButton)
 
         if width is not None:
-            msgBox.setStyleSheet('width: {}px;'.format(width))
+            msgBox.setStyleSheet("width: {}px;".format(width))
 
         return msgBox.exec_()
 
@@ -82,5 +83,5 @@ class AnkiHelper:
         # insert the list to the set
         list_set = set(_list)
         # convert the set to the list
-        unique_list = (list(list_set))
+        unique_list = list(list_set)
         return unique_list

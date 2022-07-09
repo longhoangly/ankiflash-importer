@@ -1,13 +1,11 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 from dataclasses import dataclass
-from .. enum.translation import Translation
+from ..enum.translation import Translation
 
 
 @dataclass
 class Card:
-
     def __init__(self, translation=None):
 
         # word in html meaning

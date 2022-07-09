@@ -1,18 +1,16 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
-from abc import ABC, abstractmethod
 import logging
+
 from typing import List
-
 from bs4 import BeautifulSoup
+from abc import ABC, abstractmethod
 
-from . enum.translation import Translation
-from . enum.card import Card
+from .enum.card import Card
+from .enum.translation import Translation
 
 
 class BaseDictionary(ABC):
-
     def __init__(self):
 
         self.doc: BeautifulSoup = None

@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 """
 AnkiFlash Importer
@@ -10,26 +9,26 @@ This is the next generation of AnkiFlash Importer, it's now not only include imp
 
 Author: Long Ly
 Website: https://www.facebook.com/ankiflashcom
-Modified: Jun 24, 2021
+Modified: May 24, 2022
 """
 
 import os
 import logging
 from os.path import join
 from logging.handlers import RotatingFileHandler
+from PyQt6.QtWidgets import QAction, QMenu
 
 import aqt
 from aqt import mw, gui_hooks
-from PyQt6.QtWidgets import QAction, QMenu
 
-from . service.constant import Constant
-from . service.helpers.anki_helper import AnkiHelper
-from . ui.generator.generator_dialog import GeneratorDialog
+from .service.constant import Constant
+from .service.helpers.ankiflash import AnkiHelper
+from .ui.generator.generator_dialog import GeneratorDialog
 
-version = '1.2.0'
+version = "1.3.0"
 
 
-class AnkiFlash():
+class AnkiFlash:
     """AnkiFlash"""
 
     def __init__(self, version):
@@ -43,22 +42,28 @@ class AnkiFlash():
         os.makedirs(self.mediaDir, exist_ok=True)
 
         # Paths
-        self.iconPath = join(self.addonDir, r'resources/anki.png')
+        self.iconPath = join(self.addonDir, r"resources/anki.png")
         self.ankiCsvPath = join(self.addonDir, Constant.ANKI_DECK)
 
         # Config Logging (Rotate Every 10MB)
-        os.makedirs(join(self.addonDir, r'logs'), exist_ok=True)
-        self.ankiFlashLog = join(self.addonDir, r'logs/ankiflash.log')
+        os.makedirs(join(self.addonDir, r"logs"), exist_ok=True)
+        self.ankiFlashLog = join(self.addonDir, r"logs/ankiflash.log")
 
         rfh = RotatingFileHandler(
-            filename=self.ankiFlashLog, maxBytes=50000000, backupCount=3, encoding='utf-8')
+            filename=self.ankiFlashLog,
+            maxBytes=50000000,
+            backupCount=3,
+            encoding="utf-8",
+        )
         should_roll_over = os.path.isfile(self.ankiFlashLog)
         if should_roll_over:
             rfh.doRollover()
-        logging.basicConfig(level=logging.INFO,
-                            format=u"%(asctime)s - %(threadName)s [%(thread)d] - %(message)s",
-                            datefmt="%d-%b-%y %H:%M:%S",
-                            handlers=[rfh])
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s - %(threadName)s [%(thread)d] - %(message)s",
+            datefmt="%d-%b-%y %H:%M:%S",
+            handlers=[rfh],
+        )
 
     def show_generator(self):
         self.generator.show()
@@ -66,26 +71,45 @@ class AnkiFlash():
 
 def init_anki_flash(browser: aqt.browser.Browser):
 
+    sorted_field = ""
     input_words = []
+
     mw.selectedNotes = []
+    mw.mapping_keys = []
+
     if browser is not None:
-        selectedNoteIds = browser.selected_notes()
-        if len(selectedNoteIds) > 0:
-            for noteId in selectedNoteIds:
+        mw.selectedNoteIds = browser.selected_notes()
+
+        if len(mw.selectedNoteIds) > 0:
+            for noteId in mw.selectedNoteIds:
                 note = mw.col.get_note(noteId)
                 mw.selectedNotes.append(note)
-                first_note_field = note.__getitem__(note.keys()[0])
-                input_words.append(first_note_field)
+
+                sorted_idx = mw.col.models.sort_idx(note.note_type())
+                sorted_field = note.keys()[sorted_idx]
+
+                keyword = note.__getitem__(sorted_field)
+                input_words.append(keyword)
+
+                if len(mw.mapping_keys) == 0:
+                    mw.mapping_keys = note.keys()
+                else:
+                    mw.mapping_keys = list(set(mw.mapping_keys) & set(note.keys()))
+
+        tmp_set = set(mw.mapping_keys)
+        tmp_set.remove(sorted_field)
+        mw.mapping_keys = [sorted_field] + list(tmp_set)
 
     mw.ankiFlash = AnkiFlash(version)
     mw.ankiFlash.generator = GeneratorDialog(
-        version, mw.ankiFlash.iconPath, mw.ankiFlash.addonDir, mw.ankiFlash.mediaDir)
+        version, mw.ankiFlash.iconPath, mw.ankiFlash.addonDir, mw.ankiFlash.mediaDir
+    )
 
     if browser is not None:
-        mw.ankiFlash.generator.enable_mapping(True)
+        mw.ankiFlash.generator.enable_mapping(True, mw.mapping_keys)
         mw.ankiFlash.generator.set_input_words(AnkiHelper.unique(input_words))
     else:
-        mw.ankiFlash.generator.enable_mapping(False)
+        mw.ankiFlash.generator.enable_mapping(False, [])
 
     mw.ankiFlash.show_generator()
 

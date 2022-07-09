@@ -1,7 +1,6 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
-from . enum.translation import Translation
+from .enum.translation import Translation
 
 
 class Constant:
@@ -14,27 +13,47 @@ class Constant:
     # OXFORD
     OXFORD_SPELLING_WRONG = "Did you spell it correctly?"
     OXFORD_WORD_NOT_FOUND = "Oxford Learner's Dictionaries | Find the meanings"
-    OXFORD_URL_EN_EN = "https://www.oxfordlearnersdictionaries.com/definition/english/{}"
-    OXFORD_SEARCH_URL_EN_EN = "https://www.oxfordlearnersdictionaries.com/search/english/direct/?q={}"
+    OXFORD_URL_EN_EN = (
+        "https://www.oxfordlearnersdictionaries.com/definition/english/{}"
+    )
+    OXFORD_SEARCH_URL_EN_EN = (
+        "https://www.oxfordlearnersdictionaries.com/search/english/direct/?q={}"
+    )
 
     # LACVIET
     LACVIET_SPELLING_WRONG = "Dữ liệu đang được cập nhật"
-    LACVIET_URL_VN_EN = "http://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-anh&t=V-A&k={}"
-    LACVIET_URL_VN_FR = "http://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-phap&t=V-F&k={}"
-    LACVIET_URL_VN_VN = "http://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-phap&t=V-V&k={}"
-    LACVIET_URL_EN_VN = "http://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-anh&t=A-V&k={}"
-    LACVIET_URL_FR_VN = "http://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-phap&t=F-V&k={}"
+    LACVIET_URL_VN_EN = (
+        "http://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-anh&t=V-A&k={}"
+    )
+    LACVIET_URL_VN_FR = (
+        "http://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-phap&t=V-F&k={}"
+    )
+    LACVIET_URL_VN_VN = (
+        "http://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-phap&t=V-V&k={}"
+    )
+    LACVIET_URL_EN_VN = (
+        "http://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-anh&t=A-V&k={}"
+    )
+    LACVIET_URL_FR_VN = (
+        "http://tratu.coviet.vn/tu-dien-lac-viet.aspx?learn=hoc-tieng-phap&t=F-V&k={}"
+    )
 
     # CAMBRIDGE
     CAMBRIDGE_SPELLING_WRONG = "Did you spell it correctly?"
     CAMBRIDGE_URL_EN_CN_TD = "https://dictionary.cambridge.org/search/english-chinese-traditional/direct/?q={}"
     CAMBRIDGE_URL_EN_CN_SP = "https://dictionary.cambridge.org/search/english-chinese-simplified/direct/?q={}"
-    CAMBRIDGE_URL_EN_FR = "https://dictionary.cambridge.org/search/english-french/direct/?q={}"
-    CAMBRIDGE_URL_EN_JP = "https://dictionary.cambridge.org/search/english-japanese/direct/?q={}"
+    CAMBRIDGE_URL_EN_FR = (
+        "https://dictionary.cambridge.org/search/english-french/direct/?q={}"
+    )
+    CAMBRIDGE_URL_EN_JP = (
+        "https://dictionary.cambridge.org/search/english-japanese/direct/?q={}"
+    )
 
     # COLLINS
     COLLINS_SPELLING_WRONG = "Sorry, no results for"
-    COLLINS_URL_FR_EN = "https://www.collinsdictionary.com/search/?dictCode=french-english&q={}"
+    COLLINS_URL_FR_EN = (
+        "https://www.collinsdictionary.com/search/?dictCode=french-english&q={}"
+    )
 
     # KANTAN
     KANTAN_URL_VN_JP_OR_JP_VN = "https://kantan.vn/postrequest.ashx"
@@ -56,7 +75,9 @@ class Constant:
     NO_EXAMPLE = "No example {{c1::...}}"
     SUCCESS = "Success"
     COPYRIGHT = "This card's content is collected from the following dictionaries: {}"
-    WORD_NOT_FOUND = "Word not found. Could you please check spelling or feedback to us!"
+    WORD_NOT_FOUND = (
+        "Word not found. Could you please check spelling or feedback to us!"
+    )
     CONNECTION_FAILED = "Cannot connect to dictionaries, please try again later!"
     NOT_SUPPORTED_TRANSLATION = "The translation from {} to {} is not supported!"
 
@@ -88,3 +109,23 @@ class Constant:
 
     JP_EN = Translation(JAPANESE, ENGLISH)
     JP_VN = Translation(JAPANESE, VIETNAMESE)
+
+    # AnkiFlash fields for mapping content
+    ANKI_FLASH_FIELDS = [
+        "Word",
+        "WordType",
+        "Phonetic",
+        "Example",
+        "Sound",
+        "Image",
+        "Meaning",
+        "Copyright",
+    ]
+
+    # All supported languages
+    SUPPORTED_TRANSLATIONS = {
+        ENGLISH: [ENGLISH, VIETNAMESE, CHINESE_TD, CHINESE_SP, FRENCH, JAPANESE],
+        VIETNAMESE: [ENGLISH, FRENCH, JAPANESE, VIETNAMESE],
+        FRENCH: [ENGLISH, VIETNAMESE],
+        JAPANESE: [ENGLISH, VIETNAMESE],
+    }

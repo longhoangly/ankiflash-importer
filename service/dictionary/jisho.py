@@ -1,20 +1,17 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 from typing import List
 from bs4 import BeautifulSoup
 
-from .. enum.meaning import Meaning
-from .. enum.translation import Translation
-
-from .. constant import Constant
-from .. base_dictionary import BaseDictionary
-from .. helpers.html_helper import HtmlHelper
-from .. helpers.dict_helper import DictHelper
+from ..constant import Constant
+from ..enum.meaning import Meaning
+from ..enum.translation import Translation
+from ..helpers.html import HtmlHelper
+from ..helpers.dictionary import DictHelper
+from ..base_dictionary import BaseDictionary
 
 
 class JishoDictionary(BaseDictionary):
-
     def search(self, formattedWord: str, translation: Translation) -> bool:
         """Find input word from dictionary data"""
 
@@ -24,8 +21,7 @@ class JishoDictionary(BaseDictionary):
             self.wordId = wordParts[1]
             self.oriWord = wordParts[2]
         else:
-            raise RuntimeError(
-                "Incorrect word format: {}".format(formattedWord))
+            raise RuntimeError("Incorrect word format: {}".format(formattedWord))
 
         url = HtmlHelper.lookup_url(Constant.JISHO_WORD_URL_JP_EN, self.wordId)
         self.doc = HtmlHelper.get_document(url)
@@ -38,14 +34,12 @@ class JishoDictionary(BaseDictionary):
         if Constant.JISHO_WORD_NOT_FOUND in self.doc.get_text():
             return True
 
-        self.word = HtmlHelper.get_text(
-            self.doc, ".concept_light-representation", 0)
+        self.word = HtmlHelper.get_text(self.doc, ".concept_light-representation", 0)
         return not self.word
 
     def get_word_type(self) -> str:
         if not self.wordType:
-            elements = self.doc.select(
-                "div.concept_light.clearfix div.meaning-tags")
+            elements = self.doc.select("div.concept_light.clearfix div.meaning-tags")
 
             wordTypes = []
             for element in elements:
@@ -55,15 +49,15 @@ class JishoDictionary(BaseDictionary):
                     if wType not in wordTypes:
                         wordTypes.append(wType)
 
-            self.wordType = "(" + " / ".join(wordTypes) + \
-                ")" if len(wordTypes) > 0 else ""
+            self.wordType = (
+                "(" + " / ".join(wordTypes) + ")" if len(wordTypes) > 0 else ""
+            )
         return self.wordType
 
     def get_example(self) -> str:
         examples: list[str] = []
         for i in range(4):
-            example = HtmlHelper.get_child_inner_html(
-                self.doc, ".sentence", i)
+            example = HtmlHelper.get_child_inner_html(self.doc, ".sentence", i)
             if not example and i == 0:
                 return Constant.NO_EXAMPLE
             elif not example and i != 0:
@@ -74,7 +68,8 @@ class JishoDictionary(BaseDictionary):
 
                 if lowerWord in exampleStr:
                     exampleStr = exampleStr.replace(
-                        lowerWord, "{{c1::" + lowerWord + "}}")
+                        lowerWord, "{{c1::" + lowerWord + "}}"
+                    )
                 else:
                     exampleStr = "{} {}".format(exampleStr, "{{c1::...}}")
                 examples.append(exampleStr.replace("\n", ""))
@@ -87,14 +82,14 @@ class JishoDictionary(BaseDictionary):
     def get_image(self, ankiDir: str, isOnline: bool) -> str:
         self.ankiDir = ankiDir
         self.imageLink = ""
-        self.image = "<a href=\"https://www.google.com/search?biw=1280&bih=661&tbm=isch&sa=1&q={}\" style=\"font-size: 15px; color: blue\">Search images by the word</a>".format(
-            self.oriWord)
+        self.image = '<a href="https://www.google.com/search?biw=1280&bih=661&tbm=isch&sa=1&q={}" style="font-size: 15px; color: blue">Search images by the word</a>'.format(
+            self.oriWord
+        )
         return self.image
 
     def get_sounds(self, ankiDir: str, isOnline: bool) -> List[str]:
         self.ankiDir = ankiDir
-        self.soundLinks = HtmlHelper.get_attribute(
-            self.doc, "audio>source", 0, "src")
+        self.soundLinks = HtmlHelper.get_attribute(self.doc, "audio>source", 0, "src")
 
         if not self.soundLinks:
             self.sounds = ""
@@ -107,11 +102,13 @@ class JishoDictionary(BaseDictionary):
         for soundLink in links:
             soundName = DictHelper.get_last_url_segment(soundLink)
             if isOnline:
-                self.sounds = "<audio src=\"{}\" type=\"audio/wav\" preload=\"auto\" autobuffer controls>[sound:{}]</audio> {}".format(
-                    soundLink, soundLink, self.sounds if len(self.sounds) > 0 else "")
+                self.sounds = '<audio src="{}" type="audio/wav" preload="auto" autobuffer controls>[sound:{}]</audio> {}'.format(
+                    soundLink, soundLink, self.sounds if len(self.sounds) > 0 else ""
+                )
             else:
-                self.sounds = "<audio src=\"{}\" type=\"audio/wav\" preload=\"auto\" autobuffer controls>[sound:{}]</audio> {}".format(
-                    soundName, soundName, self.sounds if len(self.sounds) > 0 else "")
+                self.sounds = '<audio src="{}" type="audio/wav" preload="auto" autobuffer controls>[sound:{}]</audio> {}'.format(
+                    soundName, soundName, self.sounds if len(self.sounds) > 0 else ""
+                )
 
         return self.sounds
 
@@ -119,8 +116,7 @@ class JishoDictionary(BaseDictionary):
         self.get_word_type()
 
         meanings: List[Meaning] = []
-        meanGroup = HtmlHelper.get_doc_element(
-            self.doc, ".meanings-wrapper", 0)
+        meanGroup = HtmlHelper.get_doc_element(self.doc, ".meanings-wrapper", 0)
         if meanGroup:
             meaning: Meaning
             meanElms = meanGroup.select(".meaning-tags,.meaning-wrapper")
@@ -138,8 +134,7 @@ class JishoDictionary(BaseDictionary):
                 # Meaning
                 if "meaning-wrapper" in meanElm["class"]:
                     meaning = Meaning()
-                    mean = HtmlHelper.get_child_element(
-                        meanElm, ".meaning-meaning", 0)
+                    mean = HtmlHelper.get_child_element(meanElm, ".meaning-meaning", 0)
                     if mean:
                         meaning.meaning = mean.get_text().strip()
 
@@ -147,8 +142,7 @@ class JishoDictionary(BaseDictionary):
                     exampleElms = meanElm.select(".sentence")
                     for exampleElm in exampleElms:
                         if exampleElm:
-                            examples.append(
-                                exampleElm.get_text().replace("\n", ""))
+                            examples.append(exampleElm.get_text().replace("\n", ""))
 
                     meaning.examples = examples
                     meanings.append(meaning)
@@ -161,7 +155,9 @@ class JishoDictionary(BaseDictionary):
                 meaning.examples = extraExamples
                 meanings.append(meaning)
 
-        return HtmlHelper.build_meaning(self.word, self.wordType, self.phonetic, meanings, True)
+        return HtmlHelper.build_meaning(
+            self.word, self.wordType, self.phonetic, meanings, True
+        )
 
     def get_dictionary_name(self) -> str:
         return "Jisho Dictionary"
@@ -170,7 +166,8 @@ class JishoDictionary(BaseDictionary):
 def getJishoJapaneseSentences(word: str) -> List[str]:
 
     url = HtmlHelper.lookup_url(
-        Constant.JISHO_SEARCH_URL_JP_EN, word + "%20%23sentences")
+        Constant.JISHO_SEARCH_URL_JP_EN, word + "%20%23sentences"
+    )
     document: BeautifulSoup = HtmlHelper.get_document(url)
 
     sentences: list[str] = []

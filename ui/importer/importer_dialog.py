@@ -1,31 +1,25 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 import os
+import logging
+
+from os.path import join
+from shutil import copyfile
+from PyQt6 import QtCore
+from PyQt6.QtWidgets import QDialog
+
 from aqt import mw
 from anki.models import ModelManager
 from anki.importing.csvfile import TextImporter
 
-from PyQt6.QtWidgets import QDialog
-from PyQt6 import QtCore
-from shutil import copyfile
+from .ui_importer import UiImporter
+from ...service.constant import Constant
+from ...service.helpers.ankiflash import AnkiHelper
+from ...service.importer import Importer
 
-from . ui_importer import UiImporter
-from ... service.constant import Constant
-from ... service.helpers.anki_helper import AnkiHelper
-
-from os.path import join
-import logging
 import csv
-csv.field_size_limit(2**30)
 
-# The import mode is one of:
-# UPDATE_MODE: update if first field matches existing note
-# IGNORE_MODE: ignore if first field matches existing note
-# ADD_MODE: import even if first field matches existing note
-UPDATE_MODE = 0
-IGNORE_MODE = 1
-ADD_MODE = 2
+csv.field_size_limit(2**30)
 
 
 class ImporterDialog(QDialog):
@@ -41,9 +35,9 @@ class ImporterDialog(QDialog):
         self.iconPath = iconPath
 
         self.ankiCsvPath = join(self.addonDir, Constant.ANKI_DECK)
-        self.frontFile = join(self.addonDir, r'resources/front.html')
-        self.backFile = join(self.addonDir, r'resources/back.html')
-        self.cssFile = join(self.addonDir, r'resources/style.css')
+        self.frontFile = join(self.addonDir, r"resources/front.html")
+        self.backFile = join(self.addonDir, r"resources/back.html")
+        self.cssFile = join(self.addonDir, r"resources/style.css")
 
         self.keyPressed.connect(self.on_key)
 
@@ -51,8 +45,7 @@ class ImporterDialog(QDialog):
         self.ui.setupUi(self)
 
         self.ui.deckNameTxt.textChanged.connect(self.enable_import_btn)
-        self.ui.importBtn.clicked.connect(
-            lambda: self.btn_import_clicked(version))
+        self.ui.importBtn.clicked.connect(lambda: self.btn_import_clicked(version))
 
     def key_press_event(self, event):
         super().key_press_event(event)
@@ -62,7 +55,7 @@ class ImporterDialog(QDialog):
         if key == QtCore.Qt.Key_Return and self.ui.deckNameTxt.text():
             self.btn_import_clicked(self.version)
         else:
-            logging.info('key pressed: {}'.format(key))
+            logging.info("key pressed: {}".format(key))
 
     def enable_import_btn(self):
         if self.ui.deckNameTxt.text():
@@ -73,184 +66,81 @@ class ImporterDialog(QDialog):
     def btn_import_clicked(self, version):
         self.ui.importProgressBar.setValue(20)
 
-        with open(self.frontFile, 'r', encoding='utf-8') as file:
+        with open(self.frontFile, "r", encoding="utf-8") as file:
             self.front = file.read()
 
-        with open(self.backFile, 'r', encoding='utf-8') as file:
+        with open(self.backFile, "r", encoding="utf-8") as file:
             self.back = file.read()
 
-        with open(self.cssFile, 'r', encoding='utf-8') as file:
+        with open(self.cssFile, "r", encoding="utf-8") as file:
             self.css = file.read()
 
         updateExistingNote = self.ui.checkBox.isChecked()
         # Create note type if needs
-        noteTypeName = u'AnkiFlashTemplate.{}'.format(version)
-        is_note_type_diff = self.is_note_type_diff(
-            noteTypeName, self.front, self.back, self.css)
+        noteTypeName = "AnkiFlashTemplate.{}".format(version)
+
+        is_nt_diff = Importer.is_note_type_diff(
+            noteTypeName, self.front, self.back, self.css, mw
+        )
+
+        mm = ModelManager(mw.col)
 
         # Create new note type if not exist or existent but won't update existing!
-        if (is_note_type_diff == None) or (is_note_type_diff != None and not updateExistingNote):
+        if (is_nt_diff == None) or (is_nt_diff != None and not updateExistingNote):
             # If note type already existed, and we don't want to udpate existing! We need a new name!
-            if is_note_type_diff != None:
-                noteTypeName = u'AnkiFlashTemplate.{}.{}'.format(
-                    version, AnkiHelper.id_generator())
+            if is_nt_diff != None:
+                noteTypeName = "AnkiFlashTemplate.{}.{}".format(
+                    version, AnkiHelper.id_generator()
+                )
                 noteTypeId = mw.col.models.id_for_name(noteTypeName)
-                while (noteTypeId != None):
-                    noteTypeName = u'AnkiFlashTemplate.{}.{}'.format(
-                        version, AnkiHelper.id_generator())
+                while noteTypeId != None:
+                    noteTypeName = "AnkiFlashTemplate.{}.{}".format(
+                        version, AnkiHelper.id_generator()
+                    )
                     noteTypeId = mw.col.models.id_for_name(noteTypeName)
 
-            self.create_note_type(
-                noteTypeName, self.front, self.back, self.css)
+            Importer.create_note_type(
+                noteTypeName, self.front, self.back, self.css, mw, mm
+            )
             logging.info("{} Note type created.".format(noteTypeName))
 
-        elif is_note_type_diff and updateExistingNote:
-            self.update_note_type(
-                noteTypeName, self.front, self.back, self.css)
-            logging.info(
-                "{} Note type is existent, override it.".format(noteTypeName))
+        elif is_nt_diff and updateExistingNote:
+            Importer.update_note_type(
+                noteTypeName, self.front, self.back, self.css, mw, mm
+            )
+            logging.info("{} Note type is existent, override it.".format(noteTypeName))
         else:
             logging.info(
-                "{} Note type is existent, the same with AnkiFlash, use it.".format(noteTypeName))
+                "{} Note type is existent, the same with AnkiFlash, use it.".format(
+                    noteTypeName
+                )
+            )
         self.ui.importProgressBar.setValue(50)
 
         # Import csv text file into Anki
-        self.import_text_file(self.ui.deckNameTxt.text(),
-                              noteTypeName, self.ankiCsvPath)
+        mode = self.ui.importModeBox.currentText()
+        ti = TextImporter(mw.col, self.ankiCsvPath)
+        Importer.import_text_file(
+            self.ui.deckNameTxt.text(), mode, noteTypeName, mw, ti
+        )
         self.ui.importProgressBar.setValue(100)
         logging.info("Imported csv file: {}".format(self.ankiCsvPath))
 
-        AnkiHelper.message_box("Info",
-                               "Finished importing flashcards.",
-                               "Let's enjoy learning curve.",
-                               self.iconPath)
+        AnkiHelper.message_box(
+            "Info",
+            "Finished importing flashcards.",
+            "Let's enjoy learning curve.",
+            self.iconPath,
+        )
 
-        os.makedirs(join(self.mediaDir, r'resources'), exist_ok=True)
-        copyfile(join(self.addonDir, r'resources/Raleway-Regular.ttf'),
-                 join(self.mediaDir, r'resources/Raleway-Regular.ttf'))
-        copyfile(join(self.addonDir, r'resources/OpenSans-Regular.ttf'),
-                 join(self.mediaDir, r'resources/OpenSans-Regular.ttf'))
+        os.makedirs(join(self.mediaDir, r"resources"), exist_ok=True)
+        copyfile(
+            join(self.addonDir, r"resources/Raleway-Regular.ttf"),
+            join(self.mediaDir, r"resources/Raleway-Regular.ttf"),
+        )
+        copyfile(
+            join(self.addonDir, r"resources/OpenSans-Regular.ttf"),
+            join(self.mediaDir, r"resources/OpenSans-Regular.ttf"),
+        )
 
         self.close()
-
-    def is_note_type_diff(self, noteTypeName, front, back, css):
-        # Get note type
-        noteType = mw.col.models.byName(noteTypeName)
-        if noteType == None:
-            return None
-
-        # Get template
-        tempates = noteType["tmpls"]
-        for temp in tempates:
-            if temp["name"] == "AnkiFlash":
-                template = temp
-
-        # Compare question
-        asIsFrontMd5 = AnkiHelper.md5_utf8(template["qfmt"])
-        toBeFrontMd5 = AnkiHelper.md5_utf8(front)
-        if(asIsFrontMd5 != toBeFrontMd5):
-            return True
-
-        # Compare answers
-        asIsBackMd5 = AnkiHelper.md5_utf8(template["afmt"])
-        toBeBackMd5 = AnkiHelper.md5_utf8(back)
-        if(asIsBackMd5 != toBeBackMd5):
-            return True
-
-        # Compate css
-        asIsCssMd5 = AnkiHelper.md5_utf8(noteType["css"])
-        toBeCssMd5 = AnkiHelper.md5_utf8(css)
-        if(asIsCssMd5 != toBeCssMd5):
-            return True
-
-        return False
-
-    def create_note_type(self, noteTypeName, front, back, css):
-        # Create empty note type
-        mm = ModelManager(mw.col)
-        nt = mm.new(noteTypeName)
-
-        # Add fields into note type
-        mm.add_field(nt, mm.new_field("Word"))
-        mm.add_field(nt, mm.new_field("WordType"))
-        mm.add_field(nt, mm.new_field("Phonetic"))
-        mm.add_field(nt, mm.new_field("Example"))
-        mm.add_field(nt, mm.new_field("Sound"))
-        mm.add_field(nt, mm.new_field("Image"))
-        mm.add_field(nt, mm.new_field("Meaning"))
-        mm.add_field(nt, mm.new_field("Copyright"))
-
-        # Add template into note type
-        template = mm.new_template("AnkiFlash")
-        template["qfmt"] = front
-        template["afmt"] = back
-        nt["css"] = css
-        mm.add_template(nt, template)
-
-        # Save model / note type
-        mm.save(nt)
-
-        # Update UI
-        mw.reset()
-
-    def update_note_type(self, noteTypeName, front, back, css):
-
-        noteType = mw.col.models.byName(noteTypeName)
-        if noteType == None:
-            raise RuntimeError(
-                "{} Note type not found!".format(noteTypeName))
-
-        # Get template
-        tempates = noteType["tmpls"]
-        for temp in tempates:
-            if temp["name"] == "AnkiFlash":
-                template = temp
-
-        # Add template into note type
-        template["qfmt"] = front
-        template["afmt"] = back
-        noteType["css"] = css
-
-        # Save model / note type
-        mm = ModelManager(mw.col)
-        mm.save(noteType)
-
-        # Update UI
-        mw.reset()
-
-    def import_text_file(self, deckName, noteTypeName, csvPath):
-        # Select deck
-        did = mw.col.decks.id(deckName)
-        mw.col.decks.select(did)
-
-        # Set note type for deck
-        m = mw.col.models.by_name(noteTypeName)
-        deck = mw.col.decks.get(did)
-        deck["mid"] = m["id"]
-        mw.col.decks.save(deck)
-
-        # Import into the collection
-        ti = TextImporter(mw.col, csvPath)
-        ti.model["id"] = m["id"]
-
-        mw.col.set_aux_notetype_config(
-            ti.model["id"], "lastDeck", did
-        )
-        mw.col.models.save(ti.model, updateReqs=False)
-
-        mode = self.ui.importModeBox.currentText()
-        if "1." in mode:
-            ti.importMode = ADD_MODE
-        elif "2." in mode:
-            ti.importMode = UPDATE_MODE
-        else:
-            ti.importMode = IGNORE_MODE
-
-        ti.delimiter = "\t"
-        ti.allowHTML = True
-        ti.open()
-        ti.updateDelimiter()
-        ti.run()
-
-        # Update UI
-        mw.reset()

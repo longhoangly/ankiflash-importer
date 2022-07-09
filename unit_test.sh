@@ -1,14 +1,17 @@
 #!/bin/zsh
 
-export PYTHONPATH="${PYTHONPATH}:${pwd}"
+export PWD=$(pwd)
+export PYTHONPATH="${PYTHONPATH}:${PWD}"
+echo PYTHONPATH=$PYTHONPATH
 
 echo
 echo Running unit tests...
 
-echo
-python3 -B tests/english_card_test.py
-python3 -B tests/french_card_test.py
-python3 -B tests/japanese_card_test.py
-python3 -B tests/vietnamese_card_test.py
+# python3 -B tests/other/port_test.py
 
-python3 -B tests/port_test.py
+# python3 -B tests/generator/english_card_test.py
+python3 -B tests/generator/french_card_test.py
+# python3 -B tests/generator/japanese_card_test.py
+# python3 -B tests/generator/vietnamese_card_test.py
+
+# python3 -B tests/mapper/mapper_test.py

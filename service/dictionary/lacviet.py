@@ -1,19 +1,16 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 from typing import List
 
-from .. enum.meaning import Meaning
-from .. enum.translation import Translation
-
-from .. constant import Constant
-from .. base_dictionary import BaseDictionary
-from .. helpers.html_helper import HtmlHelper
-from .. helpers.dict_helper import DictHelper
+from ..constant import Constant
+from ..enum.meaning import Meaning
+from ..enum.translation import Translation
+from ..helpers.html import HtmlHelper
+from ..helpers.dictionary import DictHelper
+from ..base_dictionary import BaseDictionary
 
 
 class LacVietDictionary(BaseDictionary):
-
     def search(self, formattedWord: str, translation: Translation) -> bool:
         """Find input word from dictionary data"""
 
@@ -23,25 +20,19 @@ class LacVietDictionary(BaseDictionary):
             self.wordId = wordParts[1]
             self.oriWord = wordParts[2]
         else:
-            raise RuntimeError(
-                "Incorrect word format: {}".format(formattedWord))
+            raise RuntimeError("Incorrect word format: {}".format(formattedWord))
 
         url = ""
         if translation.equals(Constant.VN_EN):
-            url = HtmlHelper.lookup_url(
-                Constant.LACVIET_URL_VN_EN, self.wordId)
-        elif (translation.equals(Constant.VN_FR)):
-            url = HtmlHelper.lookup_url(
-                Constant.LACVIET_URL_VN_FR, self.wordId)
-        elif (translation.equals(Constant.VN_VN)):
-            url = HtmlHelper.lookup_url(
-                Constant.LACVIET_URL_VN_VN, self.wordId)
-        elif (translation.equals(Constant.EN_VN)):
-            url = HtmlHelper.lookup_url(
-                Constant.LACVIET_URL_EN_VN, self.wordId)
-        elif (translation.equals(Constant.FR_VN)):
-            url = HtmlHelper.lookup_url(
-                Constant.LACVIET_URL_FR_VN, self.wordId)
+            url = HtmlHelper.lookup_url(Constant.LACVIET_URL_VN_EN, self.wordId)
+        elif translation.equals(Constant.VN_FR):
+            url = HtmlHelper.lookup_url(Constant.LACVIET_URL_VN_FR, self.wordId)
+        elif translation.equals(Constant.VN_VN):
+            url = HtmlHelper.lookup_url(Constant.LACVIET_URL_VN_VN, self.wordId)
+        elif translation.equals(Constant.EN_VN):
+            url = HtmlHelper.lookup_url(Constant.LACVIET_URL_EN_VN, self.wordId)
+        elif translation.equals(Constant.FR_VN):
+            url = HtmlHelper.lookup_url(Constant.LACVIET_URL_FR_VN, self.wordId)
 
         self.doc = HtmlHelper.get_document(url)
 
@@ -62,14 +53,16 @@ class LacVietDictionary(BaseDictionary):
     def get_word_type(self) -> str:
         if not self.wordType:
             element = HtmlHelper.get_doc_element(self.doc, "div.m5t.p10lr", 0)
-            self.wordType = element.text.replace("|Tất cả", "").replace(
-                "|Từ liên quan", "") if element else ""
+            self.wordType = (
+                element.text.replace("|Tất cả", "").replace("|Từ liên quan", "")
+                if element
+                else ""
+            )
             self.wordType = " | ".join(self.wordType.split("|"))
 
             if not self.wordType:
                 elements = HtmlHelper.get_texts(self.doc, "div.m5t.p10lr")
-                self.wordType = " | ".join(elements) if len(
-                    elements) > 0 else ""
+                self.wordType = " | ".join(elements) if len(elements) > 0 else ""
 
             self.wordType = "(" + self.wordType + ")" if self.wordType else ""
         return self.wordType
@@ -86,8 +79,7 @@ class LacVietDictionary(BaseDictionary):
                 self.word = self.word.lower()
                 example = example.lower()
                 if self.word in example:
-                    example = example.replace(
-                        self.word, "{{c1::" + self.word + "}}")
+                    example = example.replace(self.word, "{{c1::" + self.word + "}}")
                 else:
                     example = "{} {}".format(example, "{{c1::...}}")
                 examples.append(example)
@@ -102,32 +94,35 @@ class LacVietDictionary(BaseDictionary):
     def get_image(self, ankiDir: str, isOnline: bool) -> str:
         self.ankiDir = ankiDir
         self.imageLink = ""
-        self.image = "<a href=\"https://www.google.com/search?biw=1280&bih=661&tbm=isch&sa=1&q={}\" style=\"font-size: 15px; color: blue\">Search images by the word</a>".format(
-            self.oriWord)
+        self.image = '<a href="https://www.google.com/search?biw=1280&bih=661&tbm=isch&sa=1&q={}" style="font-size: 15px; color: blue">Search images by the word</a>'.format(
+            self.oriWord
+        )
         return self.image
 
     def get_sounds(self, ankiDir: str, isOnline: bool) -> List[str]:
         self.ankiDir = ankiDir
-        self.soundLinks = HtmlHelper.get_attribute(
-            self.doc, "embed", 0, "flashvars")
+        self.soundLinks = HtmlHelper.get_attribute(self.doc, "embed", 0, "flashvars")
 
         if not self.soundLinks:
             self.sounds = ""
             self.soundLinks = ""
             return self.sounds
 
-        self.soundLinks = self.soundLinks.replace(
-            "file=", "").replace("&autostart=false", "")
+        self.soundLinks = self.soundLinks.replace("file=", "").replace(
+            "&autostart=false", ""
+        )
 
         links = DictHelper.download_files(self.soundLinks, isOnline, ankiDir)
         for soundLink in links:
             soundName = DictHelper.get_last_url_segment(soundLink)
             if isOnline:
-                self.sounds = "<audio src=\"{}\" type=\"audio/wav\" preload=\"auto\" autobuffer controls>[sound:{}]</audio> {}".format(
-                    soundLink, soundLink, self.sounds if len(self.sounds) > 0 else "")
+                self.sounds = '<audio src="{}" type="audio/wav" preload="auto" autobuffer controls>[sound:{}]</audio> {}'.format(
+                    soundLink, soundLink, self.sounds if len(self.sounds) > 0 else ""
+                )
             else:
-                self.sounds = "<audio src=\"{}\" type=\"audio/wav\" preload=\"auto\" autobuffer controls>[sound:{}]</audio> {}".format(
-                    soundName, soundName, self.sounds if len(self.sounds) > 0 else "")
+                self.sounds = '<audio src="{}" type="audio/wav" preload="auto" autobuffer controls>[sound:{}]</audio> {}'.format(
+                    soundName, soundName, self.sounds if len(self.sounds) > 0 else ""
+                )
 
         return self.sounds
 
@@ -154,7 +149,12 @@ class LacVietDictionary(BaseDictionary):
                             meaning.wordType = meanElm.get_text().strip().capitalize()
                         else:
                             # only type -> get inner html
-                            meaning.wordType = meanElm.get_text().strip().replace("\n", "").capitalize()
+                            meaning.wordType = (
+                                meanElm.get_text()
+                                .strip()
+                                .replace("\n", "")
+                                .capitalize()
+                            )
                     elif meanElm.has_attr("class") and "m" in meanElm.get("class"):
                         # from the second meaning tag
                         if not firstMeaning:
@@ -168,21 +168,30 @@ class LacVietDictionary(BaseDictionary):
                             # add correct url prefix for all <a> tags
                             for aTag in meaningTags:
                                 replaceTag = aTag
-                                replaceTag["href"] = "http://tratu.coviet.vn/" + \
-                                    aTag.get("href")
+                                replaceTag[
+                                    "href"
+                                ] = "http://tratu.coviet.vn/" + aTag.get("href")
                                 aTag.replaceWith(replaceTag)
 
                             meaning.meaning = str(meanElm).strip()
                         else:
                             meaning.meaning = meanElm.get_text().strip()
                         firstMeaning = False
-                    elif meanElm.has_attr("class") and ("e" in meanElm.get("class") or "em" in meanElm.get("class") or "im" in meanElm.get("class") or "id" in meanElm.get("class") or "href" in meanElm.get("class")):
+                    elif meanElm.has_attr("class") and (
+                        "e" in meanElm.get("class")
+                        or "em" in meanElm.get("class")
+                        or "im" in meanElm.get("class")
+                        or "id" in meanElm.get("class")
+                        or "href" in meanElm.get("class")
+                    ):
                         examples.append(meanElm.get_text().strip())
 
                 meaning.examples = examples
                 meanings.append(meaning)
 
-        return HtmlHelper.build_meaning(self.word, self.wordType, self.phonetic, meanings)
+        return HtmlHelper.build_meaning(
+            self.word, self.wordType, self.phonetic, meanings
+        )
 
     def get_dictionary_name(self) -> str:
         return "Lac Viet Dictionary"

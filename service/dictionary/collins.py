@@ -1,20 +1,17 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 import logging
 from typing import List
 
-from .. enum.meaning import Meaning
-from .. enum.translation import Translation
-
-from .. constant import Constant
-from .. base_dictionary import BaseDictionary
-from .. helpers.html_helper import HtmlHelper
-from .. helpers.dict_helper import DictHelper
+from ..constant import Constant
+from ..enum.meaning import Meaning
+from ..enum.translation import Translation
+from ..helpers.html import HtmlHelper
+from ..helpers.dictionary import DictHelper
+from ..base_dictionary import BaseDictionary
 
 
 class CollinsDictionary(BaseDictionary):
-
     def __init__(self):
         super().__init__()
 
@@ -27,8 +24,7 @@ class CollinsDictionary(BaseDictionary):
             self.wordId = wordParts[1]
             self.oriWord = wordParts[2]
         else:
-            raise RuntimeError(
-                "Incorrect word format: {}".format(formattedWord))
+            raise RuntimeError("Incorrect word format: {}".format(formattedWord))
 
         url = HtmlHelper.lookup_url(Constant.COLLINS_URL_FR_EN, self.wordId)
         self.doc = HtmlHelper.get_collins_document(url)
@@ -50,15 +46,15 @@ class CollinsDictionary(BaseDictionary):
     def get_word_type(self) -> str:
         if not self.wordType:
             texts = HtmlHelper.get_texts(self.doc, "span.pos")
-            self.wordType = "(" + " / ".join(texts) + \
-                ")" if len(texts) > 0 else ""
+            self.wordType = "(" + " / ".join(texts) + ")" if len(texts) > 0 else ""
         return self.wordType
 
     def get_example(self) -> str:
         examples = []
         for i in range(4):
             example: str = HtmlHelper.get_text(
-                self.doc, ".re.type-phr,.cit.type-example", i)
+                self.doc, ".re.type-phr,.cit.type-example", i
+            )
             if not example and i == 0:
                 return Constant.NO_EXAMPLE
             elif not example:
@@ -67,8 +63,7 @@ class CollinsDictionary(BaseDictionary):
                 self.word = self.word.lower()
                 example = example.lower()
                 if self.word in example:
-                    example = example.replace(
-                        self.word, "{{c1::" + self.word + "}}")
+                    example = example.replace(self.word, "{{c1::" + self.word + "}}")
                 else:
                     example = "{} {}".format(example, "{{c1::...}}")
                 examples.append(example)
@@ -83,14 +78,19 @@ class CollinsDictionary(BaseDictionary):
     def get_image(self, ankiDir: str, isOnline: bool) -> str:
         self.ankiDir = ankiDir
         self.imageLink = ""
-        self.image = "<a href=\"https://www.google.com/search?biw=1280&bih=661&tbm=isch&sa=1&q={}\" style=\"font-size: 15px; color: blue\">Search images by the word</a>".format(
-            self.oriWord)
+        self.image = '<a href="https://www.google.com/search?biw=1280&bih=661&tbm=isch&sa=1&q={}" style="font-size: 15px; color: blue">Search images by the word</a>'.format(
+            self.oriWord
+        )
         return self.image
 
     def get_sounds(self, ankiDir: str, isOnline: bool) -> List[str]:
         self.ankiDir = ankiDir
         self.soundLinks = HtmlHelper.get_attribute(
-            self.doc, "a.hwd_sound.sound.audio_play_button.icon-volume-up.ptr", 0, "data-src-mp3")
+            self.doc,
+            "a.hwd_sound.sound.audio_play_button.icon-volume-up.ptr",
+            0,
+            "data-src-mp3",
+        )
 
         if not self.soundLinks:
             self.sounds = ""
@@ -101,11 +101,13 @@ class CollinsDictionary(BaseDictionary):
         for soundLink in links:
             soundName = DictHelper.get_last_url_segment(soundLink)
             if isOnline:
-                self.sounds = "<audio src=\"{}\" type=\"audio/wav\" preload=\"auto\" autobuffer controls>[sound:{}]</audio> {}".format(
-                    soundLink, soundLink, self.sounds if len(self.sounds) > 0 else "")
+                self.sounds = '<audio src="{}" type="audio/wav" preload="auto" autobuffer controls>[sound:{}]</audio> {}'.format(
+                    soundLink, soundLink, self.sounds if len(self.sounds) > 0 else ""
+                )
             else:
-                self.sounds = "<audio src=\"{}\" type=\"audio/wav\" preload=\"auto\" autobuffer controls>[sound:{}]</audio> {}".format(
-                    soundName, soundName, self.sounds if len(self.sounds) > 0 else "")
+                self.sounds = '<audio src="{}" type="audio/wav" preload="auto" autobuffer controls>[sound:{}]</audio> {}'.format(
+                    soundName, soundName, self.sounds if len(self.sounds) > 0 else ""
+                )
 
         return self.sounds
 
@@ -141,7 +143,9 @@ class CollinsDictionary(BaseDictionary):
         meaning.wordType = "Extra examples"
         meanings.append(meaning)
 
-        return HtmlHelper.build_meaning(self.word, self.wordType, self.phonetic, meanings)
+        return HtmlHelper.build_meaning(
+            self.word, self.wordType, self.phonetic, meanings
+        )
 
     def get_dictionary_name(self) -> str:
         return "Collins Dictionary"

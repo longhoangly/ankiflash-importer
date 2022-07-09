@@ -1,11 +1,9 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 from typing import List
 
 
 class Translation:
-
     def __init__(self, source, target):
 
         self.source: str = source
@@ -13,7 +11,9 @@ class Translation:
 
     def equals(self, translation) -> bool:
         if isinstance(translation, Translation):
-            return self.target == translation.target and self.source == translation.source
+            return (
+                self.target == translation.target and self.source == translation.source
+            )
         else:
             return False
 

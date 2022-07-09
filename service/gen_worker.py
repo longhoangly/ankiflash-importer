@@ -1,30 +1,26 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 import os
 import time
 import logging
 
 from typing import List
-
 from PyQt6.QtCore import QObject, pyqtSignal
 
-from . enum.translation import Translation
-from . enum.status import Status
-from . enum.card import Card
-
-from . base_generator import BaseGenerator
-from . constant import Constant
-
-from . generator.chinese import ChineseGenerator
-from . generator.vietnamese import VietnameseGenerator
-from . generator.spanish import SpanishGenerator
-from . generator.japanese import JapaneseGenerator
-from . generator.french import FrenchGenerator
-from . generator.english import EnglishGenerator
+from .constant import Constant
+from .enum.translation import Translation
+from .enum.status import Status
+from .enum.card import Card
+from .generator.chinese import ChineseGenerator
+from .generator.vietnamese import VietnameseGenerator
+from .generator.spanish import SpanishGenerator
+from .generator.japanese import JapaneseGenerator
+from .generator.french import FrenchGenerator
+from .generator.english import EnglishGenerator
+from .base_generator import BaseGenerator
 
 
-class Worker(QObject):
+class GenWorker(QObject):
 
     # Create a worker class to run in background using QThread
     finished = pyqtSignal()
@@ -32,20 +28,23 @@ class Worker(QObject):
     cardStr = pyqtSignal(str)
     failureStr = pyqtSignal(str)
 
-    def __init__(self, generator, words, translation, mediaDir, isOnline, allWordTypes, ankiCsvPath):
+    def __init__(
+        self, words, translation, mediaDir, isOnline, allWordTypes, ankiCsvPath
+    ):
         super().__init__()
 
         self.formattedWords: List[str] = []
         self.words: List[str] = words
         self.cards: List[Card] = []
+        self.failedCards: List[Card] = []
         self.translation: Translation = translation
-        self.generator: BaseGenerator = generator
         self.mediaDir: str = mediaDir
         self.isOnline: bool = isOnline
         self.allWordTypes: bool = allWordTypes
         self.csvFilePath: str = ankiCsvPath
+        self.generator: BaseGenerator = GenWorker.initialize_generator(self.translation)
 
-    def generate_cards_background(self) -> List[Card]:
+    def generate_cards_background(self) -> object:
         """Generate flashcards from input words"""
 
         total: int = 0
@@ -61,7 +60,8 @@ class Worker(QObject):
                 break
 
             self.formattedWords = self.generator.get_formatted_words(
-                word, self.translation, self.allWordTypes)
+                word, self.translation, self.allWordTypes
+            )
             total += len(self.formattedWords) - 1
 
             if len(self.formattedWords) > 0:
@@ -73,7 +73,8 @@ class Worker(QObject):
                         break
 
                     card = self.generator.generate_card(
-                        formattedWord, self.mediaDir, self.translation, self.isOnline)
+                        formattedWord, self.mediaDir, self.translation, self.isOnline
+                    )
                     time.sleep(0.2)
                     proceeded = proceeded + 1
                     percent = (proceeded / total) * 100
@@ -87,8 +88,13 @@ class Worker(QObject):
                         self.cardStr.emit(card.meaning)
                     else:
                         failureCount += 1
+                        self.failedCards.append(card)
                         self.failureStr.emit(
-                            "{} -> {}".format(formattedWord.split(Constant.SUB_DELIMITER)[0], card.comment))
+                            "{} -> {}".format(
+                                formattedWord.split(Constant.SUB_DELIMITER)[0],
+                                card.comment,
+                            )
+                        )
             else:
                 failureCount += 1
                 self.failureStr.emit(Constant.WORD_NOT_FOUND)
@@ -118,7 +124,8 @@ class Worker(QObject):
                 Constant.TAB,
                 card.copyright,
                 Constant.TAB,
-                card.tag + "\n")
+                card.tag + "\n",
+            )
             cardLines.append(cardContent)
 
             mappingContent = "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}".format(
@@ -136,23 +143,28 @@ class Worker(QObject):
                 Constant.TAB,
                 card.meaning,
                 Constant.TAB,
-                card.copyright + "\n")
+                card.copyright + "\n",
+            )
             mappingLines.append(mappingContent)
 
         try:
             os.remove(self.csvFilePath)
         except OSError:
             logging.info(
-                "{} does not exist! no need to remove! no error!".format(self.csvFilePath))
+                "{} does not exist! no need to remove! no error!".format(
+                    self.csvFilePath
+                )
+            )
             pass
 
-        with open(self.csvFilePath, 'w', encoding='utf-8') as file:
+        with open(self.csvFilePath, "w", encoding="utf-8") as file:
             file.writelines(cardLines)
 
         self.csvMappingPath = self.csvFilePath.replace(
-            Constant.ANKI_DECK, Constant.MAPPING_CSV)
+            Constant.ANKI_DECK, Constant.MAPPING_CSV
+        )
 
-        with open(self.csvMappingPath, 'w', encoding='utf-8') as file:
+        with open(self.csvMappingPath, "w", encoding="utf-8") as file:
             file.writelines(mappingLines)
 
         # Return if thread is interrupted
@@ -162,7 +174,8 @@ class Worker(QObject):
         # Finished
         self.progress.emit(100)
         self.finished.emit()
-        return self.cards
+
+        return {"cards": self.cards, "failedCards": self.failedCards}
 
     @staticmethod
     def initialize_generator(translation: Translation):

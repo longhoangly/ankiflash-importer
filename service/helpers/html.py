@@ -1,19 +1,17 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 import time
 import requests
 import logging
-
 import webbrowser
-from typing import List
 
-from bs4 import BeautifulSoup
+from typing import List
 from bs4.element import Tag
+from bs4 import BeautifulSoup
 from urllib.parse import unquote
 
-from .. enum.meaning import Meaning
-from . simple_server import start_server
+from ..enum.meaning import Meaning
+from .server import start_server
 
 PORT = 8081
 HOST = "localhost"
@@ -34,19 +32,14 @@ class HtmlHelper:
         try:
             return unquote(url)
         except:
-            logging.info(
-                "Exception occurred, cannot decode url: {}".format(url))
+            logging.info("Exception occurred, cannot decode url: {}".format(url))
         return ""
 
     @staticmethod
     def get_document(url: str) -> BeautifulSoup:
         logging.info("url {}".format(url))
 
-        html_text = requests.get(
-            url,
-            headers={
-                "User-Agent": AGENT_STRING
-            }).text
+        html_text = requests.get(url, headers={"User-Agent": AGENT_STRING}).text
 
         return BeautifulSoup(html_text, "html.parser")
 
@@ -65,9 +58,8 @@ class HtmlHelper:
 
             html_text = requests.get(
                 "{}/api/v1/getrecord/word_content".format(BASE_URL),
-                headers={
-                    "User-Agent": AGENT_STRING
-                }).text
+                headers={"User-Agent": AGENT_STRING},
+            ).text
 
             if html_text:
                 logging.info("html_text={}".format(html_text[0:100]))
@@ -81,10 +73,8 @@ class HtmlHelper:
         html_text = unquote(html_text)
 
         requests.get(
-            "{}/api/v1/shutdown".format(BASE_URL),
-            headers={
-                "User-Agent": AGENT_STRING
-            })
+            "{}/api/v1/shutdown".format(BASE_URL), headers={"User-Agent": AGENT_STRING}
+        )
 
         return BeautifulSoup(html_text, "html.parser")
 
@@ -104,7 +94,9 @@ class HtmlHelper:
         return element.get_text().strip() if element else ""
 
     @staticmethod
-    def get_texts(doc: BeautifulSoup, selector: str, isUnique: bool = False) -> List[str]:
+    def get_texts(
+        doc: BeautifulSoup, selector: str, isUnique: bool = False
+    ) -> List[str]:
         elements = doc.select(selector)
         texts = []
         for element in elements:
@@ -143,27 +135,32 @@ class HtmlHelper:
     def build_example(examples: List[str], isJapanese: bool = False) -> str:
         str_list = []
 
-        if (isJapanese):
-            str_list.append("<div class=\"content-container japan-font\">")
+        if isJapanese:
+            str_list.append('<div class="content-container japan-font">')
         else:
-            str_list.append("<div class=\"content-container\">")
+            str_list.append('<div class="content-container">')
 
-        str_list.append("<ul class=\"content-circle\">")
+        str_list.append('<ul class="content-circle">')
 
-        if (isJapanese):
+        if isJapanese:
             index = 0
             for example in examples:
                 if index % 2 == 0:
                     str_list.append(
-                        "<li class=\"content-example\">{}</li>".format(example.strip()))
+                        '<li class="content-example">{}</li>'.format(example.strip())
+                    )
                 else:
                     str_list.append(
-                        "<li class=\"content-sub-example\">{}</li>".format(example.strip()))
+                        '<li class="content-sub-example">{}</li>'.format(
+                            example.strip()
+                        )
+                    )
                 index += 1
         else:
             for example in examples:
                 str_list.append(
-                    "<li class=\"content-example\">{}</li>".format(example.strip()))
+                    '<li class="content-example">{}</li>'.format(example.strip())
+                )
 
         str_list.append("</ul>")
         str_list.append("</div>")
@@ -171,58 +168,82 @@ class HtmlHelper:
         return "".join(str_list)
 
     @staticmethod
-    def build_meaning(word: str, wordType: str, phonetic: str, meanings: List[Meaning], isJapanese: bool = False) -> str:
+    def build_meaning(
+        word: str,
+        wordType: str,
+        phonetic: str,
+        meanings: List[Meaning],
+        isJapanese: bool = False,
+    ) -> str:
 
         str_list = []
 
-        if (isJapanese):
-            str_list.append("<div class=\"content-container japan-font\">")
+        if isJapanese:
+            str_list.append('<div class="content-container japan-font">')
         else:
-            str_list.append("<div class=\"content-container\">")
+            str_list.append('<div class="content-container">')
 
-        str_list.append("<h2 class=\"h\">{}</h2>".format(word.strip()))
+        str_list.append('<h2 class="h">{}</h2>'.format(word.strip()))
         if wordType:
             str_list.append(
-                "<span class=\"content-type\">{}</span>".format(wordType.strip()))
+                '<span class="content-type">{}</span>'.format(wordType.strip())
+            )
 
         if phonetic:
             str_list.append(
-                "<span class=\"content-phonetic\">{}</span>".format(phonetic.strip()))
+                '<span class="content-phonetic">{}</span>'.format(phonetic.strip())
+            )
 
-        str_list.append("<ul class=\"content-order\">")
+        str_list.append('<ul class="content-order">')
         for mean in meanings:
 
             if mean.wordType:
                 str_list.append(
-                    "<h4 class=\"content-meaning-type\"'>{}</h4>".format(mean.wordType.strip()))
+                    '<h4 class="content-meaning-type"\'>{}</h4>'.format(
+                        mean.wordType.strip()
+                    )
+                )
                 str_list.append("</ul>")
-                str_list.append("<ul class=\"content-order\">")
+                str_list.append('<ul class="content-order">')
 
             if mean.meaning:
                 str_list.append(
-                    "<li class=\"content-meaning\">{}</li>".format(mean.meaning.strip()))
+                    '<li class="content-meaning">{}</li>'.format(mean.meaning.strip())
+                )
 
             if mean.subMeaning:
                 str_list.append(
-                    "<div class=\"content-sub-meaning\">{}</div>".format(mean.subMeaning.strip()))
+                    '<div class="content-sub-meaning">{}</div>'.format(
+                        mean.subMeaning.strip()
+                    )
+                )
 
             if "list" in str(type(mean.examples)) and len(mean.examples) > 0:
-                str_list.append("<ul class=\"content-circle\">")
+                str_list.append('<ul class="content-circle">')
 
-                if (isJapanese):
+                if isJapanese:
                     index = 0
                     for example in mean.examples:
                         if index % 2 == 0:
                             str_list.append(
-                                "<li class=\"content-example\">{}</li>".format(example.strip()))
+                                '<li class="content-example">{}</li>'.format(
+                                    example.strip()
+                                )
+                            )
                         else:
                             str_list.append(
-                                "<li class=\"content-sub-example\">{}</li>".format(example.strip()))
+                                '<li class="content-sub-example">{}</li>'.format(
+                                    example.strip()
+                                )
+                            )
                         index += 1
                 else:
                     for example in mean.examples:
                         str_list.append(
-                            "<li class=\"content-example\">{}</li>".format(example.strip()))
+                            '<li class="content-example">{}</li>'.format(
+                                example.strip()
+                            )
+                        )
 
                 str_list.append("</ul>")
 
