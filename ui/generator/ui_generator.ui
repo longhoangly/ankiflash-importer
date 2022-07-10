@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>682</width>
-    <height>623</height>
+    <height>589</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -29,7 +29,7 @@
      <x>10</x>
      <y>10</y>
      <width>421</width>
-     <height>451</height>
+     <height>411</height>
     </rect>
    </property>
    <property name="font">
@@ -70,7 +70,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>400</y>
+      <y>360</y>
       <width>91</width>
       <height>31</height>
      </rect>
@@ -110,266 +110,11 @@
      <string>Total: 0</string>
     </property>
    </widget>
-   <widget class="QGroupBox" name="sourceBox">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>234</y>
-      <width>121</width>
-      <height>111</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-      <strikeout>false</strikeout>
-      <kerning>true</kerning>
-     </font>
-    </property>
-    <property name="title">
-     <string>Source</string>
-    </property>
-    <property name="flat">
-     <bool>false</bool>
-    </property>
-    <property name="checkable">
-     <bool>false</bool>
-    </property>
-    <widget class="QRadioButton" name="source3">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>66</y>
-       <width>101</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <italic>false</italic>
-       <bold>false</bold>
-       <strikeout>false</strikeout>
-       <kerning>true</kerning>
-      </font>
-     </property>
-     <property name="text">
-      <string>Japanese</string>
-     </property>
-    </widget>
-    <widget class="QRadioButton" name="source4">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>84</y>
-       <width>101</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <italic>false</italic>
-       <bold>false</bold>
-       <strikeout>false</strikeout>
-       <kerning>true</kerning>
-      </font>
-     </property>
-     <property name="text">
-      <string>Vietnamese</string>
-     </property>
-    </widget>
-    <widget class="QRadioButton" name="source2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>48</y>
-       <width>101</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <italic>false</italic>
-       <bold>false</bold>
-       <strikeout>false</strikeout>
-       <kerning>true</kerning>
-      </font>
-     </property>
-     <property name="text">
-      <string>French</string>
-     </property>
-    </widget>
-    <widget class="QRadioButton" name="source1">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>101</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <italic>false</italic>
-       <bold>false</bold>
-       <strikeout>false</strikeout>
-       <kerning>true</kerning>
-      </font>
-     </property>
-     <property name="text">
-      <string>English</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QGroupBox" name="translatedToBox">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>234</y>
-      <width>171</width>
-      <height>151</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="title">
-     <string>Translated To</string>
-    </property>
-    <widget class="QRadioButton" name="target6">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>127</y>
-       <width>151</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Chinese (Simplified)</string>
-     </property>
-    </widget>
-    <widget class="QRadioButton" name="target2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>49</y>
-       <width>141</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Vietnamese</string>
-     </property>
-    </widget>
-    <widget class="QRadioButton" name="target1">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>141</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>English</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QRadioButton" name="target4">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>88</y>
-       <width>141</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Japanese</string>
-     </property>
-    </widget>
-    <widget class="QRadioButton" name="target5">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>107</y>
-       <width>151</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Chinese (Traditional)</string>
-     </property>
-    </widget>
-    <widget class="QRadioButton" name="target3">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>69</y>
-       <width>141</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>French</string>
-     </property>
-    </widget>
-   </widget>
    <widget class="QProgressBar" name="generateProgressBar">
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>400</y>
+      <y>360</y>
       <width>201</width>
       <height>31</height>
      </rect>
@@ -391,7 +136,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>350</y>
+      <y>310</y>
       <width>121</width>
       <height>17</height>
      </rect>
@@ -416,7 +161,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>370</y>
+      <y>330</y>
       <width>121</width>
       <height>17</height>
      </rect>
@@ -441,7 +186,7 @@
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>400</y>
+      <y>360</y>
       <width>71</width>
       <height>31</height>
      </rect>
@@ -465,9 +210,9 @@
    <widget class="QComboBox" name="keywordCx">
     <property name="geometry">
      <rect>
-      <x>283</x>
-      <y>195</y>
-      <width>121</width>
+      <x>229</x>
+      <y>218</y>
+      <width>151</width>
       <height>26</height>
      </rect>
     </property>
@@ -475,7 +220,7 @@
    <widget class="QLabel" name="keywordLbl">
     <property name="geometry">
      <rect>
-      <x>227</x>
+      <x>231</x>
       <y>197</y>
       <width>61</width>
       <height>20</height>
@@ -491,6 +236,84 @@
      <string>Keyword</string>
     </property>
    </widget>
+   <widget class="QComboBox" name="source">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>270</y>
+      <width>141</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>English</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Vietnamese</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Japanese</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>French</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="sourceLbl">
+    <property name="geometry">
+     <rect>
+      <x>21</x>
+      <y>250</y>
+      <width>61</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Source</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="target">
+    <property name="geometry">
+     <rect>
+      <x>229</x>
+      <y>270</y>
+      <width>151</width>
+      <height>26</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="targetLbl">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>250</y>
+      <width>101</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Translated To</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="outputBox">
    <property name="geometry">
@@ -498,7 +321,7 @@
      <x>440</x>
      <y>10</y>
      <width>231</width>
-     <height>451</height>
+     <height>411</height>
     </rect>
    </property>
    <property name="font">
@@ -516,7 +339,7 @@
       <x>20</x>
       <y>40</y>
       <width>191</width>
-      <height>181</height>
+      <height>151</height>
      </rect>
     </property>
     <property name="font">
@@ -539,7 +362,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>230</y>
+      <y>197</y>
       <width>200</width>
       <height>16</height>
      </rect>
@@ -558,7 +381,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>420</y>
+      <y>376</y>
       <width>200</width>
       <height>16</height>
      </rect>
@@ -577,7 +400,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>270</y>
+      <y>229</y>
       <width>191</width>
       <height>141</height>
      </rect>
@@ -603,7 +426,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>470</y>
+     <y>436</y>
      <width>661</width>
      <height>141</height>
     </rect>

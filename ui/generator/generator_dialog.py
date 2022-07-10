@@ -6,7 +6,7 @@ from aqt import mw
 from os.path import join
 from typing import List
 
-from PyQt6.QtWidgets import QDialog, QGroupBox, QMessageBox, QRadioButton, QComboBox
+from PyQt6.QtWidgets import QDialog, QGroupBox, QMessageBox, QRadioButton
 from PyQt6.QtCore import QThread
 
 from .ui_generator import UiGenerator
@@ -57,11 +57,7 @@ class GeneratorDialog(QDialog):
         self.ui.mappingBtn.clicked.connect(self.btn_mapping_clicked)
 
         self.get_supported_languages()
-        self.ui.source1.clicked.connect(self.get_supported_languages)
-        self.ui.source2.clicked.connect(self.get_supported_languages)
-        self.ui.source3.clicked.connect(self.get_supported_languages)
-        self.ui.source4.clicked.connect(self.get_supported_languages)
-
+        self.ui.source.currentIndexChanged.connect(self.get_supported_languages)
         self.ui.keywordCx.currentIndexChanged.connect(self.keyword_changed)
 
     def enable_mapping(self, isMappingEnable, keys: list):
@@ -130,8 +126,8 @@ class GeneratorDialog(QDialog):
         self.ui.failureTxt.setPlainText("")
 
         # Get translation options
-        source = self.selected_radio(self.ui.sourceBox)
-        target = self.selected_radio(self.ui.translatedToBox)
+        source = self.ui.source.currentText()
+        target = self.ui.target.currentText()
         self.translation = Translation(source, target)
 
         # Get generating options
@@ -298,30 +294,16 @@ class GeneratorDialog(QDialog):
             )
 
     def get_supported_languages(self):
-        source = self.selected_radio(self.ui.sourceBox)
+        source = self.ui.source.currentText()
         targetLanguages = Constant.SUPPORTED_TRANSLATIONS.get(source)
         logging.info("targetLanguages {}".format(targetLanguages))
 
-        radioBtns = [
-            radio
-            for radio in self.ui.translatedToBox.children()
-            if isinstance(radio, QRadioButton)
-        ]
-
-        for radio in radioBtns:
-            if radio.text() == Constant.ENGLISH:
-                radio.click()
-
-            if radio.text() in targetLanguages:
-                radio.setEnabled(True)
-                self.change_radio_color(radio, True)
-            else:
-                radio.setEnabled(False)
-                self.change_radio_color(radio, False)
+        self.ui.target.clear()
+        self.ui.target.addItems(targetLanguages)
 
     def change_radio_color(self, radio: QRadioButton, isEnabled: bool):
         if isEnabled:
-            radio.setStyleSheet(self.ui.source1.styleSheet())
+            radio.setStyleSheet(self.ui.source.styleSheet())
         else:
             radio.setStyleSheet("color:gray")
 
