@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 SRC="."
-DEST="/Users/long.lyhoang/Library/Application Support/Anki2/addons21/1129289384"
+DEST="/Users/long.ly/Library/Application Support/Anki2/addons21/1129289384"
 
 echo Starting Deployment...
 

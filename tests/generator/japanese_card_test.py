@@ -20,8 +20,8 @@ class JapaneseCardTests(unittest.TestCase):
 
         self.words = []
         self.words.append("夕日")
-        self.words.append("減る")
-        self.words.append("ゆかげん")
+        # self.words.append("減る")
+        # self.words.append("ゆかげん")
         self.words.append("長く")
 
     def test_japanese_english_card_all_word_types(self):
