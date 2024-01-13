@@ -4,6 +4,7 @@ import re
 import string
 import random
 import hashlib
+import unicodedata
 
 from PyQt6 import QtGui
 from PyQt6.QtWidgets import QMessageBox
@@ -28,7 +29,6 @@ class AnkiHelper:
 
     @staticmethod
     def message_box(title, text, infoText, iconPath=None, width=None):
-
         font = QtGui.QFont()
         font.setBold(False)
         font.setWeight(50)
@@ -55,7 +55,6 @@ class AnkiHelper:
     def message_box_buttons(
         title, text, infoText, standardButtons, defaultButton, iconPath=None, width=None
     ):
-
         font = QtGui.QFont()
         font.setBold(False)
         font.setWeight(50)
@@ -85,3 +84,9 @@ class AnkiHelper:
         # convert the set to the list
         unique_list = list(list_set)
         return unique_list
+
+    @staticmethod
+    def compare_ignore_encode(s1, s2):
+        s1_normalized = unicodedata.normalize("NFD", s1)
+        s2_normalized = unicodedata.normalize("NFD", s2)
+        return s1_normalized == s2_normalized

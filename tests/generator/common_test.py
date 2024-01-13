@@ -45,8 +45,9 @@ class CommonTest(unittest.TestCase):
             handlers=[rfh],
         )
 
-    def create_flashcards(self, translation, words, allWordTypes) -> List[Card]:
-
+    def create_flashcards(
+        self, translation, words, allWordTypes, failedCount=0
+    ) -> List[Card]:
         isOnline = False
         os.makedirs(self.mediaDir, exist_ok=True)
 
@@ -60,9 +61,9 @@ class CommonTest(unittest.TestCase):
         for card in result["cards"]:
             self.assertEqual(card.status, Status.SUCCESS)
 
-        self.assertEqual(len(result["failedCards"]), 0)
+        self.assertEqual(len(result["failedCards"]), failedCount)
         for card in result["failedCards"]:
-            self.assertEqual(card.status, Status.SUCCESS)
+            self.assertEqual(card.status, Status.WORD_NOT_FOUND)
 
         self.assertTrue(os.path.exists(self.ankiCsvPath))
         self.assertTrue(os.path.exists(self.mappingCsvPath))

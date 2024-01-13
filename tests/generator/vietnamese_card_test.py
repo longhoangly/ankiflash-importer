@@ -12,13 +12,13 @@ from service.constant import Constant
 class VietnameseCardTests(unittest.TestCase):
     @classmethod
     def setUpClass(self):
-
         self.addonDir = "./tests"
         self.mediaDir = "./tests/media"
         self.commontest = CommonTest(self.addonDir, self.mediaDir)
         logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
         self.words = []
+        self.words.append("hay")
         self.words.append("mỗi khi")
         self.words.append("tôi")
         self.words.append("chúng ta")
@@ -40,7 +40,7 @@ class VietnameseCardTests(unittest.TestCase):
     def test_vietnamese_vietnamese_card_all_word_types(self):
         allWordTypes = True
         translation = Constant.VN_VN
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, allWordTypes, 1)
         time.sleep(1)
 
     def test_vietnamese_vietnamese_first_word_type(self):

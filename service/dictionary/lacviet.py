@@ -1,6 +1,10 @@
 #!/usr/bin/python
 
+import requests
+import logging
+
 from typing import List
+
 
 from ..constant import Constant
 from ..enum.meaning import Meaning
@@ -8,6 +12,7 @@ from ..enum.translation import Translation
 from ..helpers.html import HtmlHelper
 from ..helpers.dictionary import DictHelper
 from ..base_dictionary import BaseDictionary
+from ..helpers.ankiflash import AnkiHelper
 
 
 class LacVietDictionary(BaseDictionary):
@@ -22,19 +27,46 @@ class LacVietDictionary(BaseDictionary):
         else:
             raise RuntimeError("Incorrect word format: {}".format(formattedWord))
 
-        url = ""
+        payload = "dict={}\r\nword={}\r\namount=12\r\ndong=Đóng\r\nshowinlang=1"
         if translation.equals(Constant.VN_EN):
-            url = HtmlHelper.lookup_url(Constant.LACVIET_URL_VN_EN, self.wordId)
+            payload = payload.format("V-A", self.wordId)
         elif translation.equals(Constant.VN_FR):
-            url = HtmlHelper.lookup_url(Constant.LACVIET_URL_VN_FR, self.wordId)
+            payload = payload.format("V-F", self.wordId)
         elif translation.equals(Constant.VN_VN):
-            url = HtmlHelper.lookup_url(Constant.LACVIET_URL_VN_VN, self.wordId)
+            payload = payload.format("V-V", self.wordId)
         elif translation.equals(Constant.EN_VN):
-            url = HtmlHelper.lookup_url(Constant.LACVIET_URL_EN_VN, self.wordId)
+            payload = payload.format("A-V", self.wordId)
         elif translation.equals(Constant.FR_VN):
-            url = HtmlHelper.lookup_url(Constant.LACVIET_URL_FR_VN, self.wordId)
+            payload = payload.format("F-V", self.wordId)
 
-        self.doc = HtmlHelper.get_document(url)
+        post_response = requests.post(
+            Constant.LACVIET_SEARCH_URL,
+            data=payload.encode("utf-8"),
+            headers={"Content-Type": "text/plain;charset=UTF-8"},
+        )
+
+        foundWordUrl = ""
+        soup = HtmlHelper.convert_html_to_soup(post_response.text)
+        for li in soup.select("li"):
+            foundWord = li.get_text().strip()
+
+            if AnkiHelper.compare_ignore_encode(self.wordId, foundWord):
+                logging.info("foundWord={}".format(foundWord))
+
+                foundWordUrl = (
+                    li.get("onclick")
+                    .replace("\\'location.href=\"", "")
+                    .replace("\"\\'", "")
+                )
+                break
+
+        self.doc = HtmlHelper.get_document(
+            "{}{}".format(Constant.LACVIET_BASE_URL, foundWordUrl)
+        )
+
+        logging.info("foundWordUrl={}".format(foundWordUrl))
+        if not foundWordUrl:
+            return False
 
         return True if not self.doc else False
 

@@ -36,9 +36,12 @@ class HtmlHelper:
         return ""
 
     @staticmethod
+    def convert_html_to_soup(docStr: str) -> BeautifulSoup:
+        return BeautifulSoup(docStr, "html.parser")
+
+    @staticmethod
     def get_document(url: str) -> BeautifulSoup:
         logging.info("url {}".format(url))
-
         html_text = requests.get(url, headers={"User-Agent": AGENT_STRING}).text
 
         return BeautifulSoup(html_text, "html.parser")
@@ -175,7 +178,6 @@ class HtmlHelper:
         meanings: List[Meaning],
         isJapanese: bool = False,
     ) -> str:
-
         str_list = []
 
         if isJapanese:
@@ -196,7 +198,6 @@ class HtmlHelper:
 
         str_list.append('<ul class="content-order">')
         for mean in meanings:
-
             if mean.wordType:
                 str_list.append(
                     '<h4 class="content-meaning-type"\'>{}</h4>'.format(
