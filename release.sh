@@ -26,7 +26,9 @@ copy_folder() {
 
 copy_folder "resources"
 copy_folder "service"
-copy_folder "ui" "py"
+copy_folder "ui/generator" "py"
+copy_folder "ui/importer" "py"
+copy_folder "ui/mapper" "py"
 
 echo Compressing release files...
 cd $RELEASE
