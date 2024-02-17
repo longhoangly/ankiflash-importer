@@ -52,7 +52,7 @@ class ImporterDialog(QDialog):
         self.keyPressed.emit(event.key())
 
     def on_key(self, key):
-        if key == QtCore.Qt.Key_Return and self.ui.deckNameTxt.text():
+        if key == QtCore.Qt.Key.Key_Return and self.ui.deckNameTxt.text():
             self.btn_import_clicked(self.version)
         else:
             logging.info("key pressed: {}".format(key))

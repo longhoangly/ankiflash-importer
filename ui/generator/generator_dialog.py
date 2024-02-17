@@ -216,11 +216,11 @@ class GeneratorDialog(QDialog):
                 "Do you want to {} generated flashcards now?\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
                     mode, len(self.words), self.cardCount, self.failureCount
                 ),
-                QMessageBox.No | QMessageBox.Yes,
-                QMessageBox.Yes,
+                QMessageBox.StandardButton.No | QMessageBox.StandardButton.Yes,
+                QMessageBox.StandardButton.Yes,
                 self.iconPath,
             )
-            if btnSelected == QMessageBox.Yes:
+            if btnSelected == QMessageBox.StandardButton.Yes:
                 if len(mw.selectedNotes) > 0:
                     self.btn_mapping_clicked()
                 else:
@@ -232,8 +232,8 @@ class GeneratorDialog(QDialog):
                 "No output flashcards available for importing or mapping.\n\nProgress completed 100%\n- Input: {}\n- Output: {}\n- Failure: {}".format(
                     len(self.words), self.cardCount, self.failureCount
                 ),
-                QMessageBox.Close,
-                QMessageBox.Close,
+                QMessageBox.StandardButton.Close,
+                QMessageBox.StandardButton.Close,
                 self.iconPath,
             )
 

@@ -44,7 +44,7 @@ class FieldsUpdaterDialog(QtWidgets.QDialog):
         self.keyPressed.emit(event.key())
 
     def on_key(self, key):
-        if key == QtCore.Qt.Key_Return:
+        if key == QtCore.Qt.Key.Key_Return:
             self.btn_update_clicked()
         else:
             logging.info("key pressed: {}".format(key))

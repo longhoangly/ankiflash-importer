@@ -43,13 +43,13 @@ class AnkiHelper:
         msgBox.setWindowTitle(title)
         msgBox.setText(text)
         msgBox.setInformativeText(infoText)
-        msgBox.setStandardButtons(QMessageBox.Close)
-        msgBox.setDefaultButton(QMessageBox.Close)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Close)
+        msgBox.setDefaultButton(QMessageBox.StandardButton.Close)
 
         if width is not None:
             msgBox.setStyleSheet("width: {}px;".format(width))
 
-        msgBox.exec_()
+        msgBox.exec()
 
     @staticmethod
     def message_box_buttons(
@@ -75,7 +75,7 @@ class AnkiHelper:
         if width is not None:
             msgBox.setStyleSheet("width: {}px;".format(width))
 
-        return msgBox.exec_()
+        return msgBox.exec()
 
     @staticmethod
     def unique(_list):

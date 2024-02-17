@@ -16,7 +16,8 @@ import os
 import logging
 from os.path import join
 from logging.handlers import RotatingFileHandler
-from PyQt6.QtWidgets import QAction, QMenu
+from PyQt6.QtWidgets import QMenu
+from PyQt6.QtGui import QAction
 
 import aqt
 from aqt import mw, gui_hooks

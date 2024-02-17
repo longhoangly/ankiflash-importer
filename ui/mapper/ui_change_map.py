@@ -15,30 +15,30 @@ class UiChangeMap(object):
         ChangeMap.resize(391, 360)
         icon = QtGui.QIcon()
         icon.addPixmap(
-            QtGui.QPixmap("../resources/anki.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+            QtGui.QPixmap("../resources/anki.ico"),
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         ChangeMap.setWindowIcon(icon)
         self.vboxlayout = QtWidgets.QVBoxLayout(ChangeMap)
         self.vboxlayout.setObjectName("vboxlayout")
-        self.label = QtWidgets.QLabel(ChangeMap)
+        self.label = QtWidgets.QLabel(parent=ChangeMap)
         self.label.setWordWrap(True)
         self.label.setObjectName("label")
         self.vboxlayout.addWidget(self.label)
-        self.fields = QtWidgets.QListWidget(ChangeMap)
+        self.fields = QtWidgets.QListWidget(parent=ChangeMap)
         self.fields.setObjectName("fields")
         self.vboxlayout.addWidget(self.fields)
-        self.buttonBox = QtWidgets.QDialogButtonBox(ChangeMap)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox = QtWidgets.QDialogButtonBox(parent=ChangeMap)
+        self.buttonBox.setOrientation(QtCore.Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.StandardButton.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.vboxlayout.addWidget(self.buttonBox)
 
         self.retranslateUi(ChangeMap)
         self.buttonBox.accepted.connect(ChangeMap.accept)  # type: ignore
         self.buttonBox.rejected.connect(ChangeMap.reject)  # type: ignore
-        self.fields.doubleClicked["QModelIndex"].connect(
-            ChangeMap.accept
-        )  # type: ignore
+        self.fields.doubleClicked["QModelIndex"].connect(ChangeMap.accept)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(ChangeMap)
 
     def retranslateUi(self, ChangeMap):

@@ -13,7 +13,7 @@ class UiFieldsUpdater(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(570, 352)
-        self.importProgressBar = QtWidgets.QProgressBar(Dialog)
+        self.importProgressBar = QtWidgets.QProgressBar(parent=Dialog)
         self.importProgressBar.setGeometry(QtCore.QRect(100, 310, 451, 31))
         font = QtGui.QFont()
         font.setBold(False)
@@ -21,22 +21,23 @@ class UiFieldsUpdater(object):
         self.importProgressBar.setFont(font)
         self.importProgressBar.setProperty("value", 0)
         self.importProgressBar.setObjectName("importProgressBar")
-        self.updateBtn = QtWidgets.QPushButton(Dialog)
+        self.updateBtn = QtWidgets.QPushButton(parent=Dialog)
         self.updateBtn.setEnabled(True)
         self.updateBtn.setGeometry(QtCore.QRect(20, 310, 75, 31))
         font = QtGui.QFont()
         font.setBold(False)
         font.setWeight(50)
         self.updateBtn.setFont(font)
-        self.updateBtn.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.updateBtn.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
         self.updateBtn.setAutoFillBackground(False)
         self.updateBtn.setCheckable(False)
         self.updateBtn.setDefault(False)
         self.updateBtn.setObjectName("updateBtn")
-        self.mappingGroup = QtWidgets.QGroupBox(Dialog)
+        self.mappingGroup = QtWidgets.QGroupBox(parent=Dialog)
         self.mappingGroup.setGeometry(QtCore.QRect(20, 10, 531, 291))
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Expanding,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -47,17 +48,17 @@ class UiFieldsUpdater(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.gridLayout = QtWidgets.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
-        self.mappingArea = QtWidgets.QScrollArea(self.mappingGroup)
+        self.mappingArea = QtWidgets.QScrollArea(parent=self.mappingGroup)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.mappingArea.sizePolicy().hasHeightForWidth())
         self.mappingArea.setSizePolicy(sizePolicy)
         self.mappingArea.setMinimumSize(QtCore.QSize(400, 150))
-        self.mappingArea.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.mappingArea.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
         self.mappingArea.setWidgetResizable(True)
         self.mappingArea.setObjectName("mappingArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
