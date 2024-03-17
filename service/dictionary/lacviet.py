@@ -60,13 +60,13 @@ class LacVietDictionary(BaseDictionary):
                 )
                 break
 
+        logging.info("foundWordUrl={}".format(foundWordUrl))
+        if not foundWordUrl:
+            return True
+
         self.doc = HtmlHelper.get_document(
             "{}{}".format(Constant.LACVIET_BASE_URL, foundWordUrl)
         )
-
-        logging.info("foundWordUrl={}".format(foundWordUrl))
-        if not foundWordUrl:
-            return False
 
         return True if not self.doc else False
 
@@ -200,9 +200,9 @@ class LacVietDictionary(BaseDictionary):
                             # add correct url prefix for all <a> tags
                             for aTag in meaningTags:
                                 replaceTag = aTag
-                                replaceTag[
-                                    "href"
-                                ] = "http://tratu.coviet.vn/" + aTag.get("href")
+                                replaceTag["href"] = (
+                                    "http://tratu.coviet.vn/" + aTag.get("href")
+                                )
                                 aTag.replaceWith(replaceTag)
 
                             meaning.meaning = str(meanElm).strip()

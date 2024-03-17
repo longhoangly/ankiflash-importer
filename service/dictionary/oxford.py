@@ -26,7 +26,7 @@ class OxfordDictionary(BaseDictionary):
         else:
             raise RuntimeError("Incorrect word format: {}".format(formattedWord))
 
-        url = HtmlHelper.lookup_url(Constant.OXFORD_URL_EN_EN, self.wordId)
+        url = HtmlHelper.lookup_url(Constant.OXFORD_DETAILS_URL, self.wordId)
         self.doc = HtmlHelper.get_document(url)
 
         return True if not self.doc else False

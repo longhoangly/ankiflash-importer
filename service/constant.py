@@ -13,7 +13,7 @@ class Constant:
     # OXFORD
     OXFORD_SPELLING_WRONG = "Did you spell it correctly?"
     OXFORD_WORD_NOT_FOUND = "Oxford Learner's Dictionaries | Find the meanings"
-    OXFORD_URL_EN_EN = (
+    OXFORD_DETAILS_URL = (
         "https://www.oxfordlearnersdictionaries.com/definition/english/{}"
     )
     OXFORD_SEARCH_URL_EN_EN = (
@@ -45,15 +45,18 @@ class Constant:
     # KANTAN
     KANTAN_URL_VN_JP_OR_JP_VN = "https://kantan.vn/postrequest.ashx"
 
+    # WIKI
+    WIKI_BASE_URL = "https:"
+    WIKI_SEARCH_WORD_URL = (
+        "https://vi.wiktionary.org/w/rest.php/v1/search/title?q={}&limit=5"
+    )
+    WIKI_DETAILS_URL = "https://vi.wiktionary.org/w/index.php"
+    WIKI_SPELLING_WRONG = "Chưa có trang nào có tên"
+
     # JISHO
     JISHO_WORD_NOT_FOUND = "Sorry, couldn't find anything matching"
     JISHO_WORD_URL_JP_EN = "https://jisho.org/word/{}"
     JISHO_SEARCH_URL_JP_EN = "https://jisho.org/search/{}"
-
-    # WORD REFERENCE
-    WORD_REFERENCE_SPELLING_WRONG = ""
-    WORD_REFERENCE_URL_EN_SP = ""
-    WORD_REFERENCE_URL_SP_EN = ""
 
     # CONSTANTS
     TAB = "\t"
@@ -72,6 +75,7 @@ class Constant:
     ENGLISH = "English"
     FRENCH = "French"
     VIETNAMESE = "Vietnamese"
+    VIETNAMESE_WIKI = "Vietnamese (Wiktionary)"
     CHINESE = "Chinese"
     CHINESE_TD = "Chinese (Traditional)"
     CHINESE_SP = "Chinese (Simplified)"
@@ -90,6 +94,7 @@ class Constant:
     VN_FR = Translation(VIETNAMESE, FRENCH)
     VN_JP = Translation(VIETNAMESE, JAPANESE)
     VN_VN = Translation(VIETNAMESE, VIETNAMESE)
+    VN_VN_WIKI = Translation(VIETNAMESE, VIETNAMESE_WIKI)
 
     FR_VN = Translation(FRENCH, VIETNAMESE)
     FR_EN = Translation(FRENCH, ENGLISH)
@@ -112,7 +117,7 @@ class Constant:
     # All supported languages
     SUPPORTED_TRANSLATIONS = {
         ENGLISH: [ENGLISH, VIETNAMESE, CHINESE_TD, CHINESE_SP, FRENCH, JAPANESE],
-        VIETNAMESE: [ENGLISH, FRENCH, JAPANESE, VIETNAMESE],
+        VIETNAMESE: [VIETNAMESE_WIKI, ENGLISH, FRENCH, JAPANESE, VIETNAMESE],
         FRENCH: [ENGLISH, VIETNAMESE],
         JAPANESE: [ENGLISH, VIETNAMESE],
     }

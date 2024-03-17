@@ -67,7 +67,6 @@ class BaseGenerator(ABC):
             card.comment = Constant.CONNECTION_FAILED
             return card
         elif dictionary.is_invalid_word():
-            dictionary.word
             card.status = Status.WORD_NOT_FOUND
             card.comment = Constant.WORD_NOT_FOUND
             return card

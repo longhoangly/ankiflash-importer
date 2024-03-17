@@ -9,6 +9,7 @@ from ..enum.translation import Translation
 from ..helpers.dictionary import DictHelper
 from ..dictionary.kantan import KantanDictionary
 from ..dictionary.lacviet import LacVietDictionary
+from ..dictionary.wiki import Wiktionary
 from ..base_generator import BaseGenerator
 
 
@@ -20,6 +21,8 @@ class VietnameseGenerator(BaseGenerator):
         foundWords = []
         if translation.equals(Constant.VN_JP):
             foundWords += DictHelper.get_kantan_words(word, allWordTypes)
+        elif translation.equals(Constant.VN_VN_WIKI):
+            foundWords += DictHelper.get_wiki_words(word, allWordTypes)
         else:
             foundWords.append(
                 word + Constant.SUB_DELIMITER + word + Constant.SUB_DELIMITER + word
@@ -32,7 +35,7 @@ class VietnameseGenerator(BaseGenerator):
 
         card: Card = Card()
 
-        # Vietnamese to English/French/Vietnamese
+        # Vietnamese to English / French / Vietnamese
         if (
             translation.equals(Constant.VN_EN)
             or translation.equals(Constant.VN_FR)
@@ -42,6 +45,14 @@ class VietnameseGenerator(BaseGenerator):
             lacVietDict = LacVietDictionary()
             card = self.single_dictionary_card(
                 formattedWord, translation, ankiDir, isOnline, lacVietDict
+            )
+
+        # Vietnamese to Vietnamese (Wiktionary)
+        elif translation.equals(Constant.VN_VN_WIKI):
+
+            wiktionary = Wiktionary()
+            card = self.single_dictionary_card(
+                formattedWord, translation, ankiDir, isOnline, wiktionary
             )
 
         # Vietnamese to Japanese

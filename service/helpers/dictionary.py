@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import os
-import json
 import logging
 import requests
 import urllib.parse
@@ -62,7 +61,7 @@ class DictHelper:
             },
         )
 
-        resp = json.loads(response.text)
+        resp = response.json()
         content = resp["Content"].replace("\n", " ").replace("\r", " ")
         logging.info("JP document {}".format(content))
 
@@ -98,7 +97,6 @@ class DictHelper:
                 )
 
         logging.info("JP kantanWords {}".format(kantanWords))
-
         return kantanWords if allWordTypes else [kantanWords[0]]
 
     @staticmethod
@@ -186,3 +184,33 @@ class DictHelper:
 
         logging.info("foundWords: {}".format(foundWords))
         return foundWords
+
+    @staticmethod
+    def get_wiki_words(word: str, allWordTypes: bool):
+
+        foundWords: list[str] = []
+        url = HtmlHelper.lookup_url(Constant.WIKI_SEARCH_WORD_URL, word)
+
+        response = requests.get(
+            url=url,
+            headers={
+                "User-Agent": "Mozilla/5.0",
+                "Content-Type": "application/json; charset=UTF-8",
+            },
+        )
+
+        resp = response.json()
+        if resp["pages"]:
+            for wordDict in resp["pages"]:
+                foundWords.append(
+                    wordDict["key"]
+                    + Constant.SUB_DELIMITER
+                    + wordDict["key"]
+                    + Constant.SUB_DELIMITER
+                    + word
+                )
+        else:
+            logging.info("Word not found: {}".format(word))
+
+        logging.info("foundWords: {}".format(foundWords))
+        return foundWords if allWordTypes else [foundWords[0]]
