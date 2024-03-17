@@ -26,7 +26,7 @@ from .service.constant import Constant
 from .service.helpers.ankiflash import AnkiHelper
 from .ui.generator.generator_dialog import GeneratorDialog
 
-version = "1.3.0"
+version = "1.4.0"
 
 
 class AnkiFlash:
