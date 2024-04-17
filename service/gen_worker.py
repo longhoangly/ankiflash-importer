@@ -97,7 +97,12 @@ class GenWorker(QObject):
                         )
             else:
                 failureCount += 1
-                self.failureStr.emit(Constant.WORD_NOT_FOUND)
+                self.failureStr.emit(
+                    "{} -> {}".format(
+                        word,
+                        Constant.WORD_NOT_FOUND,
+                    )
+                )
 
         cardLines: list[str] = []
         mappingLines: list[str] = []

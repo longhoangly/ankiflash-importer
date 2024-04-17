@@ -97,7 +97,11 @@ class DictHelper:
                 )
 
         logging.info("JP kantanWords {}".format(kantanWords))
-        return kantanWords if allWordTypes else [kantanWords[0]]
+        return (
+            [kantanWords[0]]
+            if not allWordTypes and len(kantanWords) > 0
+            else kantanWords
+        )
 
     @staticmethod
     def get_jisho_words(word: str) -> List[str]:
@@ -213,4 +217,6 @@ class DictHelper:
             logging.info("Word not found: {}".format(word))
 
         logging.info("foundWords: {}".format(foundWords))
-        return foundWords if allWordTypes else [foundWords[0]]
+        return (
+            [foundWords[0]] if not allWordTypes and len(foundWords) > 0 else foundWords
+        )
