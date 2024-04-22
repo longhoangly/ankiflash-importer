@@ -49,7 +49,10 @@ class KantanDictionary(BaseDictionary):
             element: Tag = HtmlHelper.get_doc_element(
                 self.doc, "label[class*=word-type]", 0
             )
-            self.wordType = "(" + element.get_text().strip() + ")" if element else ""
+            if element and element.get_text():
+                self.wordType = (
+                    "(" + element.get_text().strip() + ")" if element else ""
+                )
         return self.wordType
 
     def get_example(self) -> str:

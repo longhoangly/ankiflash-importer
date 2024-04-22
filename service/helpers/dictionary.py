@@ -87,7 +87,10 @@ class DictHelper:
         for wordElm in wordElms:
             dataId = wordElm.get("data-id")
 
-            if word.lower() in wordElm.get("title").lower() and dataId:
+            if (
+                word.lower() == wordElm.get("title").lower()
+                or word.lower() in wordElm.get("title").lower()
+            ) and dataId:
                 kantanWords.append(
                     wordElm.get("title")
                     + Constant.SUB_DELIMITER
@@ -123,7 +126,10 @@ class DictHelper:
 
             if (
                 foundWordElm
-                and word.lower() in foundWordElm.get_text().strip().lower()
+                and (
+                    word.lower() == foundWordElm.get_text().strip().lower()
+                    or word.lower() in foundWordElm.get_text().strip().lower()
+                )
                 and detailLink
                 and detailLink.get_text()
             ):
@@ -206,13 +212,17 @@ class DictHelper:
         resp = response.json()
         if resp["pages"]:
             for wordDict in resp["pages"]:
-                foundWords.append(
-                    wordDict["key"]
-                    + Constant.SUB_DELIMITER
-                    + wordDict["key"]
-                    + Constant.SUB_DELIMITER
-                    + word
-                )
+                if (
+                    word.lower() == wordDict["title"].lower()
+                    or word.lower() in wordDict["title"].lower()
+                ):
+                    foundWords.append(
+                        wordDict["key"]
+                        + Constant.SUB_DELIMITER
+                        + wordDict["key"]
+                        + Constant.SUB_DELIMITER
+                        + word
+                    )
         else:
             logging.info("Word not found: {}".format(word))
 
