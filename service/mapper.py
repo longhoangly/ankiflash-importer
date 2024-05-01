@@ -31,6 +31,7 @@ class Mapper(QObject):
 
             for cardLine in mappingCsvLines:
                 cardValues = cardLine.split("\t")
+                logging.info("cardLine {}".format(cardLine))
 
                 card = {}
                 card["Word"] = cardValues[0]

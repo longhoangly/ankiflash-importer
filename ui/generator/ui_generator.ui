@@ -132,7 +132,7 @@
      <number>0</number>
     </property>
    </widget>
-   <widget class="QCheckBox" name="allWordTypes">
+   <widget class="QCheckBox" name="relatedWords">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -151,7 +151,7 @@
      <string>If a word has more than one type (noun, adjective, verb...), AnkiFlash will create cards for all of them</string>
     </property>
     <property name="text">
-     <string>All word types?</string>
+     <string>All related words?</string>
     </property>
     <property name="checked">
      <bool>true</bool>

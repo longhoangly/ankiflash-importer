@@ -15,7 +15,7 @@ from .base_dictionary import BaseDictionary
 class BaseGenerator(ABC):
     @abstractmethod
     def get_formatted_words(
-        self, word: str, translation: Translation, allWordTypes: bool
+        self, word: str, translation: Translation, relatedWords: bool
     ) -> List[str]:
         """
         Get all part of speech of a specific word

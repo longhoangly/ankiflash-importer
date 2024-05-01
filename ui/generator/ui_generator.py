@@ -62,14 +62,14 @@ class UiGenerator(object):
         self.generateProgressBar.setToolTip("")
         self.generateProgressBar.setProperty("value", 0)
         self.generateProgressBar.setObjectName("generateProgressBar")
-        self.allWordTypes = QtWidgets.QCheckBox(self.inputBox)
-        self.allWordTypes.setGeometry(QtCore.QRect(20, 310, 121, 17))
+        self.relatedWords = QtWidgets.QCheckBox(self.inputBox)
+        self.relatedWords.setGeometry(QtCore.QRect(20, 310, 121, 17))
         font = QtGui.QFont()
         font.setBold(False)
         font.setWeight(50)
-        self.allWordTypes.setFont(font)
-        self.allWordTypes.setChecked(True)
-        self.allWordTypes.setObjectName("allWordTypes")
+        self.relatedWords.setFont(font)
+        self.relatedWords.setChecked(True)
+        self.relatedWords.setObjectName("relatedWords")
         self.isOnline = QtWidgets.QCheckBox(self.inputBox)
         self.isOnline.setGeometry(QtCore.QRect(20, 330, 121, 17))
         font = QtGui.QFont()
@@ -235,13 +235,13 @@ class UiGenerator(object):
         )
         self.generateBtn.setText(_translate("Dialog", "Generate"))
         self.totalLbl.setText(_translate("Dialog", "Total: 0"))
-        self.allWordTypes.setToolTip(
+        self.relatedWords.setToolTip(
             _translate(
                 "Dialog",
                 "If a word has more than one type (noun, adjective, verb...), AnkiFlash will create cards for all of them",
             )
         )
-        self.allWordTypes.setText(_translate("Dialog", "All word types?"))
+        self.relatedWords.setText(_translate("Dialog", "All related words?"))
         self.isOnline.setToolTip(
             _translate(
                 "Dialog",

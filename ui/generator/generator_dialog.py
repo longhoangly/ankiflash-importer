@@ -36,9 +36,9 @@ class GeneratorDialog(QDialog):
         self.ui.cancelBtn.setDisabled(True)
 
         if len(mw.selectedNotes) > 0:
-            self.ui.allWordTypes.setDisabled(True)
-            self.ui.allWordTypes.setChecked(False)
-            self.ui.allWordTypes.setStyleSheet("color:gray")
+            self.ui.relatedWords.setDisabled(True)
+            self.ui.relatedWords.setChecked(False)
+            self.ui.relatedWords.setStyleSheet("color:gray")
 
         self.fieldsUpdater = FieldsUpdaterDialog(
             self.iconPath, self.addonDir, self.mediaDir
@@ -131,7 +131,7 @@ class GeneratorDialog(QDialog):
         self.translation = Translation(source, target)
 
         # Get generating options
-        self.allWordTypes = self.ui.allWordTypes.isChecked()
+        self.relatedWords = self.ui.relatedWords.isChecked()
         self.isOnline = self.ui.isOnline.isChecked()
 
         # Step 2: Create a QThread object
@@ -144,7 +144,7 @@ class GeneratorDialog(QDialog):
             self.translation,
             self.mediaDir,
             self.isOnline,
-            self.allWordTypes,
+            self.relatedWords,
             self.ankiCsvPath,
         )
 

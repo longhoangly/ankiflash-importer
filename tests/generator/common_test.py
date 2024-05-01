@@ -46,13 +46,13 @@ class CommonTest(unittest.TestCase):
         )
 
     def create_flashcards(
-        self, translation, words, allWordTypes, failedCount=0
+        self, translation, words, relatedWords, failedCount=0
     ) -> List[Card]:
         isOnline = False
         os.makedirs(self.mediaDir, exist_ok=True)
 
         worker = GenWorker(
-            words, translation, self.mediaDir, isOnline, allWordTypes, self.ankiCsvPath
+            words, translation, self.mediaDir, isOnline, relatedWords, self.ankiCsvPath
         )
 
         result = worker.generate_cards_background()

@@ -26,51 +26,51 @@ class VietnameseCardTests(unittest.TestCase):
         self.words.append("dài")
 
     def test_vietnamese_english_card_all_word_types(self):
-        allWordTypes = True
+        relatedWords = True
         translation = Constant.VN_EN
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
     def test_vietnamese_english_first_word_type(self):
-        allWordTypes = False
+        relatedWords = False
         translation = Constant.VN_EN
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
     def test_vietnamese_vietnamese_card_all_word_types(self):
-        allWordTypes = True
+        relatedWords = True
         translation = Constant.VN_VN
-        self.commontest.create_flashcards(translation, self.words, allWordTypes, 1)
+        self.commontest.create_flashcards(translation, self.words, relatedWords, 1)
         time.sleep(1)
 
     def test_vietnamese_vietnamese_first_word_type(self):
-        allWordTypes = False
+        relatedWords = False
         translation = Constant.VN_VN
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
     def test_vietnamese_french_card_all_word_types(self):
-        allWordTypes = True
+        relatedWords = True
         translation = Constant.VN_FR
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
     def test_vietnamese_french_card_first_word_type(self):
-        allWordTypes = False
+        relatedWords = False
         translation = Constant.VN_FR
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
     def test_vietnamese_japanese_card_all_word_types(self):
-        allWordTypes = True
+        relatedWords = True
         translation = Constant.VN_JP
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
     def test_vietnamese_japanese_card_first_word_type(self):
-        allWordTypes = False
+        relatedWords = False
         translation = Constant.VN_JP
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
     @classmethod

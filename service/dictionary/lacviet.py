@@ -120,7 +120,9 @@ class LacVietDictionary(BaseDictionary):
 
     def get_phonetic(self) -> str:
         if not self.phonetic:
-            self.phonetic = HtmlHelper.get_text(self.doc, "div.p5l.fl.cB", 0)
+            self.phonetic = HtmlHelper.get_text(self.doc, "div.p5l.fl.cB", 0).replace(
+                "\n", ""
+            )
         return self.phonetic
 
     def get_image(self, ankiDir: str, isOnline: bool) -> str:

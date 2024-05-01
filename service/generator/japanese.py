@@ -14,16 +14,15 @@ from ..base_generator import BaseGenerator
 
 class JapaneseGenerator(BaseGenerator):
     def get_formatted_words(
-        self, word: str, translation: Translation, allWordTypes: bool
+        self, word: str, translation: Translation, relatedWords: bool
     ) -> List[str]:
         word = word.lower().strip()
 
         foundWords: List[str] = []
-        if translation.equals(Constant.JP_EN) and allWordTypes:
-            foundWords += DictHelper.get_jisho_words(word)
-
+        if translation.equals(Constant.JP_EN):
+            foundWords += DictHelper.get_jisho_words(word, relatedWords)
         elif translation.equals(Constant.JP_VN):
-            foundWords += DictHelper.get_kantan_words(word, allWordTypes)
+            foundWords += DictHelper.get_kantan_words(word, relatedWords)
         else:
             foundWords.append(
                 word + Constant.SUB_DELIMITER + word + Constant.SUB_DELIMITER + word

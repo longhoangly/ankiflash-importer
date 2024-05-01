@@ -30,9 +30,9 @@ class MapperTests(unittest.TestCase):
         self.mapper = Mapper()
 
     def test_mapping_english_english_cards(self):
-        allWordTypes = True
+        relatedWords = True
         translation = Constant.EN_EN
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
         keywordIdx = "keyMap"

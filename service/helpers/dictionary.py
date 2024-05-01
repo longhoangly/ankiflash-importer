@@ -68,7 +68,7 @@ class DictHelper:
         return BeautifulSoup(content, "html.parser")
 
     @staticmethod
-    def get_kantan_words(word: str, allWordTypes: bool) -> List[str]:
+    def get_kantan_words(word: str, relatedWords: bool) -> List[str]:
 
         search_word = urllib.parse.quote(word)
         urlParameters = (
@@ -89,7 +89,7 @@ class DictHelper:
 
             if (
                 word.lower() == wordElm.get("title").lower()
-                or word.lower() in wordElm.get("title").lower()
+                or (relatedWords and word.lower() in wordElm.get("title").lower())
             ) and dataId:
                 kantanWords.append(
                     wordElm.get("title")
@@ -102,12 +102,12 @@ class DictHelper:
         logging.info("JP kantanWords {}".format(kantanWords))
         return (
             [kantanWords[0]]
-            if not allWordTypes and len(kantanWords) > 0
+            if not relatedWords and len(kantanWords) > 0
             else kantanWords
         )
 
     @staticmethod
-    def get_jisho_words(word: str) -> List[str]:
+    def get_jisho_words(word: str, relatedWords: bool) -> List[str]:
 
         url = HtmlHelper.lookup_url(Constant.JISHO_SEARCH_URL_JP_EN, word)
         document: BeautifulSoup = HtmlHelper.get_document(url)
@@ -128,7 +128,10 @@ class DictHelper:
                 foundWordElm
                 and (
                     word.lower() == foundWordElm.get_text().strip().lower()
-                    or word.lower() in foundWordElm.get_text().strip().lower()
+                    or (
+                        relatedWords
+                        and word.lower() in foundWordElm.get_text().strip().lower()
+                    )
                 )
                 and detailLink
                 and detailLink.get_text()
@@ -196,7 +199,7 @@ class DictHelper:
         return foundWords
 
     @staticmethod
-    def get_wiki_words(word: str, allWordTypes: bool):
+    def get_wiki_words(word: str, relatedWords: bool):
 
         foundWords: list[str] = []
         url = HtmlHelper.lookup_url(Constant.WIKI_SEARCH_WORD_URL, word)
@@ -210,11 +213,10 @@ class DictHelper:
         )
 
         resp = response.json()
-        if resp["pages"]:
+        if resp and resp["pages"]:
             for wordDict in resp["pages"]:
-                if (
-                    word.lower() == wordDict["title"].lower()
-                    or word.lower() in wordDict["title"].lower()
+                if word.lower() == wordDict["title"].lower() or (
+                    relatedWords and word.lower() in wordDict["title"].lower()
                 ):
                     foundWords.append(
                         wordDict["key"]
@@ -228,5 +230,5 @@ class DictHelper:
 
         logging.info("foundWords: {}".format(foundWords))
         return (
-            [foundWords[0]] if not allWordTypes and len(foundWords) > 0 else foundWords
+            [foundWords[0]] if not relatedWords and len(foundWords) > 0 else foundWords
         )

@@ -14,7 +14,7 @@ from ..base_generator import BaseGenerator
 
 class FrenchGenerator(BaseGenerator):
     def get_formatted_words(
-        self, word: str, translation: Translation, allWordTypes: bool
+        self, word: str, translation: Translation, relatedWords: bool
     ) -> List[str]:
         word = word.lower().strip()
 

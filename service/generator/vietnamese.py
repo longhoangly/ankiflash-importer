@@ -15,14 +15,14 @@ from ..base_generator import BaseGenerator
 
 class VietnameseGenerator(BaseGenerator):
     def get_formatted_words(
-        self, word: str, translation: Translation, allWordTypes: bool
+        self, word: str, translation: Translation, relatedWords: bool
     ) -> List[str]:
         word = word.lower().strip()
         foundWords = []
         if translation.equals(Constant.VN_JP):
-            foundWords += DictHelper.get_kantan_words(word, allWordTypes)
+            foundWords += DictHelper.get_kantan_words(word, relatedWords)
         elif translation.equals(Constant.VN_VN_WIKI):
-            foundWords += DictHelper.get_wiki_words(word, allWordTypes)
+            foundWords += DictHelper.get_wiki_words(word, relatedWords)
         else:
             foundWords.append(
                 word + Constant.SUB_DELIMITER + word + Constant.SUB_DELIMITER + word

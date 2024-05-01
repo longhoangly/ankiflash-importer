@@ -29,7 +29,7 @@ class GenWorker(QObject):
     failureStr = pyqtSignal(str)
 
     def __init__(
-        self, words, translation, mediaDir, isOnline, allWordTypes, ankiCsvPath
+        self, words, translation, mediaDir, isOnline, relatedWords, ankiCsvPath
     ):
         super().__init__()
 
@@ -40,7 +40,7 @@ class GenWorker(QObject):
         self.translation: Translation = translation
         self.mediaDir: str = mediaDir
         self.isOnline: bool = isOnline
-        self.allWordTypes: bool = allWordTypes
+        self.relatedWords: bool = relatedWords
         self.csvFilePath: str = ankiCsvPath
         self.generator: BaseGenerator = GenWorker.initialize_generator(self.translation)
 
@@ -60,7 +60,7 @@ class GenWorker(QObject):
                 break
 
             self.formattedWords = self.generator.get_formatted_words(
-                word, self.translation, self.allWordTypes
+                word, self.translation, self.relatedWords
             )
             total += len(self.formattedWords) - 1
 

@@ -25,27 +25,27 @@ class JapaneseCardTests(unittest.TestCase):
         self.words.append("長く")
 
     def test_japanese_english_card_all_word_types(self):
-        allWordTypes = True
+        relatedWords = True
         translation = Constant.JP_EN
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
     def test_japanese_english_card_first_word_type(self):
-        allWordTypes = False
+        relatedWords = False
         translation = Constant.JP_EN
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
     def test_japanese_vietnamese_card_all_word_types(self):
-        allWordTypes = True
+        relatedWords = True
         translation = Constant.JP_VN
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
     def test_japanese_vietnamese_card_first_word_type(self):
-        allWordTypes = False
+        relatedWords = False
         translation = Constant.JP_VN
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
     @classmethod

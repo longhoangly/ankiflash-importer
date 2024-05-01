@@ -16,11 +16,11 @@ from ..base_generator import BaseGenerator
 
 class EnglishGenerator(BaseGenerator):
     def get_formatted_words(
-        self, word: str, translation: Translation, allWordTypes: bool
+        self, word: str, translation: Translation, relatedWords: bool
     ) -> List[str]:
         word = word.lower().strip()
         foundWords = []
-        if translation.equals(Constant.EN_EN) and allWordTypes:
+        if translation.equals(Constant.EN_EN) and relatedWords:
             foundWords += DictHelper.get_oxford_words(word)
         else:
             foundWords.append(

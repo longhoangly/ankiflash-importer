@@ -24,27 +24,27 @@ class FrenchCardTests(unittest.TestCase):
         self.words.append("aimer")
 
     def test_french_english_card_all_word_types(self):
-        allWordTypes = True
+        relatedWords = True
         translation = Constant.FR_EN
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
     def test_french_english_card_first_word_type(self):
-        allWordTypes = False
+        relatedWords = False
         translation = Constant.FR_EN
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
     def test_french_vietnamese_card_all_word_types(self):
-        allWordTypes = True
+        relatedWords = True
         translation = Constant.FR_VN
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
     def test_french_vietnamese_card_first_word_type(self):
-        allWordTypes = False
+        relatedWords = False
         translation = Constant.FR_VN
-        self.commontest.create_flashcards(translation, self.words, allWordTypes)
+        self.commontest.create_flashcards(translation, self.words, relatedWords)
         time.sleep(1)
 
     @classmethod
