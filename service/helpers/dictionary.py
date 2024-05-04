@@ -213,7 +213,7 @@ class DictHelper:
         )
 
         resp = response.json()
-        if resp and resp["pages"]:
+        if "pages" in resp and resp["pages"]:
             for wordDict in resp["pages"]:
                 if word.lower() == wordDict["title"].lower() or (
                     relatedWords and word.lower() in wordDict["title"].lower()
