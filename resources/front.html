@@ -22,32 +22,6 @@
 
     <script language="JavaScript">
 
-        function playSounds() {
-            var myAudio = document.getElementById('myAudio');
-            var audios = document.getElementsByTagName('audio');
-            sequencePlaySounds(audios, 0);
-        }
-
-        // Play sounds on page loaded
-        document.onload = playSounds();
-
-        // Recursive to play sounds
-        function sequencePlaySounds(sounds, idx) {
-
-            // Finish condition.1
-            if (idx >= sounds.length)
-                return;
-
-            let next = function () {
-                sequencePlaySounds(sounds, idx + 1)
-            };
-
-            sounds[idx].onended = next;
-            if (sounds[idx].get_attribute('src').includes('http')) {
-                sounds[idx].play();
-            }
-        }
-
         // Show/hide elements
         function ShowHide(divId) {
             if (document.getElementById(divId).style.display === 'none') {
@@ -56,6 +30,26 @@
                 document.getElementById(divId).style.display = 'none';
             }
         }
+
+        // Recursive to play sounds
+        function sequencePlaySounds(sounds, idx) {
+
+            // Finish condition.1
+            if (idx >= sounds.length)
+                return;
+
+            sounds[idx].onended = () => {
+                sequencePlaySounds(sounds, idx + 1)
+            };
+
+            if (sounds[idx].getAttribute('src').includes('http')) {
+                sounds[idx].play();
+            }
+        }
+
+        // Play sounds
+        var audios = document.getElementsByTagName('audio');
+        sequencePlaySounds(audios, 0);
 
         // Replace vowel
         var str = document.getElementById("dropped-vowel").innerHTML;
