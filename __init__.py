@@ -26,7 +26,7 @@ from .service.constant import Constant
 from .service.helpers.ankiflash import AnkiHelper
 from .ui.generator.generator_dialog import GeneratorDialog
 
-version = "1.4.0"
+version = "1.5.0"
 
 
 class AnkiFlash:
@@ -56,9 +56,11 @@ class AnkiFlash:
             backupCount=3,
             encoding="utf-8",
         )
+
         should_roll_over = os.path.isfile(self.ankiFlashLog)
         if should_roll_over:
             rfh.doRollover()
+
         logging.basicConfig(
             level=logging.INFO,
             format="%(asctime)s - %(threadName)s [%(thread)d] - %(message)s",

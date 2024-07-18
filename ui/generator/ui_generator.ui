@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>682</width>
+    <width>511</width>
     <height>589</height>
    </rect>
   </property>
@@ -28,13 +28,12 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>421</width>
+     <width>491</width>
      <height>411</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -46,13 +45,12 @@
      <rect>
       <x>20</x>
       <y>40</y>
-      <width>381</width>
-      <height>151</height>
+      <width>451</width>
+      <height>231</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <weight>50</weight>
       <bold>false</bold>
      </font>
     </property>
@@ -66,43 +64,17 @@
      <string>Input your words</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="generateBtn">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>360</y>
-      <width>91</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>Generate flashcards for the input words</string>
-    </property>
-    <property name="text">
-     <string>Generate</string>
-    </property>
-    <property name="default">
-     <bool>false</bool>
-    </property>
-   </widget>
    <widget class="QLabel" name="totalLbl">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>200</y>
-      <width>200</width>
+      <y>277</y>
+      <width>191</width>
       <height>16</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <weight>50</weight>
       <bold>false</bold>
      </font>
     </property>
@@ -110,109 +82,12 @@
      <string>Total: 0</string>
     </property>
    </widget>
-   <widget class="QProgressBar" name="generateProgressBar">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>360</y>
-      <width>201</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string/>
-    </property>
-    <property name="value">
-     <number>0</number>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="relatedWords">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>310</y>
-      <width>121</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>If a word has more than one type (noun, adjective, verb...), AnkiFlash will create cards for all of them</string>
-    </property>
-    <property name="text">
-     <string>All related words?</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="isOnline">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>330</y>
-      <width>121</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>Usually, card sound will be downloaded to local computer. AnkiFlash provide an option to use online sound, your computer don't need to store sound file.</string>
-    </property>
-    <property name="text">
-     <string>Online sound?</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="cancelBtn">
-    <property name="geometry">
-     <rect>
-      <x>330</x>
-      <y>360</y>
-      <width>71</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>Cancel flashcards generation process</string>
-    </property>
-    <property name="text">
-     <string>Cancel</string>
-    </property>
-    <property name="default">
-     <bool>false</bool>
-    </property>
-   </widget>
    <widget class="QComboBox" name="keywordCx">
     <property name="geometry">
      <rect>
-      <x>229</x>
-      <y>218</y>
-      <width>151</width>
+      <x>245</x>
+      <y>324</y>
+      <width>161</width>
       <height>26</height>
      </rect>
     </property>
@@ -220,15 +95,14 @@
    <widget class="QLabel" name="keywordLbl">
     <property name="geometry">
      <rect>
-      <x>231</x>
-      <y>197</y>
+      <x>254</x>
+      <y>303</y>
       <width>61</width>
       <height>20</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <weight>50</weight>
       <bold>false</bold>
      </font>
     </property>
@@ -236,189 +110,67 @@
      <string>Keyword</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="source">
+   <widget class="QPushButton" name="mappingBtn">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>270</y>
-      <width>141</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text">
-      <string>English</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Vietnamese</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Japanese</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>French</string>
-     </property>
-    </item>
-   </widget>
-   <widget class="QLabel" name="sourceLbl">
-    <property name="geometry">
-     <rect>
-      <x>21</x>
-      <y>250</y>
-      <width>61</width>
-      <height>20</height>
+      <x>250</x>
+      <y>370</y>
+      <width>113</width>
+      <height>32</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <weight>50</weight>
       <bold>false</bold>
      </font>
+    </property>
+    <property name="toolTip">
+     <string>To update existing flashcards with mapping fields</string>
     </property>
     <property name="text">
-     <string>Source</string>
+     <string>Mapping</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="target">
+   <widget class="QPushButton" name="importBtn">
     <property name="geometry">
      <rect>
-      <x>229</x>
-      <y>270</y>
-      <width>151</width>
-      <height>26</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="targetLbl">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>250</y>
-      <width>101</width>
-      <height>20</height>
+      <x>10</x>
+      <y>370</y>
+      <width>113</width>
+      <height>32</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <weight>50</weight>
       <bold>false</bold>
      </font>
+    </property>
+    <property name="toolTip">
+     <string>Cick here to import / create new cards.</string>
     </property>
     <property name="text">
-     <string>Translated To</string>
+     <string>Import</string>
     </property>
    </widget>
-  </widget>
-  <widget class="QGroupBox" name="outputBox">
-   <property name="geometry">
-    <rect>
-     <x>440</x>
-     <y>10</y>
-     <width>231</width>
-     <height>411</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="title">
-    <string>Output</string>
-   </property>
-   <widget class="QPlainTextEdit" name="outputTxt">
+   <widget class="QPushButton" name="copyBtn">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>40</y>
-      <width>191</width>
-      <height>151</height>
+      <x>10</x>
+      <y>320</y>
+      <width>111</width>
+      <height>32</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <weight>50</weight>
       <bold>false</bold>
      </font>
     </property>
-    <property name="focusPolicy">
-     <enum>Qt::StrongFocus</enum>
-    </property>
-    <property name="lineWrapMode">
-     <enum>QPlainTextEdit::NoWrap</enum>
-    </property>
-    <property name="placeholderText">
-     <string>Output cards</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="completedLbl">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>197</y>
-      <width>200</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
+    <property name="toolTip">
+     <string>Copy input words then paste into AnkiFlash Generator Chrome Extension to generate flashcards.</string>
     </property>
     <property name="text">
-     <string>Completed: 0</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="failureLbl">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>376</y>
-      <width>200</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Failure: 0</string>
-    </property>
-   </widget>
-   <widget class="QPlainTextEdit" name="failureTxt">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>229</y>
-      <width>191</width>
-      <height>141</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::StrongFocus</enum>
-    </property>
-    <property name="lineWrapMode">
-     <enum>QPlainTextEdit::NoWrap</enum>
-    </property>
-    <property name="placeholderText">
-     <string>Failure words</string>
+     <string>Copy Inputs</string>
     </property>
    </widget>
   </widget>
@@ -427,13 +179,12 @@
     <rect>
      <x>10</x>
      <y>436</y>
-     <width>661</width>
+     <width>491</width>
      <height>141</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -452,7 +203,6 @@
     <property name="font">
      <font>
       <family>MS Shell Dlg 2</family>
-      <weight>50</weight>
       <italic>false</italic>
       <bold>false</bold>
      </font>
@@ -476,7 +226,6 @@
     <property name="font">
      <font>
       <family>MS Shell Dlg 2</family>
-      <weight>50</weight>
       <italic>false</italic>
       <bold>false</bold>
      </font>
@@ -497,7 +246,6 @@
     <property name="font">
      <font>
       <family>MS Sans Serif</family>
-      <weight>50</weight>
       <italic>true</italic>
       <bold>false</bold>
      </font>
@@ -518,7 +266,6 @@
     <property name="font">
      <font>
       <family>MS Shell Dlg 2</family>
-      <weight>50</weight>
       <italic>false</italic>
       <bold>false</bold>
      </font>
@@ -531,50 +278,6 @@
     </property>
     <property name="textInteractionFlags">
      <set>Qt::LinksAccessibleByMouse</set>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="importBtn">
-    <property name="geometry">
-     <rect>
-      <x>535</x>
-      <y>30</y>
-      <width>113</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>Cick here to import / create new cards.</string>
-    </property>
-    <property name="text">
-     <string>Import</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="mappingBtn">
-    <property name="geometry">
-     <rect>
-      <x>410</x>
-      <y>30</y>
-      <width>113</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>To update existing flashcards with mapping fields</string>
-    </property>
-    <property name="text">
-     <string>Mapping</string>
     </property>
    </widget>
   </widget>
