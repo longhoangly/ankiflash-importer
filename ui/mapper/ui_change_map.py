@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class UiChangeMap(object):
     def setupUi(self, ChangeMap):
         ChangeMap.setObjectName("ChangeMap")
-        ChangeMap.resize(391, 360)
+        ChangeMap.resize(391, 335)
         icon = QtGui.QIcon()
         icon.addPixmap(
             QtGui.QPixmap("../resources/anki.ico"),
@@ -20,20 +20,23 @@ class UiChangeMap(object):
             QtGui.QIcon.State.Off,
         )
         ChangeMap.setWindowIcon(icon)
-        self.vboxlayout = QtWidgets.QVBoxLayout(ChangeMap)
-        self.vboxlayout.setObjectName("vboxlayout")
-        self.label = QtWidgets.QLabel(parent=ChangeMap)
-        self.label.setWordWrap(True)
-        self.label.setObjectName("label")
-        self.vboxlayout.addWidget(self.label)
+        ChangeMap.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
+        ChangeMap.setAutoFillBackground(False)
         self.fields = QtWidgets.QListWidget(parent=ChangeMap)
+        self.fields.setGeometry(QtCore.QRect(10, 35, 371, 261))
         self.fields.setObjectName("fields")
-        self.vboxlayout.addWidget(self.fields)
         self.buttonBox = QtWidgets.QDialogButtonBox(parent=ChangeMap)
+        self.buttonBox.setGeometry(QtCore.QRect(310, 300, 69, 32))
+        self.buttonBox.setStyleSheet(
+            "background-color: #1DA8AF; color: white; border-radius: 5px; width: 70px; height: 20px;"
+        )
         self.buttonBox.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.StandardButton.Ok)
         self.buttonBox.setObjectName("buttonBox")
-        self.vboxlayout.addWidget(self.buttonBox)
+        self.label = QtWidgets.QLabel(parent=ChangeMap)
+        self.label.setGeometry(QtCore.QRect(12, 10, 97, 16))
+        self.label.setWordWrap(True)
+        self.label.setObjectName("label")
 
         self.retranslateUi(ChangeMap)
         self.buttonBox.accepted.connect(ChangeMap.accept)  # type: ignore

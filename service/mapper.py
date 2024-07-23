@@ -16,11 +16,11 @@ class Mapper(QObject):
         super().__init__()
 
     def update_flashcards(
-        self, addonDir, mappingKey, selectedNotes, mappingConfig, cardFields
+        self, ankiFlashPath, mappingKey, selectedNotes, mappingConfig, cardFields
     ) -> str:
         """Mapping flashcards to AnkiFlash fields"""
 
-        mappingCsvPath = join(addonDir, Constant.MAPPING_CSV)
+        mappingCsvPath = join(ankiFlashPath, Constant.MAPPING_CSV)
         mappingCsvLines: List[str] = []
 
         with open(mappingCsvPath, "r", encoding="utf-8") as file:

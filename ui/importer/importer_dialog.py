@@ -6,7 +6,7 @@ import logging
 from os.path import join
 from shutil import copyfile
 from PyQt6 import QtCore
-from PyQt6.QtWidgets import QDialog
+from PyQt6.QtWidgets import QDialog, QFileDialog
 
 from aqt import mw
 from anki.models import ModelManager
@@ -26,26 +26,24 @@ class ImporterDialog(QDialog):
 
     keyPressed = QtCore.pyqtSignal(int)
 
-    def __init__(self, version, iconPath, addonDir, mediaDir):
+    def __init__(self, version, iconPath, mediaDir):
 
         super().__init__()
         self.version = version
-        self.addonDir = addonDir
         self.mediaDir = mediaDir
         self.iconPath = iconPath
-
-        self.ankiCsvPath = join(self.addonDir, Constant.ANKI_DECK)
-        self.frontFile = join(self.addonDir, r"resources/front.html")
-        self.backFile = join(self.addonDir, r"resources/back.html")
-        self.cssFile = join(self.addonDir, r"resources/style.css")
-
         self.keyPressed.connect(self.on_key)
 
         self.ui = UiImporter()
         self.ui.setupUi(self)
 
-        self.ui.deckNameTxt.textChanged.connect(self.enable_import_btn)
         self.ui.importBtn.clicked.connect(lambda: self.btn_import_clicked(version))
+        self.ui.ankiFlashPathBtn.clicked.connect(lambda: self.anki_flash_path_clicked())
+        self.ui.ankiFlashPathTxt.textChanged.connect(self.enable_import_btn)
+        self.ui.ankiFlashPathTxt.setEnabled(False)
+
+        self.ui.deckNameTxt.textChanged.connect(self.enable_import_btn)
+        self.ui.deckNameTxt.setText(" AnkiFlashDeck")
 
     def key_press_event(self, event):
         super().key_press_event(event)
@@ -57,9 +55,26 @@ class ImporterDialog(QDialog):
         else:
             logging.info("key pressed: {}".format(key))
 
+    def anki_flash_path_clicked(self):
+        self.ankiFlashPath = QFileDialog.getExistingDirectory(
+            parent=self,
+            caption="Select directory",
+            directory="${HOME}",
+            options=QFileDialog.Option.DontUseNativeDialog,
+        )
+        self.ui.ankiFlashPathTxt.setText(self.ankiFlashPath)
+
+        self.ankiCsvPath = join(self.ankiFlashPath, Constant.ANKI_DECK)
+        self.frontFile = join(self.ankiFlashPath, r"resources/front.html")
+        self.backFile = join(self.ankiFlashPath, r"resources/back.html")
+        self.cssFile = join(self.ankiFlashPath, r"resources/style.css")
+
     def enable_import_btn(self):
-        if self.ui.deckNameTxt.text():
+        if self.ui.deckNameTxt.text() and self.ui.ankiFlashPathTxt.text():
             self.ui.importBtn.setEnabled(True)
+            self.ui.importBtn.setStyleSheet(
+                "background-color: #1DA8AF; color: white; border-radius: 5px; margin-top: 5px; margin-bottom: 5px;"
+            )
         else:
             self.ui.importBtn.setEnabled(False)
 
@@ -135,11 +150,11 @@ class ImporterDialog(QDialog):
 
         os.makedirs(join(self.mediaDir, r"resources"), exist_ok=True)
         copyfile(
-            join(self.addonDir, r"resources/Raleway-Regular.ttf"),
+            join(self.ankiFlashPath, r"resources/Raleway-Regular.ttf"),
             join(self.mediaDir, r"resources/Raleway-Regular.ttf"),
         )
         copyfile(
-            join(self.addonDir, r"resources/OpenSans-Regular.ttf"),
+            join(self.ankiFlashPath, r"resources/OpenSans-Regular.ttf"),
             join(self.mediaDir, r"resources/OpenSans-Regular.ttf"),
         )
 

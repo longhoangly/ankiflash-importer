@@ -18,29 +18,20 @@ from ...service.constant import Constant
 class GeneratorDialog(QDialog):
     """Generator Dialog"""
 
-    def __init__(self, version, iconPath, addonDir, mediaDir):
+    def __init__(self, version, iconPath, mediaDir):
 
         super().__init__()
         self.mediaDir = mediaDir
-        self.addonDir = addonDir
         self.iconPath = iconPath
         self.version = version
-
-        self.ankiCsvPath = join(addonDir, Constant.ANKI_DECK)
 
         self.ui = UiGenerator()
         self.ui.setupUi(self)
 
-        self.fieldsUpdater = FieldsUpdaterDialog(
-            self.iconPath, self.addonDir, self.mediaDir
-        )
-
-        self.importer = ImporterDialog(
-            self.version, self.iconPath, self.addonDir, self.mediaDir
-        )
+        self.fieldsUpdater = FieldsUpdaterDialog(self.iconPath, self.mediaDir)
+        self.importer = ImporterDialog(self.version, self.iconPath, self.mediaDir)
 
         self.ui.inputTxt.textChanged.connect(self.input_text_changed)
-
         self.ui.copyBtn.clicked.connect(self.btn_copybtn_clicked)
         self.ui.importBtn.clicked.connect(self.btn_importer_clicked)
         self.ui.mappingBtn.clicked.connect(self.btn_mapping_clicked)

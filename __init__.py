@@ -41,10 +41,7 @@ class AnkiFlash:
         self.addonDir = join(mw.pm.addonFolder(), "1129289384")
         self.mediaDir = mw.col.media.dir()
         os.makedirs(self.mediaDir, exist_ok=True)
-
-        # Paths
         self.iconPath = join(self.addonDir, r"resources/anki.png")
-        self.ankiCsvPath = join(self.addonDir, Constant.ANKI_DECK)
 
         # Config Logging (Rotate Every 10MB)
         os.makedirs(join(self.addonDir, r"logs"), exist_ok=True)
@@ -67,9 +64,6 @@ class AnkiFlash:
             datefmt="%d-%b-%y %H:%M:%S",
             handlers=[rfh],
         )
-
-    def show_generator(self):
-        self.generator.show()
 
 
 def init_anki_flash(browser: aqt.browser.Browser):
@@ -105,16 +99,17 @@ def init_anki_flash(browser: aqt.browser.Browser):
 
     mw.ankiFlash = AnkiFlash(version)
     mw.ankiFlash.generator = GeneratorDialog(
-        version, mw.ankiFlash.iconPath, mw.ankiFlash.addonDir, mw.ankiFlash.mediaDir
+        version, mw.ankiFlash.iconPath, mw.ankiFlash.mediaDir
     )
 
     if browser is not None:
         mw.ankiFlash.generator.enable_mapping(True, mw.mapping_keys)
         mw.ankiFlash.generator.set_input_words(AnkiHelper.unique(input_words))
+        mw.ankiFlash.generator.show()
     else:
         mw.ankiFlash.generator.enable_mapping(False, [])
-
-    mw.ankiFlash.show_generator()
+        mw.ankiFlash.generator.importer.ui.importProgressBar.setValue(0)
+        mw.ankiFlash.generator.importer.exec()
 
 
 # Create
@@ -125,7 +120,7 @@ mw.form.menuTools.addAction(ankiFlashAct)
 
 def add_context_menu_item(browser: aqt.browser.Browser, menu: QMenu) -> None:
 
-    browserAct = QAction("Update notes with AnkiFlash", mw)
+    browserAct = QAction("Update Notes with AnkiFlash", mw)
     browserAct.triggered.connect(lambda: init_anki_flash(browser))
     menu.addAction(browserAct)
 

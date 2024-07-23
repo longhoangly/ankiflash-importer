@@ -16,7 +16,7 @@ class UiGenerator(object):
         Dialog.setFocusPolicy(QtCore.Qt.FocusPolicy.StrongFocus)
         icon = QtGui.QIcon()
         icon.addPixmap(
-            QtGui.QPixmap("../../resources/anki.ico"),
+            QtGui.QPixmap("../resources/anki.ico"),
             QtGui.QIcon.Mode.Normal,
             QtGui.QIcon.State.Off,
         )
@@ -44,6 +44,7 @@ class UiGenerator(object):
         self.totalLbl.setObjectName("totalLbl")
         self.keywordCx = QtWidgets.QComboBox(parent=self.inputBox)
         self.keywordCx.setGeometry(QtCore.QRect(245, 324, 161, 26))
+        self.keywordCx.setStyleSheet("")
         self.keywordCx.setObjectName("keywordCx")
         self.keywordLbl = QtWidgets.QLabel(parent=self.inputBox)
         self.keywordLbl.setGeometry(QtCore.QRect(254, 303, 61, 20))
@@ -56,18 +57,27 @@ class UiGenerator(object):
         font = QtGui.QFont()
         font.setBold(False)
         self.mappingBtn.setFont(font)
+        self.mappingBtn.setStyleSheet(
+            "background-color: grey; border-radius: 5px; margin-top: 5px; margin-bottom: 5px;"
+        )
         self.mappingBtn.setObjectName("mappingBtn")
         self.importBtn = QtWidgets.QPushButton(parent=self.inputBox)
         self.importBtn.setGeometry(QtCore.QRect(10, 370, 113, 32))
         font = QtGui.QFont()
         font.setBold(False)
         self.importBtn.setFont(font)
+        self.importBtn.setStyleSheet(
+            "background-color: grey; border-radius: 5px; margin-top: 5px; margin-bottom: 5px;"
+        )
         self.importBtn.setObjectName("importBtn")
         self.copyBtn = QtWidgets.QPushButton(parent=self.inputBox)
         self.copyBtn.setGeometry(QtCore.QRect(10, 320, 111, 32))
         font = QtGui.QFont()
         font.setBold(False)
         self.copyBtn.setFont(font)
+        self.copyBtn.setStyleSheet(
+            "background-color: grey; border-radius: 5px; margin-top: 5px; margin-bottom: 5px;"
+        )
         self.copyBtn.setObjectName("copyBtn")
         self.ankiflashInfoBox = QtWidgets.QGroupBox(parent=Dialog)
         self.ankiflashInfoBox.setGeometry(QtCore.QRect(10, 436, 491, 141))

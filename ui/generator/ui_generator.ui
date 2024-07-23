@@ -91,6 +91,9 @@
       <height>26</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
    </widget>
    <widget class="QLabel" name="keywordLbl">
     <property name="geometry">
@@ -127,6 +130,9 @@
     <property name="toolTip">
      <string>To update existing flashcards with mapping fields</string>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: grey; border-radius: 5px; margin-top: 5px; margin-bottom: 5px;</string>
+    </property>
     <property name="text">
      <string>Mapping</string>
     </property>
@@ -148,6 +154,9 @@
     <property name="toolTip">
      <string>Cick here to import / create new cards.</string>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: grey; border-radius: 5px; margin-top: 5px; margin-bottom: 5px;</string>
+    </property>
     <property name="text">
      <string>Import</string>
     </property>
@@ -168,6 +177,9 @@
     </property>
     <property name="toolTip">
      <string>Copy input words then paste into AnkiFlash Generator Chrome Extension to generate flashcards.</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: grey; border-radius: 5px; margin-top: 5px; margin-bottom: 5px;</string>
     </property>
     <property name="text">
      <string>Copy Inputs</string>

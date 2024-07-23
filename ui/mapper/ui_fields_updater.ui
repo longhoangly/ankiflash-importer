@@ -16,15 +16,14 @@
   <widget class="QProgressBar" name="importProgressBar">
    <property name="geometry">
     <rect>
-     <x>100</x>
+     <x>130</x>
      <y>310</y>
-     <width>451</width>
+     <width>421</width>
      <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <weight>50</weight>
      <bold>false</bold>
     </font>
    </property>
@@ -32,50 +31,13 @@
     <number>0</number>
    </property>
   </widget>
-  <widget class="QPushButton" name="updateBtn">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>310</y>
-     <width>75</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
-   <property name="focusPolicy">
-    <enum>Qt::NoFocus</enum>
-   </property>
-   <property name="toolTip">
-    <string>Import generated flashcards into Anki</string>
-   </property>
-   <property name="autoFillBackground">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Update</string>
-   </property>
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="default">
-    <bool>false</bool>
-   </property>
-  </widget>
   <widget class="QGroupBox" name="mappingGroup">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>10</y>
+     <y>50</y>
      <width>531</width>
-     <height>291</height>
+     <height>251</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -83,6 +45,11 @@
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>13</pointsize>
+    </font>
    </property>
    <property name="title">
     <string>Field Mapping [Your fields mapped to AnkiFlash's fields]</string>
@@ -116,7 +83,7 @@
            <x>0</x>
            <y>0</y>
            <width>499</width>
-           <height>240</height>
+           <height>197</height>
           </rect>
          </property>
         </widget>
@@ -125,6 +92,48 @@
      </layout>
     </item>
    </layout>
+  </widget>
+  <widget class="QLineEdit" name="ankiFlashPathTxt">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>10</y>
+     <width>421</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="placeholderText">
+    <string> Select AnkiFlash Folder Path</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="ankiFlashPathBtn">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>10</y>
+     <width>100</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: grey; border-radius: 5px; margin-top: 5px; margin-bottom: 5px;</string>
+   </property>
+   <property name="text">
+    <string>AnkiFlash Path</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="updateBtn">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>310</y>
+     <width>100</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Update</string>
+   </property>
   </widget>
  </widget>
  <resources/>

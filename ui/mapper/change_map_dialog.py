@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
 import logging
+from os.path import join
 
-from PyQt6 import QtCore
-from PyQt6 import QtWidgets
-
+from PyQt6 import QtWidgets, QtCore
+from PyQt6.QtWidgets import QFileDialog
 from aqt import qconnect
 
 from .ui_change_map import UiChangeMap

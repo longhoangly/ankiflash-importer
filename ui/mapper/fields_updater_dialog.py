@@ -5,6 +5,7 @@ import logging
 from typing import Optional
 from PyQt6 import QtCore
 from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import QFileDialog
 
 from aqt import mw, qconnect
 
@@ -18,12 +19,12 @@ class FieldsUpdaterDialog(QtWidgets.QDialog):
 
     keyPressed = QtCore.pyqtSignal(int)
 
-    def __init__(self, iconPath, addonDir, mediaDir):
+    def __init__(self, iconPath, mediaDir):
 
         super().__init__()
-        self.addonDir = addonDir
         self.mediaDir = mediaDir
         self.iconPath = iconPath
+        self.mappedFields = {}
 
         self.ui = UiFieldsUpdater()
         self.ui.setupUi(self)
@@ -37,7 +38,31 @@ class FieldsUpdaterDialog(QtWidgets.QDialog):
         self.mapping = {}
 
         self.mapper = Mapper()
-        self.mapper.progress.connect(self.updateMappingProgress)
+        self.mapper.progress.connect(self.update_mapping_progress)
+
+        self.ui.ankiFlashPathTxt.setEnabled(False)
+        self.ui.updateBtn.setEnabled(False)
+
+        self.ui.ankiFlashPathBtn.clicked.connect(lambda: self.anki_flash_path_clicked())
+        self.ui.ankiFlashPathTxt.textChanged.connect(self.enable_updat_btn)
+
+    def anki_flash_path_clicked(self):
+        self.ankiFlashPath = QFileDialog.getExistingDirectory(
+            parent=self,
+            caption="Select directory",
+            directory="${HOME}",
+            options=QFileDialog.Option.DontUseNativeDialog,
+        )
+        self.ui.ankiFlashPathTxt.setText(self.ankiFlashPath)
+
+    def enable_updat_btn(self):
+        if self.ui.ankiFlashPathTxt.text():
+            self.ui.updateBtn.setEnabled(True)
+            self.ui.updateBtn.setStyleSheet(
+                "background-color: #1DA8AF; color: white; border-radius: 5px; margin-top: 5px; margin-bottom: 5px;"
+            )
+        else:
+            self.ui.updateBtn.setEnabled(False)
 
     def key_press_event(self, event):
         super().key_press_event(event)
@@ -112,6 +137,7 @@ class FieldsUpdaterDialog(QtWidgets.QDialog):
         def set_dest_field_text(index, text):
             item = self.grid.itemAt(index)
             item.widget().setText(text)
+            self.mappedFields[index] = text
 
         text = (
             selectField
@@ -119,20 +145,31 @@ class FieldsUpdaterDialog(QtWidgets.QDialog):
             else 'mapped to "{}"'.format(selectField)
         )
         set_dest_field_text(self.userFieldIndex * 3 + 1, text)
-
         self.mapping[self.userField] = selectField
 
-    def updateMappingProgress(self, progress):
+    def update_mapping_progress(self, progress):
         self.ui.importProgressBar.setValue(progress)
 
     def btn_update_clicked(self):
+        values = list(self.mappedFields.values())
+        if (values.count("<ignored>") == len(values) and values) or (
+            len(self.mappedFields.keys()) == 0
+        ):
+            AnkiHelper.message_box(
+                "Error",
+                "No field map set! All ignored!",
+                "Please re-check the field mapping and set map for at least one field!",
+                self.iconPath,
+            )
+            return
+
         self.ui.importProgressBar.setValue(5)
         logging.info(self.mapping)
         # {'Example': 'Copyright', 'cardField': 'ankiFlashField'...}
 
         keywordIdx = mw.ankiFlash.generator.ui.keywordCx.currentText()
         updated_count = self.mapper.update_flashcards(
-            self.addonDir,
+            self.ankiFlashPath,
             keywordIdx,
             mw.selectedNotes,
             self.mapping,
