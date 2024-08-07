@@ -18,18 +18,16 @@ from ...service.constant import Constant
 class GeneratorDialog(QDialog):
     """Generator Dialog"""
 
-    def __init__(self, version, iconPath, mediaDir):
+    def __init__(self, ankiFlash):
 
         super().__init__()
-        self.mediaDir = mediaDir
-        self.iconPath = iconPath
-        self.version = version
+        self.ankiFlash = ankiFlash
 
         self.ui = UiGenerator()
         self.ui.setupUi(self)
 
-        self.fieldsUpdater = FieldsUpdaterDialog(self.iconPath, self.mediaDir)
-        self.importer = ImporterDialog(self.version, self.iconPath, self.mediaDir)
+        self.fieldsUpdater = FieldsUpdaterDialog(self.ankiFlash)
+        self.importer = ImporterDialog(self.ankiFlash)
 
         self.ui.inputTxt.textChanged.connect(self.input_text_changed)
         self.ui.copyBtn.clicked.connect(self.btn_copybtn_clicked)
@@ -66,7 +64,7 @@ class GeneratorDialog(QDialog):
             "Info",
             "Inputs copied into clipboard.",
             "Let's paste input words to AnkiFlash Generator Chrome Extention to generate flashcards.",
-            self.iconPath,
+            self.ankiFlash.iconPath,
         )
 
     def btn_importer_clicked(self):

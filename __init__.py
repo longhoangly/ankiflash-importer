@@ -22,7 +22,6 @@ from PyQt6.QtGui import QAction
 import aqt
 from aqt import mw, gui_hooks
 
-from .service.constant import Constant
 from .service.helpers.ankiflash import AnkiHelper
 from .ui.generator.generator_dialog import GeneratorDialog
 
@@ -32,8 +31,7 @@ version = "1.5.0"
 class AnkiFlash:
     """AnkiFlash"""
 
-    def __init__(self, version):
-
+    def __init__(self):
         # disable old log process
         logging.shutdown()
 
@@ -42,6 +40,7 @@ class AnkiFlash:
         self.mediaDir = mw.col.media.dir()
         os.makedirs(self.mediaDir, exist_ok=True)
         self.iconPath = join(self.addonDir, r"resources/anki.png")
+        self.version = version
 
         # Config Logging (Rotate Every 10MB)
         os.makedirs(join(self.addonDir, r"logs"), exist_ok=True)
@@ -97,10 +96,8 @@ def init_anki_flash(browser: aqt.browser.Browser):
         tmp_set.remove(sorted_field)
         mw.mapping_keys = [sorted_field] + list(tmp_set)
 
-    mw.ankiFlash = AnkiFlash(version)
-    mw.ankiFlash.generator = GeneratorDialog(
-        version, mw.ankiFlash.iconPath, mw.ankiFlash.mediaDir
-    )
+    mw.ankiFlash = AnkiFlash()
+    mw.ankiFlash.generator = GeneratorDialog(mw.ankiFlash)
 
     if browser is not None:
         mw.ankiFlash.generator.enable_mapping(True, mw.mapping_keys)

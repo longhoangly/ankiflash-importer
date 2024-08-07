@@ -6,7 +6,7 @@ class Constant:
 
     # ANKI
     ANKI_DECK = "anki_deck.csv"
-    MAPPING_CSV = "mapping.csv"
+    MAPPING_CSV = "ankiflash_mapping.csv"
 
     # AnkiFlash fields for mapping content
     ANKI_FLASH_FIELDS = [

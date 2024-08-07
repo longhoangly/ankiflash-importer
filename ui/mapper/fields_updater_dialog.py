@@ -19,11 +19,10 @@ class FieldsUpdaterDialog(QtWidgets.QDialog):
 
     keyPressed = QtCore.pyqtSignal(int)
 
-    def __init__(self, iconPath, mediaDir):
+    def __init__(self, ankiFlash):
 
         super().__init__()
-        self.mediaDir = mediaDir
-        self.iconPath = iconPath
+        self.ankiFlash = ankiFlash
         self.mappedFields = {}
 
         self.ui = UiFieldsUpdater()
@@ -159,7 +158,7 @@ class FieldsUpdaterDialog(QtWidgets.QDialog):
                 "Error",
                 "No field map set! All ignored!",
                 "Please re-check the field mapping and set map for at least one field!",
-                self.iconPath,
+                self.ankiFlash.iconPath,
             )
             return
 
@@ -180,7 +179,7 @@ class FieldsUpdaterDialog(QtWidgets.QDialog):
             "Info",
             "Finished updating flashcards.",
             "Let's enjoy learning curve.\nUpdated {} flashcards!".format(updated_count),
-            self.iconPath,
+            self.ankiFlash.iconPath,
         )
         self.close()
         mw.reset()

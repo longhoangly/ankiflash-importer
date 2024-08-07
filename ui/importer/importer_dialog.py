@@ -26,18 +26,22 @@ class ImporterDialog(QDialog):
 
     keyPressed = QtCore.pyqtSignal(int)
 
-    def __init__(self, version, iconPath, mediaDir):
+    def __init__(self, ankiFlash):
 
         super().__init__()
-        self.version = version
-        self.mediaDir = mediaDir
-        self.iconPath = iconPath
+        self.ankiFlash = ankiFlash
         self.keyPressed.connect(self.on_key)
 
         self.ui = UiImporter()
         self.ui.setupUi(self)
 
-        self.ui.importBtn.clicked.connect(lambda: self.btn_import_clicked(version))
+        self.frontFile = join(self.ankiFlash.addonDir, r"resources/front.html")
+        self.backFile = join(self.ankiFlash.addonDir, r"resources/back.html")
+        self.cssFile = join(self.ankiFlash.addonDir, r"resources/style.css")
+
+        self.ui.importBtn.clicked.connect(
+            lambda: self.btn_import_clicked(self.ankiFlash.version)
+        )
         self.ui.ankiFlashPathBtn.clicked.connect(lambda: self.anki_flash_path_clicked())
         self.ui.ankiFlashPathTxt.textChanged.connect(self.enable_import_btn)
         self.ui.ankiFlashPathTxt.setEnabled(False)
@@ -51,7 +55,7 @@ class ImporterDialog(QDialog):
 
     def on_key(self, key):
         if key == QtCore.Qt.Key.Key_Return and self.ui.deckNameTxt.text():
-            self.btn_import_clicked(self.version)
+            self.btn_import_clicked(self.ankiFlash.version)
         else:
             logging.info("key pressed: {}".format(key))
 
@@ -63,11 +67,7 @@ class ImporterDialog(QDialog):
             options=QFileDialog.Option.DontUseNativeDialog,
         )
         self.ui.ankiFlashPathTxt.setText(self.ankiFlashPath)
-
         self.ankiCsvPath = join(self.ankiFlashPath, Constant.ANKI_DECK)
-        self.frontFile = join(self.ankiFlashPath, r"resources/front.html")
-        self.backFile = join(self.ankiFlashPath, r"resources/back.html")
-        self.cssFile = join(self.ankiFlashPath, r"resources/style.css")
 
     def enable_import_btn(self):
         if self.ui.deckNameTxt.text() and self.ui.ankiFlashPathTxt.text():
@@ -145,17 +145,17 @@ class ImporterDialog(QDialog):
             "Info",
             "Finished importing flashcards.",
             "Let's enjoy learning curve.",
-            self.iconPath,
+            self.ankiFlash.iconPath,
         )
 
-        os.makedirs(join(self.mediaDir, r"resources"), exist_ok=True)
+        os.makedirs(join(self.ankiFlash.mediaDir, r"resources"), exist_ok=True)
         copyfile(
-            join(self.ankiFlashPath, r"resources/Raleway-Regular.ttf"),
-            join(self.mediaDir, r"resources/Raleway-Regular.ttf"),
+            join(self.ankiFlash.addonDir, r"resources/Raleway-Regular.ttf"),
+            join(self.ankiFlash.mediaDir, r"resources/Raleway-Regular.ttf"),
         )
         copyfile(
-            join(self.ankiFlashPath, r"resources/OpenSans-Regular.ttf"),
-            join(self.mediaDir, r"resources/OpenSans-Regular.ttf"),
+            join(self.ankiFlash.addonDir, r"resources/OpenSans-Regular.ttf"),
+            join(self.ankiFlash.mediaDir, r"resources/OpenSans-Regular.ttf"),
         )
 
         self.close()
