@@ -7,13 +7,24 @@
         <div class="phonetic">{{Phonetic}}</div>
         <div class="type">{{WordType}}</div>
 
-        <button onclick="ShowHide('example')" class="btn btn-info">Examples</button>
+        <button onclick="showHide('example')" class="btn btn-info">
+            Examples
+        </button>
         <div id="example" style="display: none">
-            <div class="example">{{cloze:Example}}</div>
-            <button onclick="ShowHide('word')" class="btn btn-info">Show More Hints</button>
+            <div class="row">
+                <div class="col-sm">
+                    <div class="example">{{cloze:Example}}</div>
+                </div>
+            </div>
+
+            <button onclick="showHide('word')" class="btn btn-info">
+                Show More Hints
+            </button>
             <div id="word" style="display: none">
                 <div id="dropped-vowel" class="word-hint">{{Word}}</div>
-                <div class="image">{{Image}}</div>
+                <div class="col-sm">
+                    <div class="image">{{Image}}</div>
+                </div>
             </div>
         </div>
 
@@ -21,42 +32,39 @@
     </div>
 
     <script language="JavaScript">
-
         // Show/hide elements
-        function ShowHide(divId) {
-            if (document.getElementById(divId).style.display === 'none') {
-                document.getElementById(divId).style.display = 'block';
+        function showHide(divId) {
+            if (document.getElementById(divId).style.display === "none") {
+                document.getElementById(divId).style.display = "block";
             } else {
-                document.getElementById(divId).style.display = 'none';
+                document.getElementById(divId).style.display = "none";
             }
         }
 
         // Recursive to play sounds
         function sequencePlaySounds(sounds, idx) {
-
             // Finish condition.1
-            if (idx >= sounds.length)
-                return;
+            if (idx >= sounds.length) return;
 
             sounds[idx].onended = () => {
-                sequencePlaySounds(sounds, idx + 1)
+                sequencePlaySounds(sounds, idx + 1);
             };
 
-            if (sounds[idx].getAttribute('src').includes('http')) {
+            if (sounds[idx].getAttribute("src").includes("http")) {
                 sounds[idx].play();
             }
         }
 
         // Play sounds
-        var audios = document.getElementsByTagName('audio');
+        var audios = document.getElementsByTagName("audio");
         sequencePlaySounds(audios, 0);
 
         // Replace vowel
         var str = document.getElementById("dropped-vowel").innerHTML;
-        letters = '';
+        letters = "";
         for (var i = 0, len = str.length; i < len; i++) {
             if (str[i].match(/[AEOUIaeoui]/i)) {
-                letters += '<span class="hint">' + '_' + '</span>';
+                letters += '<span class="hint">' + "_" + "</span>";
             } else {
                 letters += str[i];
             }
@@ -64,8 +72,8 @@
         document.getElementById("dropped-vowel").innerHTML = letters;
 
         // Show/hide play sounds element
-        var playBtn = document.getElementById('playBtn');
-        if (document.getElementById('myAudio').textContent === '') {
+        var playBtn = document.getElementById("playBtn");
+        if (document.getElementById("myAudio").textContent === "") {
             playBtn.parentNode.removeChild(playBtn);
         }
     </script>

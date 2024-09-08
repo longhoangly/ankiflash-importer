@@ -11,8 +11,6 @@
 }
 
 body {
-    width: 100%;
-    height: 100%;
     font-size: 16px;
     font-family: "Raleway", "Open Sans" !important;
 }
@@ -139,7 +137,8 @@ body {
     font-style: italic;
 }
 
-/* Japanese Kantan */
+/* Kantan */
+
 .japanese_gothic,
 .japan-font {
     font-family: "Raleway", "Open Sans" !important;
@@ -230,6 +229,7 @@ ul.japanese {
 }
 
 /* Collins */
+
 .cit.type-translation.quote,
 .cit.type-translation .quote {
     font-weight: bold;
